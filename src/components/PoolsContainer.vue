@@ -1,4 +1,16 @@
 <script setup>
+  import { reactive } from 'vue';
+  import PoolComponent from './PoolComponent.vue';
+  import { Pool } from '../libs/pool-class-v1';
+  
+  const pools=reactive([]);
+
+  const addPool=()=>{
+    pools.push(new Pool());
+  };
+  const addDice=(_arguments)=>{
+    console.log("addDice", _arguments)
+  }
 </script>
 
 <template>
@@ -8,9 +20,10 @@
       Pools Container
     </span>
   </div>
-  <div>
+  <div> 
     <span style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
   </div>
+  <PoolComponent v-for="pool in pools" :pool=pool @addDice="addDice"></PoolComponent>
 </div>
 </template>
 
