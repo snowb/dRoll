@@ -1,8 +1,13 @@
 <script setup>
 import HelloWorld from './components/HelloWorld.vue'
+import { Dice } from './libs/dice-class-v1';
+import { Pool } from './libs/pool-class-v1';
+
+const newPool=new Pool([new Dice(1,6),new Dice(1,6)]);
 </script>
 
 <template>
+  <div>{{newPool.getSets()}}</div>
   <div>
     <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite logo" />
