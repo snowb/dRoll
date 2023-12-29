@@ -32,7 +32,15 @@ export class Pool {
    */
   constructor (_dice_objects_array, _iterations) {
     //input: array of Dice objects
-    if(!_dice_objects_array instanceof Array) {
+    if(_dice_objects_array===undefined) {
+      //empty new Pool() call, create empty array and calculate nothing
+      //needs addDice() to stuff
+      this.#fullRollResults=[];
+      if(isNumeric(_iterations)) {this.#iterations=+_iterations;}
+      else if(typeof _iterations!=="undefined") {
+        console.warn("pool-class-v1.js: Invalid iterations passed, assuming 10,000.");
+      }
+    } else if(!_dice_objects_array instanceof Array) {
       console.error("pool-class-v1.js: Pool constructor requires an Array of Dice objects.");
     } else {
       this.#fullRollResults = _dice_objects_array.reduce((_dice_array, _element)=>{

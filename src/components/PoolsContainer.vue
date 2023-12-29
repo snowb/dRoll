@@ -9,7 +9,7 @@
     </span>
   </div>
   <div>
-    <span style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;">Add Pool</span>
+    <span style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
   </div>
 </div>
 </template>
