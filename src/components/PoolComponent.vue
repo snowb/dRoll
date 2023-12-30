@@ -1,20 +1,18 @@
 <script setup>
   import { defineProps, toRaw, watchEffect, ref, computed} from 'vue';
+  import DiceComponent from './DiceComponent.vue';
+  import PoolMetricsComponent from './PoolMetricsComponent.vue';
 
   const props=defineProps({
     pool: Object,
     pool_index: Number,
-    force_render: Object
+    force_render: Number
   });
 
   const emit=defineEmits(['addDice']);
   const addDice=()=>{
     emit('addDice', {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
-  const showPool=(_dice)=>{
-    console.log("showing",toRaw(_dice));
-    return "showing "+toRaw(_dice).getMinimum()+"D"+toRaw(_dice).getMaximum();
-  }
 
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
   let showPoolMetrics=ref(false);
@@ -50,16 +48,14 @@
         </span>
       </div>
       <div style="display: flex; flex-direction: row;">
-        <div v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
-          style="background-color: #242424; color: white; border-radius: 0.2em; padding:0em 0.5em 0em 0.5em; margin:0.2em;"
-          :key="'pool'+props.pool_index+'dice'+dice_index"
-          >
-          {{ showPool(dice) }} at dice_index:{{ dice_index }}
-        </div>
-        <!-- needs to be the DiceComponent -->
-        <!-- {{ props.pool.getMetrics() }} -->
+        <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
+          :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
+          :force_render="props.force_render"
+          ></DiceComponent>
       </div>
-      <div v-if="showPoolMetrics">{{ refPoolStringFullResults }}</div>
+      <!-- <div v-if="showPoolMetrics">{{ refPoolStringFullResults }}</div> -->
+      <!-- PoolMetricsComponent -->
+      <PoolMetricsComponent v-if="showPoolMetrics" :metrics="refPoolStringFullResults"></PoolMetricsComponent>
     </span>
   </div>
   
