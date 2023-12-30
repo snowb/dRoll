@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive, ref, unref, shallowReactive, toRaw, triggerRef, shallowRef } from 'vue';
+  import { toRaw, triggerRef, shallowRef } from 'vue';
   import PoolComponent from './PoolComponent.vue';
   import { Pool } from '../libs/pool-class-v1';
   
