@@ -12,7 +12,7 @@ import { Dice } from "./dice-class-v1.js";
  * @property {Object} groupResults - contains sets, sequences, and metrics for both
  */
 export class Pool {
-  #iterations=10000
+  #iterations=10000;
   #fullRollResults=null;
   #rollResults=null;
   #secondaryResults={sum:[],average:[],min:[],max:[]};
