@@ -11,9 +11,9 @@
     triggerRef(pools);
   };
   const addDice=(_arguments)=>{
-    console.log("PoolsContainer: addDice 1",toRaw(pools));
+    //console.log("PoolsContainer: addDice 1",toRaw(pools));
     toRaw(pools.value[_arguments.pool_index]).addDice(_arguments.min, _arguments.max, _arguments.modifier);
-    console.log("PoolsContainer: addDice 2",pools[_arguments.pool_index])
+    //console.log("PoolsContainer: addDice 2",pools[_arguments.pool_index])
     triggerRef(pools);
   }
 </script>
