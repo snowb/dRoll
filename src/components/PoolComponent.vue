@@ -36,7 +36,7 @@
     <span style="display:inline-block; box-shadow: 0px 0px 5px 0px inset #242424; background-color: #e7e7e7; color:black; padding:0.2em;">
       <div>
         <span style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">
-          Pool#{{ pool_index }}
+          Pool#{{ pool_index+1 }}
         </span>
         <span style="border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
           @click="addDice">
