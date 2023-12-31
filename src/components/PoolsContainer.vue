@@ -11,9 +11,7 @@
     triggerRef(pools);
   };
   const addDice=(_arguments)=>{
-    //console.log("PoolsContainer: addDice 1",toRaw(pools));
     toRaw(pools.value[_arguments.pool_index]).addDice(_arguments.min, _arguments.max, _arguments.modifier);
-    //console.log("PoolsContainer: addDice 2",pools[_arguments.pool_index])
     triggerRef(pools);
   }
   const updateValue=(_value_to_update)=>{
@@ -48,7 +46,6 @@
         break;
     }
     triggerRef(pools);
-    //console.log(pools.value[_value_to_update.target_pool_index].updateValue(_value_to_update.target_dice_index));
   };
 </script>
 
@@ -59,7 +56,6 @@
       Pools Container
     </span>
   </div>
-  <!-- <PoolComponent v-for="(pool,pool_index) in pools" :pool=ref(pool.getFullRollResults()) :pool_index=pool_index @addDice="addDice"></PoolComponent> -->
   <PoolComponent v-for="(pool,pool_index) in pools" 
     :pool=pool :pool_index=pool_index :force_render="forceRender()"
     @addDice="addDice" @updateValue="updateValue">

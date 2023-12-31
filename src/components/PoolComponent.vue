@@ -39,12 +39,8 @@
   let refPoolStringFullResults=ref("test1");
   let count=0;
   watchEffect(()=>{
-    // console.log("watchEffect 1",props.pool)
-    // console.log("watchEffect 2",unref(props.pool))
     props.pool;
     props.force_render
-    //let unrefPool=unref(props.pool.value);
-    //console.log(unrefPool)
     refPoolStringFullResults.value=props.pool.getMetrics();//unrefPool[props.pool_index].getMetrics();//JSON.stringify(rawPoolFullResults);
     count++;
     });
@@ -78,9 +74,7 @@
           @updateValue="updateValue"
           ></DiceComponent>
       </div>
-      <!-- <div v-if="showPoolMetrics">{{ refPoolStringFullResults }}</div> -->
-      <!-- PoolMetricsComponent -->
-      <PoolMetricsComponent v-if="showPoolMetrics" :metrics="refPoolStringFullResults"></PoolMetricsComponent>
+      <PoolMetricsComponent v-if="showPoolMetrics" :metrics="refPoolStringFullResults.pool_metrics" :force_render="force_render"></PoolMetricsComponent>
     </span>
   </div>
   

@@ -31,15 +31,10 @@
 <template>
   <div>
     <div style="background-color: #242424; color: white; border-radius: 0.2em; padding:0em 0em 0.2em 0.5em; margin:0.2em;">
-      <!-- {{ showPool(props.dice) }} at dice_index:{{ props.dice_index }} -->
       <div style="">
         <span style="font-weight: bold;">
           Dice#{{ dice_index+1 }}
         </span>
-        <!-- <span style="border:thin solid white; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
-          @click="editDice">
-          Edit Dice
-        </span> -->
         <span style="text-decoration: underline; padding: 0em 0.5em;"
           @click="toggleMetrics">
           {{showDiceMetricsText}} Metrics
