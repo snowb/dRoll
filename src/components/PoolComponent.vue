@@ -34,7 +34,7 @@
   };
 
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
-  let showPoolMetrics=ref(false);
+  let showPoolMetrics=ref(true);
   let showPoolMetricsText=computed(()=>{return showPoolMetrics.value ? "Hide" : "Show"});
   let refPoolStringFullResults=ref("test1");
   let count=0;
@@ -74,7 +74,12 @@
           @updateValue="updateValue"
           ></DiceComponent>
       </div>
-      <PoolMetricsComponent v-if="showPoolMetrics" :metrics="refPoolStringFullResults.pool_metrics" :force_render="force_render"></PoolMetricsComponent>
+      <PoolMetricsComponent v-if="showPoolMetrics" 
+        :metrics="refPoolStringFullResults.pool_metrics" 
+        :pool_minimum="refPoolStringFullResults.minimum_value"
+        :pool_maximum="refPoolStringFullResults.maximum_value"
+      >
+      </PoolMetricsComponent>
     </span>
   </div>
   
