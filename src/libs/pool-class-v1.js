@@ -61,6 +61,21 @@ export class Pool {
     }
   };
   /**
+   * returns iterations value
+   * @returns {number} - pool's iterations
+   */
+  getIterations () {
+    return this.#iterations;
+  }
+  /**
+   * update iterations and re-roll;
+   * @param {number} _iterations 
+   */
+  setIterations (_iterations) {
+    this.#iterations=_iterations;
+    this.rollPool();
+  }
+  /**
    * return #fullRollResults private property
    * @returns {Dice[]}
    */
