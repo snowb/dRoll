@@ -2,6 +2,7 @@
   import { defineProps, toRaw, watchEffect, ref, computed} from 'vue';
   import DiceComponent from './DiceComponent.vue';
   import PoolMetricsComponent from './PoolMetricsComponent.vue';
+  import { isNumeric } from '../libs/isNumeric';
 
   const props=defineProps({
     pool: Object,
@@ -9,9 +10,27 @@
     force_render: Number
   });
 
-  const emit=defineEmits(['addDice']);
+  const emit=defineEmits(['addDice', 'updateValue']);
   const addDice=()=>{
     emit('addDice', {pool_index:props.pool_index, min:1, max:6, modifier:0});
+  };
+  const updateValue=(_value_to_update)=>{
+    _value_to_update.target_pool_index=props.pool_index;
+    emit("updateValue",_value_to_update);
+  };
+  const editValue=(_event, _value_to_update)=>{
+    if(_event.key=="Enter"){
+      _event.preventDefault();
+    }
+    if(!isNumeric(_event.target.innerText)){
+      switch(_value_to_update){
+        case "iterations":
+          _event.target.innerText=toRaw(props.pool).getIterations();
+          break;
+      }
+      return undefined;
+    }
+    updateValue({target_value:_value_to_update, new_value:+_event.target.innerText});
   };
 
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
@@ -46,11 +65,17 @@
           @click="toggleMetrics">
           {{showPoolMetricsText}} Metrics
         </span>
+        <span style="font-weight: bold;">Iterations:</span>
+        <span contenteditable @keydown.tab="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
+        style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
+          {{ props.pool.getIterations() }}
+        </span>
       </div>
       <div style="display: flex; flex-direction: row;">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
           :force_render="props.force_render"
+          @updateValue="updateValue"
           ></DiceComponent>
       </div>
       <!-- <div v-if="showPoolMetrics">{{ refPoolStringFullResults }}</div> -->

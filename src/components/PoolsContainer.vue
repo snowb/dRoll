@@ -16,6 +16,40 @@
     //console.log("PoolsContainer: addDice 2",pools[_arguments.pool_index])
     triggerRef(pools);
   }
+  const updateValue=(_value_to_update)=>{
+    let target_dice=pools.value[_value_to_update.target_pool_index].getFullRollResults()[_value_to_update.target_dice_index];
+    let new_values={
+      target_dice:_value_to_update.target_dice_index
+    };
+    let action="";
+    switch(_value_to_update.target_value){
+      case "min":
+        new_values.min=_value_to_update.new_value;
+        new_values.max=target_dice.getMaximum();
+        new_values.modifier=target_dice.getModifier();
+        action="updateDice";
+        break;
+      case "max":
+        new_values.max=_value_to_update.new_value;
+        new_values.min=target_dice.getMinimum();
+        new_values.modifier=target_dice.getModifier();
+        action="updateDice";
+        break;
+      case "iterations":
+        action="updateIterations";
+        break;
+    }
+    switch(action){
+      case "updateDice":
+        pools.value[_value_to_update.target_pool_index].updateDice(new_values.target_dice, new_values.min, new_values.max, new_values.modifier);
+        break;
+      case "updateIterations":
+        pools.value[_value_to_update.target_pool_index].setIterations(+_value_to_update.new_value);
+        break;
+    }
+    triggerRef(pools);
+    //console.log(pools.value[_value_to_update.target_pool_index].updateValue(_value_to_update.target_dice_index));
+  };
 </script>
 
 <template>
@@ -28,7 +62,8 @@
   <!-- <PoolComponent v-for="(pool,pool_index) in pools" :pool=ref(pool.getFullRollResults()) :pool_index=pool_index @addDice="addDice"></PoolComponent> -->
   <PoolComponent v-for="(pool,pool_index) in pools" 
     :pool=pool :pool_index=pool_index :force_render="forceRender()"
-    @addDice="addDice"></PoolComponent>
+    @addDice="addDice" @updateValue="updateValue">
+  </PoolComponent>
   <div> 
     <span style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
   </div>
