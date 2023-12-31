@@ -691,27 +691,44 @@ export class Pool {
     this.#dropValue("dropValue", _drop_count, _drop_value);
   };
   /**
-   * method to add dice to the Pool, roll them and generate secondary values and metrics
+   * calls updateDice and passes arguments to add a dice to pool
+   * @param {string|number|Dice} _minimum_value_or_dice - minimum value or Dice object to generate and add
+   * @param {string|number} _maximum_value - maximum value of Dice, required if minimum value is non-Dice object
+   * @param {undefined|number|function} [_modifier] - modifier to roll
+   */
+  addDice(_minimum_value_or_dice, _maximum_value, _modifier) {
+    this.updateDice(undefined, _minimum_value_or_dice, _maximum_value, _modifier);
+  };
+  /**
+   * Updates Dice array with provide data, including adding dice if _target_dice is not valid
+   * @param {*} _target_dice 
    * @param {string|number|Dice} _minimum_value_or_dice - minimum value or Dice object to generate and add
    * @param {string|number} _maximum_value - maximum value of Dice, required if minimum value is non-Dice object
    * @param {undefined|number|function} [_modifier] - modifier to roll
    * @returns {undefined} - on error
    */
-  addDice(_minimum_value_or_dice, _maximum_value, _modifier) {
+  updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier){
     if(!isNumeric(_minimum_value_or_dice) && !_minimum_value_or_dice instanceof Dice) {
-      console.warn("pool-class-v1.js: Invalid minimum value passed to addDice() method.");
+      console.warn("pool-class-v1.js: Invalid minimum value passed to updateDice() method.");
       return undefined;
     }
     if(!isNumeric(_minimum_value_or_dice) && !_minimum_value_or_dice instanceof Dice) {
-      console.error("pool-class-v1.js: Invalid maximum value passed to addDice() method.");
+      console.error("pool-class-v1.js: Invalid maximum value passed to updateDice() method.");
       return undefined
     }
     if(_minimum_value_or_dice instanceof Dice){
       this.#fullRollResults.push(_minimum_value_or_dice);
       return;
     }
-    this.#fullRollResults.push(new Dice(_minimum_value_or_dice, _maximum_value, _modifier));
-    this.#fullRollResults[this.#fullRollResults.length-1].roll(this.#iterations);
+    let target_dice;
+    if(_target_dice!==undefined && isNumeric(_target_dice) && _target_dice<this.#fullRollResults.length){
+      this.#fullRollResults[_target_dice]=new Dice(_minimum_value_or_dice, _maximum_value, _modifier);
+      target_dice = +_target_dice;
+    } else {
+      this.#fullRollResults.push(new Dice(_minimum_value_or_dice, _maximum_value, _modifier));
+      target_dice = this.#fullRollResults.length-1;
+    }
+    this.#fullRollResults[target_dice].roll(this.#iterations);
     this.#calculateSecondaryValues();
     this.#calculateSequences();
     this.#calculateSets();
