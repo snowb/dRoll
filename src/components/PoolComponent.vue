@@ -36,15 +36,9 @@
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
   let showPoolMetrics=ref(true);
   let showPoolMetricsText=computed(()=>{return showPoolMetrics.value ? "Hide" : "Show"});
-  let refPoolStringFullResults=ref("");
-  let refPoolStringSets=ref("");
-  let refPoolStringSequences=ref("");
   watchEffect(()=>{
     props.pool;
     props.force_render
-    refPoolStringFullResults.value=props.pool.getMetrics();
-    refPoolStringSets.value=props.pool.getSetMetrics();
-    refPoolStringSequences.value=props.pool.getSequenceMetrics();
     });
 </script>
 
@@ -76,23 +70,8 @@
           @updateValue="updateValue"
           ></DiceComponent>
       </div>
-      <PoolMetricsComponent :metrics="refPoolStringFullResults.pool_metrics" 
-        :pool_minimum="refPoolStringFullResults.minimum_value"
-        :pool_maximum="refPoolStringFullResults.maximum_value"
-      >
-      </PoolMetricsComponent>
-      <PoolMetricsComponent v-if="showPoolMetrics && refPoolStringSets.length>1" 
-        :metrics="refPoolStringSets" 
-        :pool_minimum="refPoolStringFullResults.minimum_value"
-        :pool_maximum="refPoolStringFullResults.maximum_value"
-        title="Set Metrics"
-      >
-      </PoolMetricsComponent>
-      <PoolMetricsComponent v-if="showPoolMetrics && refPoolStringSequences.length>1" 
-        :metrics="refPoolStringSequences" 
-        :pool_minimum="refPoolStringFullResults.minimum_value"
-        :pool_maximum="refPoolStringFullResults.maximum_value"
-        title="Sequence Metrics"
+      <PoolMetricsComponent v-if="props.pool!==undefined && showPoolMetrics"
+        :pool="props.pool" :force_render="force_render"
       >
       </PoolMetricsComponent>
     </span>

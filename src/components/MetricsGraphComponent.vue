@@ -12,42 +12,22 @@ ChartJS.defaults.backgroundColor="#444"
 //ChartJS.defaults.plugins.tooltip.enabled=false;
 
 const props=defineProps({
-  metrics: Array,
+  metrics: Object,
   force_render: Number,
-  pool_minimum: Number,
   pool_maximum: Number,
   title: String
 });
 
-const getValues=()=>{
-  console.log(props.metrics)
-  if(props.metrics==undefined){ return {labels:[],values:[]}}
-  return props.metrics.reduce((_values_arrays, _element_object)=>{
-    switch(true){
-      case _element_object.value!==undefined:
-        _values_arrays.labels.push(_element_object.value);
-        break;
-      case _element_object.set!==undefined:
-        _values_arrays.labels.push(_element_object.set.toString());
-        break
-      case _element_object.sequence!==undefined:
-        _values_arrays.labels.push(_element_object.sequence.toString());
-        break
-    }
-    _values_arrays.values.push(_element_object.ratio*100);
-    return _values_arrays;
-  },{labels:[],values:[]});
-};
-
 let chartData=computed(()=>{
+  props.force_render;
   return {
     datasets:[
       {
         label:"Occurance %",
-        data:getValues().values
+        data:props.metrics.values ? props.metrics.values : []
       },
     ],
-    labels:getValues().labels
+    labels:props.metrics.labels ? props.metrics.labels : []
   };
 });
 
@@ -66,12 +46,9 @@ let chartOptions={
 
 <template>
   <div v-if="props.title!==undefined" style="font-weight: bold; margin-left:1em;">{{ props.title }}</div>
-  <div v-if="props.metrics.length>1" :style="{width: chartWidth, position:'relative'}">
+  <div v-if="props.metrics" :style="{width: chartWidth, position:'relative'}">
     <bar :data="chartData" :options="chartOptions"></bar>
   </div>
-  <!-- <div>
-    {{props.metrics}}
-  </div> -->
 </template>
 
 <style scoped>
