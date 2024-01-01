@@ -63,7 +63,7 @@
           {{ props.pool.getIterations() }}
         </span>
       </div>
-      <div style="display: flex; flex-direction: row;">
+      <div style="display: flex; flex-direction: row; align-items: flex-start;">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
           :force_render="props.force_render"
