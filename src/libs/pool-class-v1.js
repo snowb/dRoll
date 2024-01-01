@@ -556,6 +556,12 @@ export class Pool {
           all_sets_metrics.push(set_metrics);
       }
     }
+    all_sets_metrics=all_sets_metrics.reduce((_non_empty_sets, _set)=>{
+      if(_set.count>0){
+        _non_empty_sets.push(_set);
+      }
+      return _non_empty_sets;
+    },[]);
     return all_sets_metrics;
   };
   /**
