@@ -35,18 +35,26 @@ import { ref, watchEffect } from 'vue';
       _graph_values.values.push(_metric.ratio*100);
       return _graph_values;
     },{labels:[],values:[]});
-    });
+  });
+
+  const getWidth=(_array, _multipler)=>{
+    let multiplier=_multipler===undefined ? 1 : +_multipler;
+    return _array.length*10/6*multiplier+"vw";
+  };
 </script>
 
 <template>
   <MetricsGraphComponent v-if="refPoolMetrics.values.length>1" :metrics="refPoolMetrics" :force_render="props.force_render"
-  :pool_maximum="props.pool.getMetrics().maximum_value"
+    :pool_maximum="props.pool.getMetrics().maximum_value" :width="getWidth(refPoolMetrics.values, 1)"
+    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}"
   ></MetricsGraphComponent>
   <MetricsGraphComponent :metrics="refPoolSetMetrics" :force_render="props.force_render"
+    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(refPoolSetMetrics.values, 1.25)"
     v-if="refPoolSetMetrics.values.length>1"
     title="Set Metrics"
   ></MetricsGraphComponent>
   <MetricsGraphComponent :metrics="refPoolSequenceMetrics" :force_render="props.force_render"
+    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(refPoolSequenceMetrics.values, 1.5)"
     v-if="refPoolSequenceMetrics.values.length>1"
     title="Sequence Metrics"
   ></MetricsGraphComponent>
