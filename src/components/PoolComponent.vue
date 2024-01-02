@@ -68,18 +68,15 @@
         </span>
         <span style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em;"
           @click="toggleMetrics">
-          {{showPoolMetricsText}} Metrics
-        </span>
+          {{showPoolMetricsText}} Metrics</span>
         <span style="font-weight: bold;">Iterations:</span>
         <span contenteditable @keydown.tab="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
         style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
           {{ props.pool.getIterations() }}
         </span>
-        <span style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em;"
+        <span style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
           @click="dropPool"
-        >
-          Delete Pool
-        </span>
+        >Delete Pool</span>
       </div>
       <div style="display: flex; flex-direction: row; align-items: flex-start;">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
