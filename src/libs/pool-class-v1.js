@@ -712,11 +712,12 @@ export class Pool {
     this.#dropValue("dropValue", _drop_count, _drop_value);
   };
   dropDice(_dice_index) {
-    if(!isNumeric(_dice_index) || !_dice_index >= this.#fullRollResults.length) {
+    if(!isNumeric(_dice_index) || _dice_index >= this.#fullRollResults.length) {
       console.warn("pool-class-v1.js: Invalid value passed to dropDice() method.");
       return undefined;
     }
     this.#fullRollResults.splice(_dice_index,1);
+    this.rollPool();
   };
   /**
    * calls updateDice and passes arguments to add a dice to pool
