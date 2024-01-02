@@ -10,7 +10,7 @@
     force_render: Number
   });
 
-  const emit=defineEmits(['addDice', 'updateValue', 'dropDice']);
+  const emit=defineEmits(['addDice', 'updateValue', 'dropDice', 'dropPool']);
   const addDice=()=>{
     emit('addDice', {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
@@ -35,7 +35,11 @@
 
   const dropDice=(_target_dice_index)=>{
     emit("dropDice", props.pool_index, _target_dice_index);
-  }
+  };
+
+  const dropPool=()=>{
+    emit("dropPool", props.pool_index);
+  };
 
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
   let showPoolMetrics=ref(true);
@@ -70,6 +74,11 @@
         <span contenteditable @keydown.tab="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
         style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
           {{ props.pool.getIterations() }}
+        </span>
+        <span style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em;"
+          @click="dropPool"
+        >
+          Delete Pool
         </span>
       </div>
       <div style="display: flex; flex-direction: row; align-items: flex-start;">

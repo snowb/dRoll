@@ -18,6 +18,10 @@
     toRaw(pools.value[_target_pool_index]).dropDice(_target_dice_index);
     triggerRef(pools);
   };
+  const dropPool=(_target_pool_index)=>{
+    toRaw(pools.value).splice(_target_pool_index,1);
+    triggerRef(pools);
+  };
   const updateValue=(_value_to_update)=>{
     let target_dice=pools.value[_value_to_update.target_pool_index].getFullRollResults()[_value_to_update.target_dice_index];
     let new_values={
@@ -62,7 +66,7 @@
   </div>
   <PoolComponent v-for="(pool,pool_index) in pools" 
     :pool=pool :pool_index=pool_index :force_render="forceRender()"
-    @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice">
+    @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool">
   </PoolComponent>
   <div> 
     <span style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
