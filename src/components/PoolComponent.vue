@@ -1,5 +1,5 @@
 <script setup>
-  import { defineProps, toRaw, watchEffect, ref, computed} from 'vue';
+  import { defineProps, toRaw, watchEffect, ref, computed, triggerRef} from 'vue';
   import DiceComponent from './DiceComponent.vue';
   import PoolMetricsComponent from './PoolMetricsComponent.vue';
   import { isNumeric } from '../libs/isNumeric';
@@ -10,7 +10,7 @@
     force_render: Number
   });
 
-  const emit=defineEmits(['addDice', 'updateValue']);
+  const emit=defineEmits(['addDice', 'updateValue', 'dropDice']);
   const addDice=()=>{
     emit('addDice', {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
@@ -33,6 +33,10 @@
     updateValue({target_value:_value_to_update, new_value:+_event.target.innerText});
   };
 
+  const dropDice=(_target_dice_index)=>{
+    emit("dropDice", props.pool_index, _target_dice_index);
+  }
+
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
   let showPoolMetrics=ref(true);
   let showPoolMetricsText=computed(()=>{return showPoolMetrics.value ? "Hide" : "Show"});
@@ -42,7 +46,6 @@
     });
     /**
      * 
-     * add 'Delete' capability (small X?)
      * add Re-Roll capability
      * 
      */
@@ -73,7 +76,7 @@
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
           :force_render="props.force_render"
-          @updateValue="updateValue"
+          @updateValue="updateValue" @dropDice="dropDice"
           ></DiceComponent>
       </div>
       <PoolMetricsComponent v-if="props.pool!==undefined && showPoolMetrics"

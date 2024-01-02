@@ -2,7 +2,7 @@
 //Component for displaying Dice object
   import { toRaw, ref, computed } from 'vue';
   import { isNumeric } from '../libs/isNumeric';
-import MetricsGraphComponent from './MetricsGraphComponent.vue';
+  import MetricsGraphComponent from './MetricsGraphComponent.vue';
 
   const props=defineProps({
     dice: Object,
@@ -10,7 +10,7 @@ import MetricsGraphComponent from './MetricsGraphComponent.vue';
     force_render: Number
   });
 
-  const emit=defineEmits(["updateValue"])
+  const emit=defineEmits(["updateValue","dropDice"])
   let diceMetrics=computed(()=>{
     return props.dice.getMetrics().reduce((_graph_values, _metric)=>{
       //format dice metrics for graphing
@@ -40,6 +40,10 @@ import MetricsGraphComponent from './MetricsGraphComponent.vue';
   let width=computed(()=>{
     return toRaw(props.dice).getMaximum()*150/6+"px";
   });
+
+  const dropDice=()=>{
+    emit("dropDice", props.dice_index);
+  };
 </script>
 
 <template>
@@ -52,6 +56,11 @@ import MetricsGraphComponent from './MetricsGraphComponent.vue';
         <span style="text-decoration: underline; padding: 0em 0.5em;"
           @click="toggleMetrics">
           {{showDiceMetricsText}} Metrics
+        </span>
+        <span>
+          <img title="Remove Dice from Pool" style="width:1em; margin-right: 0.2em;" src="../assets/white-close-circle.svg"
+           @click="dropDice"
+          >
         </span>
       </div>
       <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
