@@ -711,6 +711,13 @@ export class Pool {
     //drops first occurance of _drop_value in roll
     this.#dropValue("dropValue", _drop_count, _drop_value);
   };
+  dropDice(_dice_index) {
+    if(!isNumeric(_dice_index) || !_dice_index >= this.#fullRollResults.length) {
+      console.warn("pool-class-v1.js: Invalid value passed to dropDice() method.");
+      return undefined;
+    }
+    this.#fullRollResults.splice(_dice_index,1);
+  };
   /**
    * calls updateDice and passes arguments to add a dice to pool
    * @param {string|number|Dice} _minimum_value_or_dice - minimum value or Dice object to generate and add
