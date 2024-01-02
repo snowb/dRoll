@@ -39,7 +39,7 @@ import { ref, watchEffect } from 'vue';
 
   const getWidth=(_array, _multipler)=>{
     let multiplier=_multipler===undefined ? 1 : +_multipler;
-    return _array.length*10/6*multiplier+"vw";
+    return _array.length*150/6*multiplier+"px";
   };
 </script>
 
@@ -49,12 +49,12 @@ import { ref, watchEffect } from 'vue';
     :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}"
   ></MetricsGraphComponent>
   <MetricsGraphComponent :metrics="refPoolSetMetrics" :force_render="props.force_render"
-    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(refPoolSetMetrics.values, 1.25)"
+    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(refPoolSetMetrics.values, 1.5)"
     v-if="refPoolSetMetrics.values.length>1"
     title="Set Metrics"
   ></MetricsGraphComponent>
   <MetricsGraphComponent :metrics="refPoolSequenceMetrics" :force_render="props.force_render"
-    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(refPoolSequenceMetrics.values, 1.5)"
+    :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(refPoolSequenceMetrics.values, 1.25)"
     v-if="refPoolSequenceMetrics.values.length>1"
     title="Sequence Metrics"
   ></MetricsGraphComponent>

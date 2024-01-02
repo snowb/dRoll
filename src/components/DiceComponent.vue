@@ -38,7 +38,7 @@ import MetricsGraphComponent from './MetricsGraphComponent.vue';
   };
 
   let width=computed(()=>{
-    return toRaw(props.dice).getMaximum()*10/6+"vw";
+    return toRaw(props.dice).getMaximum()*150/6+"px";
   });
 </script>
 
