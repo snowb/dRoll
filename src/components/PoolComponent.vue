@@ -40,6 +40,12 @@
     props.pool;
     props.force_render
     });
+    /**
+     * 
+     * add 'Delete' capability (small X?)
+     * add Re-Roll capability
+     * 
+     */
 </script>
 
 <template>
