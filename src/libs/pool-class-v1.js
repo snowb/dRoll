@@ -711,6 +711,11 @@ export class Pool {
     //drops first occurance of _drop_value in roll
     this.#dropValue("dropValue", _drop_count, _drop_value);
   };
+  /**
+   * drops specific index Dice from Pool and re-rolls
+   * @param {Number} _dice_index - index of the specified Dice
+   * @returns {undefined} - if error
+   */
   dropDice(_dice_index) {
     if(!isNumeric(_dice_index) || _dice_index >= this.#fullRollResults.length) {
       console.warn("pool-class-v1.js: Invalid value passed to dropDice() method.");
@@ -758,6 +763,21 @@ export class Pool {
       target_dice = this.#fullRollResults.length-1;
     }
     this.#fullRollResults[target_dice].roll(this.#iterations);
+    this.#calculateSecondaryValues();
+    this.#calculateSequences();
+    this.#calculateSets();
+  };
+  /**
+   * re-rolls the Dice object at the specified index
+   * @param {Number} _dice_index - index of Dice object to re-roll
+   * @returns {undefined} - if error
+   */
+  reRollDice(_dice_index){
+    if(!isNumeric(_dice_index) || _dice_index>=this.#fullRollResults.length) {
+      console.warn("pool-class-v1.js: Invalid value passed to reRollDice() method.");
+      return undefined;
+    }
+    this.#fullRollResults[_dice_index].roll(this.#iterations);
     this.#calculateSecondaryValues();
     this.#calculateSequences();
     this.#calculateSets();

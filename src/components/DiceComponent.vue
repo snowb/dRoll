@@ -10,7 +10,7 @@
     force_render: Number
   });
 
-  const emit=defineEmits(["updateValue","dropDice"])
+  const emit=defineEmits(["updateValue","dropDice", "reRollDice"])
   let diceMetrics=computed(()=>{
     return props.dice.getMetrics().reduce((_graph_values, _metric)=>{
       //format dice metrics for graphing
@@ -44,6 +44,10 @@
   const dropDice=()=>{
     emit("dropDice", props.dice_index);
   };
+  
+  const reRollDice=()=>{
+    emit("reRollDice",props.dice_index);
+  }
 </script>
 
 <template>
@@ -81,6 +85,7 @@
         </span>
       </span>
       <span @click="toggleMode" style="margin-left:0.2em;" title="Toggle Advanced Mode"><img style="width:1em;" src="../assets/white-gear.svg"/></span>
+      <span><img @click="reRollDice" title="Re-roll Dice" style="width:1em; height:1em;" src="../assets/white-redo.svg" /></span>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
       :force_render="force_render" :metrics="diceMetrics" :width="width"
