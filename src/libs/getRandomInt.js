@@ -1,5 +1,11 @@
 import { isNumeric } from "./isNumeric.js";
-
+/**
+ * Generates a random integer between the provided minimum and maximum values
+ * @function
+ * @param {Number|String} _min - minium value
+ * @param {Number|String} _max - maximum value
+ * @returns {Number}
+ */
 export const getRandomInt=(_min, _max)=>
 {
   if(!isNumeric(_min) || !isNumeric(_max)){

@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "docs": "jsdoc2md src/libs/*.js > api.md"
   },
   "dependencies": {
     "chart.js": "^4.4.1",
@@ -15,6 +16,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.2",
+    "jsdoc-to-markdown": "^8.0.0",
     "vite": "^5.0.8"
   }
 }
