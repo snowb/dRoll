@@ -78,10 +78,23 @@
     @reRollPool="reRollPool" @reRollDice="reRollDice">
   </PoolComponent>
   <div> 
-    <span style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
+    <span class="button pointer" style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
   </div>
 </div>
 </template>
 
 <style scoped>
+  .button:hover {
+    background-color: rgb(46, 100, 39);
+  }
+  .button {
+    box-shadow: 2px 2px 1px 0px #dbdbdb;
+  }
+  .button:active {
+    box-shadow: 0px 0px 0px 0px #dbdbdb;
+    transform: translate(2px,2px);
+  }
+  .pointer:hover{
+    cursor: pointer;
+  }
 </style>

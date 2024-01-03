@@ -69,11 +69,9 @@
         <span style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">
           Pool#{{ pool_index+1 }}
         </span>
-        <span style="border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
-          @click="addDice">
-          Add Dice
-        </span>
-        <span style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em;"
+        <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
+          @click="addDice">Add Dice</span>
+        <span class="pointer" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em;"
           @click="toggleMetrics">
           {{showPoolMetricsText}} Metrics</span>
         <span style="font-weight: bold;">Iterations:</span>
@@ -81,8 +79,8 @@
         style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
           {{ props.pool.getIterations() }}
         </span>
-        <span><img @click="reRollPool" title="Re-roll Pool" style="width:1em; height:1em;" src="../assets/black-redo.svg" /></span>
-        <span style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
+        <span class="pointer"><img @click="reRollPool" title="Re-roll Pool" style="width:1em; height:1em;" src="../assets/black-redo.svg" /></span>
+        <span class="pointer" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
           @click="dropPool"
         >Delete Pool</span>
       </div>
@@ -103,7 +101,17 @@
 </template>
 
 <style scoped>
-  #container {
-    border: thin solid pink;
+  .button:hover {
+    background-color: rgb(120, 255, 101);
+  }
+  .button {
+    box-shadow: 2px 2px 1px 0px #242424;
+  }
+  .button:active {
+    box-shadow: 0px 0px 0px 0px #242424;
+    transform: translate(2px,2px);
+  }
+  .pointer:hover{
+    cursor: pointer;
   }
 </style>
