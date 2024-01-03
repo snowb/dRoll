@@ -25,7 +25,7 @@ let chartData=computed(()=>{
   return {
     datasets:[
       {
-        label:"Occurance %",
+        label:"Occurence %",
         data:props.metrics.values ? props.metrics.values : []
       },
     ],
