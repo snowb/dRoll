@@ -75,7 +75,7 @@
           @click="toggleMetrics">
           {{showPoolMetricsText}} Metrics</span>
         <span style="font-weight: bold;">Iterations:</span>
-        <span contenteditable @keydown.tab="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
+        <span :id="props.pool_index+'_iterations'" contenteditable @blur="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
         style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
           {{ props.pool.getIterations() }}
         </span>

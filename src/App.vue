@@ -15,7 +15,7 @@ const toggleInformation=()=>{
       <span @click="toggleInformation" style="color:rgb(154, 154, 255); font-weight: bold; text-decoration: underline; cursor: pointer;">Hide Information</span><br>
       <span style="color: rgb(120, 255, 101);">Green Boxes</span> are editable.<br>
       Click <span class="button pointer" style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;">Add Pool</span> to add a Pool.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span style="font-weight: bold;">Iterations</span> box for the number of rolls to model.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span style="font-weight: bold;">Iterations</span> box for the number of rolls to model. <span style="font-size: smaller;">(Updates on Enter, Tab or focus change)</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp; Click <img style="background-color: #dbdbdb; width:1em; height:1em;" src="./assets/black-redo.svg"/> to re-roll the entire Pool.<br>
       &nbsp;&nbsp;&nbsp;&nbsp; Click "Delete Pool" to delete the Pool.<br><br>
 
