@@ -10,6 +10,7 @@ import { isNumeric } from "./isNumeric.js";
  * @property {number} minimum_value - Minimum value passed to Dice constructor
  * @property {number} maximum_value - Maximum value passed to Dice constructor
  * @property {undefined|function} modifer - modifier function for modifying results
+ * @property {string} additional_text - additional text to be available to outside libs/apps
  */
 export class Dice {
   #iterations=10000;
@@ -18,6 +19,7 @@ export class Dice {
   #minimum_value=1;
   #maximum_value=1;
   #modifer=undefined;
+  #additional_text="";
   /**
    * Checks inputs and sets private properties. Does not auto-run roll().
    * @class
@@ -41,11 +43,44 @@ export class Dice {
    * @returns {number}
    */
   getAverage () {return this.#average};//get average, Number
+  /**
+   * @returns {number} - returns number of iterations
+   */
   getIterations () {return this.#iterations;}//get number of iterations
+  /**
+   * @returns {number} - returns unmodified minimum value
+   */
   getMinimum () {return this.#minimum_value;}//get unmodified minimum value
+  /**
+   * @returns {number} - returns unmodified maximum value
+   */
   getMaximum () {return this.#maximum_value;}//get unmodified maximum value
+  /**
+   * @returns {undefined|number|function} - returns modifier value
+   */
   getModifier () {return this.#modifer;}//get modifier
+  /**
+   * @returns {Dice} - returns a new Dice object with the same min, max, and modifiers
+   */
   getClone() {return new Dice(this.#minimum_value, this.#maximum_value, this.#modifer)};//return new Dice with same arguments
+  /**
+   * 
+   * @param {string} _text - input of number or text to be stored for outside lib/app use
+   */
+  setAdditionalText(_text){
+    if(typeof _text !== "string" && typeof _text !== "number") {
+      console.warn("dice-class-v1.js: Non-text/non-number passed to setAdditionalText() method. Setting to empty string.");
+      this.#additional_text="";
+    } else {
+      this.#additional_text=_text;
+    }
+  }
+  /**
+   * @returns {text|number} - returns additional_text property
+   */
+  getAdditionalText(){
+    return this.#additional_text;
+  }
   /**
    * calculates values between minimum and maximum values, applies modifier for number of provided iterations
    * stores values in #results
@@ -53,14 +88,14 @@ export class Dice {
    */
   roll (_iterations) {
     //mutating method to enable re-rolling
-    if(!isNumeric(_iterations) && typeof _iterations!=="undefined"){
+    if(!isNumeric(_iterations) || _iterations===undefined){
       console.warn("dice-class-v1.js: Invalid iteration value, assuming 10,000.");
       this.#iterations=10000;
     }
     this.#iterations=isNumeric(_iterations) ? +_iterations : this.#iterations;
     this.#results = Array(this.#iterations).fill(null).map((_element, _index)=>{
-    //create an array equal to iterations, fill with 0s, map to object with index and random integer between minimum and maximum values
-    return {index:_index, value:getRandomInt(this.#minimum_value,this.#maximum_value)};
+      //create an array equal to iterations, fill with 0s, map to object with index and random integer between minimum and maximum values
+      return {index:_index, value:getRandomInt(this.#minimum_value,this.#maximum_value)};
     });
     if(this.#modifer!==undefined && isNumeric(this.#modifer)) {
       //modifier is numeric, assume a simple add/subtract modifier
@@ -74,6 +109,29 @@ export class Dice {
       },0)/this.#iterations;
     }
   };
+  /**
+   * Re-roll a value at a specific index
+   * @param {string|number} _index - re-rolls the value at the specific index
+   * @returns {undefined} - on error
+   */
+  reRoll(_index){
+    if(!isNumeric(_index) || _index==undefined){
+      console.error("dice-class-v1.js: Invalid value passed to reRoll() method.");
+      return undefined;
+    }
+    this.#results[_index].value=getRandomInt(this.#minimum_value,this.#maximum_value);
+    if(this.#modifer!==undefined && isNumeric(this.#modifer)) {
+      //modifier is numeric, assume a simple add/subtract modifier
+      this.modifyValues((_value)=>{ return _value + +this.#modifer });
+    } else if (this.#modifer!==undefined && typeof this.#modifer==="function"){
+      this.modifyValues(this.#modifer);
+    } else {
+      this.#average = this.#results.reduce((_avg,_element)=>{
+      //calculate average of all generated values
+      return _avg+=_element.value;
+      },0)/this.#iterations;
+    }
+  }
   /**
    * returns all values above the input value
    * @param {string|number} _value - value to match
@@ -256,6 +314,7 @@ export class Dice {
         continue;
       }
       new_dice.roll(this.getIterations());
+      new_dice.setAdditionalText("Exploding");
       explosion_dice_source.getResults().filter((_element)=>{
         return _element.value!=explode_on_value;
       }).forEach((_roll)=>{

@@ -806,8 +806,12 @@ export class Pool {
       return undefined;
     }
     let pool_explosion_results=[];
-    this.#fullRollResults.forEach((_dice)=>{
-      pool_explosion_results=[...pool_explosion_results,..._dice.explodeValue(_value_to_explode_on, _explode_limit, _additional_dice)];
+    this.#fullRollResults.forEach((_dice, _index)=>{
+      let exploded_dice=_dice.explodeValue(_value_to_explode_on, _explode_limit, _additional_dice);
+      exploded_dice.forEach((_exploded_dice)=>{
+        _exploded_dice.setAdditionalText("#"+(_index+1)+" Explode");
+      });
+      pool_explosion_results=[...pool_explosion_results,...exploded_dice];
     });
     pool_explosion_results.forEach((_new_dice)=>{
       this.addDice(_new_dice);
@@ -821,10 +825,6 @@ export class Pool {
    * getMax ... ?
    *  ... Above, Below, Equal, WithinRange
    * 
-   * SEPARATE CLASS
-   *  Compare Dice class
-   *    for comparing different sets of Dice and their values
-   *    for comparing opposed rolls
    *
    */
 };
