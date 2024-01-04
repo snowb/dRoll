@@ -48,6 +48,10 @@
   const reRollDice=()=>{
     emit("reRollDice",props.dice_index);
   }
+  let close_icon_hover=ref(false);
+  const close_icon_color=computed(()=>{
+    return close_icon_hover.value ? "#ffb4b4" : "#dbdbdb" ;
+  });
 </script>
 
 <template>
@@ -61,11 +65,7 @@
           @click="toggleMetrics">
           {{showDiceMetricsText}} Metrics
         </span>
-        <span>
-          <img title="Remove Dice from Pool" style="width:1em; margin-right: 0.2em;" src="../assets/white-close-circle.svg"
-           @click="dropDice"
-          >
-        </span>
+        <v-icon @click="dropDice" class="pointer" style="margin-right: 0.2em; color:#ffb4b4" name="io-close-circle" scale="1" @mouseover="close_icon_hover=true" @mouseout="close_icon_hover=false" :fill="close_icon_color"></v-icon>
       </div>
       <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
         d <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
@@ -84,8 +84,8 @@
           {{toRaw(props.dice).getMaximum()}}
         </span>
       </span>
-      <span @click="toggleMode" style="margin-left:0.2em;" title="Toggle Advanced Mode"><img style="width:1em;" src="../assets/white-gear.svg"/></span>
-      <span><img @click="reRollDice" title="Re-roll Dice" style="width:1em; height:1em;" src="../assets/white-redo.svg" /></span>
+      <v-icon class="pointer" hover animation="spin" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="bi-gear-fill" scale="1" fill="#dbdbdb"></v-icon>
+      <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
       :force_render="force_render" :metrics="diceMetrics" :width="width"
@@ -95,4 +95,7 @@
 </template>
 
 <style scoped>
+.pointer:hover{
+    cursor: pointer;
+  }
 </style>

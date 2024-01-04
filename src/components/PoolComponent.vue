@@ -79,7 +79,7 @@
         style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
           {{ props.pool.getIterations() }}
         </span>
-        <span class="pointer"><img @click="reRollPool" title="Re-roll Pool" style="width:1em; height:1em;" src="../assets/black-redo.svg" /></span>
+        <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollPool" title="Re-Roll Pool" name="bi-arrow-repeat" scale="1" fill="#242424"></v-icon>
         <span class="pointer" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
           @click="dropPool"
         >Delete Pool</span>
