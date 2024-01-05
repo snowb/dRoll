@@ -60,11 +60,11 @@
       <div>
         <span style="font-weight: bold;">
           Dice#{{ dice_index+1 }}
-        </span>
+        </span> 
         <span style="text-decoration: underline; padding: 0em 0.5em;"
           @click="toggleMetrics">
           {{showDiceMetricsText}} Metrics
-        </span>
+        </span> 
         <v-icon @click="dropDice" class="pointer" style="margin-right: 0.2em; color:#ffb4b4" name="io-close-circle" scale="1" @mouseover="close_icon_hover=true" @mouseout="close_icon_hover=false" :fill="close_icon_color"></v-icon>
       </div>
       <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
@@ -84,7 +84,7 @@
           {{toRaw(props.dice).getMaximum()}}
         </span>
       </span>
-      <v-icon class="pointer" hover animation="spin" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="bi-gear-fill" scale="1" fill="#dbdbdb"></v-icon>
+      <v-icon class="pointer" hover animation="spin" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="bi-gear-fill" scale="1" fill="#dbdbdb"></v-icon> 
       <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
