@@ -3,8 +3,10 @@
 import { computed, watchEffect } from 'vue';
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, registerables } from 'chart.js'
+// import zoomPlugin from 'chartjs-plugin-zoom';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
+// ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, zoomPlugin);
 // ChartJS.defaults.font.weight="bold";
 // ChartJS.defaults.font.size=12;
 // ChartJS.defaults.color="#000"
@@ -35,10 +37,6 @@ let chartData=computed(()=>{
 
 watchEffect(()=>{
   if(props.style!==undefined){
-    //ChartJS.defaults.color=props.style.color;
-    //ChartJS.defaults.backgroundColor=props.style.backgroundColor;
-    //ChartJS.defaults.font.color=props.style.backgroundColor;
-    //ChartJS.defaults.scale.grid.color=props.style.gridColor;
   }
 });
 
@@ -73,13 +71,23 @@ let chartOptions=computed(()=>{
         callbacks:{
           title:(_tooltip)=>{
             return "Value: "+_tooltip[0].label;
-           },
-/*           label:(_tooltip)=>{
-            console.log(_tooltip)
-            return _tooltip.raw+"%";
-          } */
+           }
         }
-      }
+      },
+      // zoom: {
+      //   zoom: {
+      //     wheel: {
+      //       enabled: true,
+      //     },
+      //     pinch: {
+      //       enabled: true
+      //     },
+      //     mode: 'xy',
+      //   },
+      //   limits:{
+      //     y:{min:0,max:100}
+      //   }
+      // },
     };
   }
   return options;
