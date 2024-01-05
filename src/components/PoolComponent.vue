@@ -71,7 +71,7 @@
         </span>
         <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
           @click="addDice">Add Dice</span>
-        <span class="pointer" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em;"
+        <span class="pointer blue-link" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em;"
           @click="toggleMetrics">
           {{showPoolMetricsText}} Metrics</span>
         <span style="font-weight: bold;">Iterations:</span>
@@ -80,7 +80,7 @@
           {{ props.pool.getIterations() }}
         </span>
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollPool" title="Re-Roll Pool" name="bi-arrow-repeat" scale="1" fill="#242424"></v-icon>
-        <span class="pointer" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
+        <span class="pointer red-link" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
           @click="dropPool"
         >Delete Pool</span>
       </div>
@@ -113,5 +113,11 @@
   }
   .pointer:hover{
     cursor: pointer;
+  }
+  .blue-link:hover{
+    color:#0000ff;
+  }
+  .red-link:hover{
+    color:#ff0000
   }
 </style>
