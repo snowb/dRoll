@@ -94,7 +94,7 @@ let chartOptions=computed(()=>{
    -->
   <div>
     <div v-if="props.title!==undefined" style="font-weight: bold; margin-left:1em;">{{ props.title }}</div>
-    <div v-if="props.metrics" :style="{width: props.width, position:'relative'}">
+    <div v-if="props.metrics" :style="{width: props.width, position:'relative'}" style="max-width:90vw;">
       <bar :data="chartData" :options="chartOptions"></bar>
     </div>
   </div>

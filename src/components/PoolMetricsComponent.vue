@@ -120,10 +120,10 @@ import { ref, watchEffect, computed } from 'vue';
       :pool_maximum="props.pool.getMetrics().maximum_value" :width="getWidth(computedPoolMetrics.values, 1)"
       :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" title="Pool Sums"
     ></MetricsGraphComponent>
-    <span style="display:flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-left:0.2em;">
-      <span @click="setPoolMetricsDiplay('equal')" class="pointer red-link" :class="{selected:isSelectedMetricsDisplay('equal')}">Equal To</span>
-      <span @click="setPoolMetricsDiplay('equal_above')" class="pointer red-link" :class="{selected:isSelectedMetricsDisplay('equal_above')}">Equal To Or Above</span>
-      <span @click="setPoolMetricsDiplay('equal_below')" class="pointer red-link" :class="{selected:isSelectedMetricsDisplay('equal_below')}">Equal To Or Below</span>
+    <span style="font-size:small; display:flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-left:0.2em;">
+      <span @click="setPoolMetricsDiplay('equal')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal')}">Equal To</span>
+      <span @click="setPoolMetricsDiplay('equal_above')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal_above')}">Equal To Or Above</span>
+      <span @click="setPoolMetricsDiplay('equal_below')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal_below')}">Equal To Or Below</span>
     </span>
   </div>
     
@@ -140,6 +140,9 @@ import { ref, watchEffect, computed } from 'vue';
 </template>
 
 <style scoped>
+.space_around{
+  margin: 0.2em 0em 0.2em 0em;
+}
 .pointer:hover{
   cursor:pointer;
 }

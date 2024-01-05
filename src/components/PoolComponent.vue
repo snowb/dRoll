@@ -63,7 +63,7 @@
 </script>
 
 <template>
-  <div style="margin: 0.2em;">
+  <div style="margin: 0.2em; max-width:99vw;">
     <span style="display:inline-block; box-shadow: 0px 0px 5px 0px inset #242424; background-color: #e7e7e7; color:black; padding:0.2em;">
       <div>
         <span style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">
@@ -84,7 +84,7 @@
           @click="dropPool"
         >Delete Pool</span>
       </div>
-      <div style="display: flex; flex-direction: row; align-items: flex-start;">
+      <div style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap:wrap; max-width:99vw">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
           :force_render="props.force_render"

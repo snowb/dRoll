@@ -91,10 +91,11 @@
 .pools_container{
   border-radius:0.2em; 
   box-shadow:inset 0px 0px 5px 0px white; 
-  /* width: 100vw;  */
+  max-width: 99vw;
   display: inline-flex; 
   flex-direction: column; 
   align-self: flex-start;
+  flex-wrap: wrap;
   padding:0.2em;
 }
 .add_pool{
