@@ -121,6 +121,12 @@ import { ref, watchEffect, computed } from 'vue';
       :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" title="Pool Sums"
     ></MetricsGraphComponent>
     <span style="font-size:small; display:flex; flex-direction: column; justify-content: center; align-items: flex-start; margin-left:0.2em;">
+      <!-- 
+
+      add GreenBox to EqAbove and EqBelow
+      Default is Max for EqBelow and Min for EqAbove
+      Update value triggers setPoolMetricsDisplay filtering
+       -->
       <span @click="setPoolMetricsDiplay('equal')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal')}">Equal To</span>
       <span @click="setPoolMetricsDiplay('equal_above')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal_above')}">Equal To Or Above</span>
       <span @click="setPoolMetricsDiplay('equal_below')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal_below')}">Equal To Or Below</span>
