@@ -126,6 +126,12 @@ export class Pool {
    */
   getTotalRollsWithSets(){return this.#groupResults.totalRollsWithSets};
   /**
+   * @returns {number} - length/size of pool
+   */
+  getPoolSize(){
+    return this.#fullRollResults.length;
+  };
+  /**
    * rolls all Dice in the Pool, calculates secondary values
    */
   rollPool () {
