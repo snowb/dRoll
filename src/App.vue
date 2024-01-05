@@ -21,7 +21,7 @@ const toggleInformation=()=>{
 
       Click <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em; background-color: #dbdbdb; color:#242424">Add Dice</span> to add a Dice <span style="font-size: smaller;">(default 1D6)</span>.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Change value in the <span style="color: rgb(120, 255, 101);">Green Box</span> to the desired dice-size.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="bi-gear-fill" scale="1" fill="#dbdbdb"></v-icon> to switch from dX mode <span style="font-size: smaller;">(d6, d10, etc)</span> to X-to-Y mode <span style="font-size: smaller;">(-6 to 6, etc)</span>.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> to switch from dX mode <span style="font-size: smaller;">(d6, d10, etc)</span> to X-to-Y mode <span style="font-size: smaller;">(-6 to 6, etc)</span>.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon> to re-roll the individual Dice.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="io-close-circle" scale="1" fill="#dbdbdb"></v-icon> to drop the individual Dice from the Pool.<br>
       <br>
