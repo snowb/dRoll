@@ -68,15 +68,35 @@ let chartOptions=computed(()=>{
     };
     options.backgroundColor=props.style.backgroundColor;
     options.color=props.style.backgroundColor;
+    options.plugins={
+      tooltip:{
+        callbacks:{
+          title:(_tooltip)=>{
+            return "Value: "+_tooltip[0].label;
+           },
+/*           label:(_tooltip)=>{
+            console.log(_tooltip)
+            return _tooltip.raw+"%";
+          } */
+        }
+      }
+    };
   }
   return options;
 });
 </script>
 
 <template>
-  <div v-if="props.title!==undefined" style="font-weight: bold; margin-left:1em;">{{ props.title }}</div>
-  <div v-if="props.metrics" :style="{width: props.width, position:'relative'}">
-    <bar :data="chartData" :options="chartOptions"></bar>
+  <!-- 
+
+    needs a max-width based on viewwidth property (99vw?)
+
+   -->
+  <div>
+    <div v-if="props.title!==undefined" style="font-weight: bold; margin-left:1em;">{{ props.title }}</div>
+    <div v-if="props.metrics" :style="{width: props.width, position:'relative'}">
+      <bar :data="chartData" :options="chartOptions"></bar>
+    </div>
   </div>
 </template>
 
