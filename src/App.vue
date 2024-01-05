@@ -9,28 +9,63 @@ const toggleInformation=()=>{
 </script>
 
 <template>
-  <div>
-    <div @click="toggleInformation" v-if="!showInformation" style="margin-left:10px; color:rgb(154, 154, 255); font-weight: bold; text-decoration: underline; cursor: pointer;">Show Information</div>
-    <div v-if="showInformation" style="margin-left:10px; text-align: left; align-self: flex-start;">
-      <span @click="toggleInformation" style="color:rgb(154, 154, 255); font-weight: bold; text-decoration: underline; cursor: pointer;">Hide Information</span><br>
-      <span style="color: rgb(120, 255, 101);">Green Boxes</span> are editable.<br>
-      Click <span class="button pointer" style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;">Add Pool</span> to add a Pool.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span style="font-weight: bold;">Iterations</span> box for the number of rolls to model. <span style="font-size: smaller;">(Updates on Enter, Tab or focus change)</span><br>
+  <div class="margin-10px">
+    <span class="bold info_button" @click="toggleInformation" v-if="!showInformation">Show Information</span>
+    <span class="shown_info" v-if="showInformation">
+      <span class="bold info_button" @click="toggleInformation">Hide Information</span><br>
+      <span class="green_box bold">Green Boxes</span> are editable.<br>
+      Click <span class="add_pool button_shape">Add Pool</span> to add a Pool.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span class="bold">Iterations</span> box for the number of rolls to model. <span class="smaller">(Updates on Enter, Tab or focus change)</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="bi-arrow-repeat" scale="1" fill="#242424" style="background-color:#dbdbdb"></v-icon> to re-roll the entire Pool.<br>
       &nbsp;&nbsp;&nbsp;&nbsp; Click "Delete Pool" to delete the Pool.<br><br>
 
-      Click <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em; background-color: #dbdbdb; color:#242424">Add Dice</span> to add a Dice <span style="font-size: smaller;">(default 1D6)</span>.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Change value in the <span style="color: rgb(120, 255, 101);">Green Box</span> to the desired dice-size.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> to switch from dX mode <span style="font-size: smaller;">(d6, d10, etc)</span> to X-to-Y mode <span style="font-size: smaller;">(-6 to 6, etc)</span>.<br>
+      Click <span class="add_dice button_shape">Add Dice</span> to add a Dice <span class="smaller">(default 1D6)</span>.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Change value in the <span class="green_box bold">Green Box</span> to the desired dice-size.<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> to switch from dX mode <span class="smaller">(d6, d10, etc)</span> to X-to-Y mode <span style="font-size: smaller;">(-6 to 6, etc)</span>.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon> to re-roll the individual Dice.<br>
       &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="io-close-circle" scale="1" fill="#dbdbdb"></v-icon> to drop the individual Dice from the Pool.<br>
-      <br>
-      <span @click="toggleInformation" style="color:rgb(154, 154, 255); font-weight: bold; text-decoration: underline; cursor: pointer;">Hide Information</span>
-    </div>
+      <span class="bold info_button" @click="toggleInformation">Hide Information</span>
+    </span>
+    <br>
     <br>
     <PoolsContainer></PoolsContainer>
   </div>
 </template>
 
 <style scoped>
+.margin-10px{
+  margin-left:10px;
+}
+.shown_info{
+  text-align: left;
+}
+.info_button{
+  color:rgb(154, 154, 255); 
+  text-decoration: underline; 
+  cursor: pointer;
+}
+.green_box{
+  color: rgb(120, 255, 101);
+}
+.button_shape{
+  padding:0em 0.5em 0em 0.5em; 
+  border-radius: 0.2em;
+}
+.add_pool{
+  border:thin solid white; 
+  
+}
+.add_dice{
+  display:inline-block; 
+  border:thin solid black; 
+  background-color: #dbdbdb; 
+  color:#242424
+}
+.bold{
+  font-weight: bold;
+}
+.smaller{
+  font-size: smaller;
+}
+
 </style>
