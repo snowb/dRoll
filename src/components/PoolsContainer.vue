@@ -66,11 +66,9 @@
 </script>
 
 <template>
-<div style="border-radius:0.2em; box-shadow:inset 0px 0px 5px 0px white; width: 100vw; display: inline-flex; flex-direction: column; padding:0.2em;">
+<div class="pools_container" style="">
   <div>
-    <span style="font-weight:bold; border-bottom:thin solid rgba(255,255,255,0.5); border-right:thin solid rgba(255,255,255,0.5); border-radius: 0.2em; padding:0em 0.5em 0em 0.5em;">
-      Pools Container
-    </span>
+    <span class="pools_container_title">Pools Container</span>
   </div>
   <PoolComponent v-for="(pool,pool_index) in pools" 
     :pool=pool :pool_index=pool_index :force_render="forceRender()"
@@ -78,23 +76,43 @@
     @reRollPool="reRollPool" @reRollDice="reRollDice">
   </PoolComponent>
   <div> 
-    <span class="button pointer" style="border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.2em;" @click="addPool()">Add Pool</span>
+    <span class="button pointer add_pool" @click="addPool()">Add Pool</span>
   </div>
 </div>
 </template>
 
 <style scoped>
-  .button:hover {
-    background-color: rgb(46, 100, 39);
-  }
-  .button {
-    box-shadow: 2px 2px 1px 0px #dbdbdb;
-  }
-  .button:active {
-    box-shadow: 0px 0px 0px 0px #dbdbdb;
-    transform: translate(2px,2px);
-  }
-  .pointer:hover{
-    cursor: pointer;
-  }
+.pools_container_title{
+  font-weight:bold; 
+  border-bottom:thin solid rgba(255,255,255,0.5); 
+  border-right:thin solid rgba(255,255,255,0.5); 
+  border-radius: 0.2em; padding:0em 0.5em 0em 0.5em;
+}
+.pools_container{
+  border-radius:0.2em; 
+  box-shadow:inset 0px 0px 5px 0px white; 
+  /* width: 100vw;  */
+  display: inline-flex; 
+  flex-direction: column; 
+  align-self: flex-start;
+  padding:0.2em;
+}
+.add_pool{
+  border:thin solid white; 
+  padding:0em 0.5em 0em 0.5em; 
+  border-radius: 0.2em;
+}
+.button:hover {
+  background-color: rgb(46, 100, 39);
+}
+.button {
+  box-shadow: 2px 2px 1px 0px #dbdbdb;
+}
+.button:active {
+  box-shadow: 0px 0px 0px 0px #dbdbdb;
+  transform: translate(2px,2px);
+}
+.pointer:hover{
+  cursor: pointer;
+}
 </style>
