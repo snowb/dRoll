@@ -6,6 +6,7 @@ import { IoCloseCircle,
   GiCrownedExplosion, 
   BiArrowRepeat, 
   BiGearFill,
+  FaExchangeAlt,
   BiDice6Fill,
   GiCardBurn,
   FaDiceD20 } from "oh-vue-icons/icons";
@@ -13,7 +14,8 @@ import { IoCloseCircle,
 addIcons(IoCloseCircle, 
   GiCrownedExplosion, //for exploding dice 
   BiArrowRepeat,      //for re-roll 
-  BiGearFill,         //for setting change ... switch to   FaExchangeAlt?
+  BiGearFill,         //for advanced setting change
+  FaExchangeAlt,      //for switching between dX and X-to-Y Dikce
   BiDice6Fill,        //for Add Dice (maybe)
   GiCardBurn,         //for Add Deck (maybe, need to modify Path)
                       // combined icon for show/hide Sets?

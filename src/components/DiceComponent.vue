@@ -55,13 +55,19 @@
 </script>
 
 <template>
+  <!-- 
+
+    change to static width? container as Flex so they auto-flow to next line
+
+
+   -->
   <div style="background-color: #242424; color: white; border-radius: 0.2em; padding:0em 0em 0.2em 0.5em; margin:0.2em;">
     <div>
       <div>
         <span style="font-weight: bold;">
           Dice#{{ dice_index+1 }}
         </span> 
-        <span style="text-decoration: underline; padding: 0em 0.5em;"
+        <span class="blue-link pointer" style="text-decoration: underline; padding: 0em 0.5em;"
           @click="toggleMetrics">
           {{showDiceMetricsText}} Metrics
         </span> 
@@ -84,11 +90,11 @@
           {{toRaw(props.dice).getMaximum()}}
         </span>
       </span>
-      <v-icon class="pointer" hover animation="spin" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="bi-gear-fill" scale="1" fill="#dbdbdb"></v-icon> 
+      <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
       <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
-      :force_render="force_render" :metrics="diceMetrics" :width="width"
+      :force_render="force_render" :metrics="diceMetrics" :width="width" title="Roll Values"
     ></MetricsGraphComponent>
   </div>
   
@@ -97,5 +103,8 @@
 <style scoped>
 .pointer:hover{
     cursor: pointer;
+  }
+  .blue-link:hover{
+    color:rgb(130, 130, 255);
   }
 </style>
