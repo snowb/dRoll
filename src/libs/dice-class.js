@@ -29,10 +29,10 @@ export class Dice {
    */
   constructor(_minimum_value, _maximum_value, _modifier) {
     if(!isNumeric(_minimum_value)) {
-      console.warn("dice-class-v1.js: Invalid minimum value, assuming 1.");
+      console.warn("dice-class.js: Invalid minimum value, assuming 1.");
     } else { this.#minimum_value = +_minimum_value; }
     if(!isNumeric(_maximum_value)) {
-      console.error("dice-class-v1.js: Invalid maximum value.");
+      console.error("dice-class.js: Invalid maximum value.");
     } else { 
       this.#maximum_value = +_maximum_value;
       this.#modifer=_modifier;
@@ -69,7 +69,7 @@ export class Dice {
    */
   setAdditionalText(_text){
     if(typeof _text !== "string" && typeof _text !== "number") {
-      console.warn("dice-class-v1.js: Non-text/non-number passed to setAdditionalText() method. Setting to empty string.");
+      console.warn("dice-class.js: Non-text/non-number passed to setAdditionalText() method. Setting to empty string.");
       this.#additional_text="";
     } else {
       this.#additional_text=_text;
@@ -89,7 +89,7 @@ export class Dice {
   roll (_iterations) {
     //mutating method to enable re-rolling
     if(!isNumeric(_iterations) || _iterations===undefined){
-      console.warn("dice-class-v1.js: Invalid iteration value, assuming 10,000.");
+      console.warn("dice-class.js: Invalid iteration value, assuming 10,000.");
       this.#iterations=10000;
     }
     this.#iterations=isNumeric(_iterations) ? +_iterations : this.#iterations;
@@ -116,7 +116,7 @@ export class Dice {
    */
   reRoll(_index){
     if(!isNumeric(_index) || _index==undefined){
-      console.error("dice-class-v1.js: Invalid value passed to reRoll() method.");
+      console.error("dice-class.js: Invalid value passed to reRoll() method.");
       return undefined;
     }
     this.#results[_index].value=getRandomInt(this.#minimum_value,this.#maximum_value);
@@ -138,7 +138,7 @@ export class Dice {
    * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
   getAbove (_value) {//get all values above _value
-    if(!isNumeric(_value)){console.error("dice-class-v1.js: getAbove requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getAbove requires a number for input.");return undefined;}
     let above_results = this.#results.filter((_element)=>{return _element.value>+_value;});//.map((_element)=>{return _element.value});
     return {count:above_results.length, values:above_results};
   };
@@ -148,7 +148,7 @@ export class Dice {
    * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
   getBelow (_value) {//get all values below _value
-    if(!isNumeric(_value)){console.error("dice-class-v1.js: getBelow requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getBelow requires a number for input.");return undefined;}
     let below_results = this.#results.filter((_element)=>{return _element.value<+_value;});//.map((_element)=>{return _element.value});
     return {count:below_results.length, values:below_results};
   };
@@ -158,7 +158,7 @@ export class Dice {
    * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
   getEqual (_value) {//get all values equal to _value
-    if(!isNumeric(_value)){console.error("dice-class-v1.js: getEqual requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getEqual requires a number for input.");return undefined;}
     let equal = this.#results.filter((_element)=>{return _element.value==+_value;});//.map((_element)=>{return _element.value});
     return {count:equal.length, values:equal};
   };
@@ -176,7 +176,7 @@ export class Dice {
    * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
   getWithinRange (_min_value, _max_value) {//return all values within the specified range, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("dice-class-v1.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("dice-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
     let range = this.#results.filter((_element)=>{return _element.value>=+_value && _element.value<=+_value;});//.map((_element)=>{return _element.value});
     return {count:equal.length, values:range};
   };
@@ -188,7 +188,7 @@ export class Dice {
    * @returns {Object}
    */
   getAllForValue (_value) {//get above, below, equal, average, and all results
-    if(!isNumeric(_value)){console.error("dice-class-v1.js: getAllForValue requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getAllForValue requires a number for input.");return undefined;}
     let allForValue={};
     allForValue["Above_"+_value]=this.getAbove(_value);
     allForValue["Below_"+_value]=this.getBelow(_value);
@@ -268,15 +268,15 @@ export class Dice {
     //explode dice (add more dice) based on puts
     //returns a Dice object with calculated values for iterations that explode
     if(![undefined,"max","min"].includes(_value_to_explode_on) && !isNumeric(_value_to_explode_on)){
-      console.error("dice-class-v1.js: Invalid ExplodingValue passed to explodeValue() method.; must be blank; 'max', 'min' or a number.");
+      console.error("dice-class.js: Invalid ExplodingValue passed to explodeValue() method.; must be blank; 'max', 'min' or a number.");
       return undefined;
     }
     if(_explode_limit!==undefined && !isNumeric(_explode_limit)) {
-      console.error("dice-class-v1.js: Invalid ExplodeLimit passed to explodeValue() method; must be a number.");
+      console.error("dice-class.js: Invalid ExplodeLimit passed to explodeValue() method; must be a number.");
       return undefined;
     }
     if(_additional_dice!==undefined && !(_additional_dice instanceof Dice)) {
-      console.error("dice-class-v1.js: Invalid AdditionalDice passed to explodeValue() method; must be a Dice object.");
+      console.error("dice-class.js: Invalid AdditionalDice passed to explodeValue() method; must be a Dice object.");
       return undefined;
     }
     //loop over this.#results, 
@@ -310,7 +310,7 @@ export class Dice {
       if(explode_on_value > max_new_value || explode_on_value < min_new_value){
         //can never explode as the explode value explode_on_value is below the minimum
         //or above the maximum, alert, continue loop
-        console.warn("dice-class-v1.js: ExplodeValue is above Dice maximum or below Dice minimum, skipping iteration "+added_dice+".");
+        console.warn("dice-class.js: ExplodeValue is above Dice maximum or below Dice minimum, skipping iteration "+added_dice+".");
         continue;
       }
       new_dice.roll(this.getIterations());

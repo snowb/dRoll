@@ -1,5 +1,5 @@
 import { isNumeric } from "./isNumeric.js";
-import { Dice } from "./dice-class-v1.js";
+import { Dice } from "./dice-class.js";
 /**
  * Pool object an Array of Dice objects and an optional iterations counts 
  * Generates calls .roll() on the provided Dice objects and stores the results
@@ -38,10 +38,10 @@ export class Pool {
       this.#fullRollResults=[];
       if(isNumeric(_iterations)) {this.#iterations=+_iterations;}
       else if(typeof _iterations!=="undefined") {
-        console.warn("pool-class-v1.js: Invalid iterations passed, assuming 10,000.");
+        console.warn("pool-class.js: Invalid iterations passed, assuming 10,000.");
       }
     } else if(!_dice_objects_array instanceof Array) {
-      console.error("pool-class-v1.js: Pool constructor requires an Array of Dice objects.");
+      console.error("pool-class.js: Pool constructor requires an Array of Dice objects.");
     } else {
       this.#fullRollResults = _dice_objects_array.reduce((_dice_array, _element)=>{
         if(_element instanceof Dice) {_dice_array.push(_element);}
@@ -49,13 +49,13 @@ export class Pool {
       },[]);
       let all_dice_objects=this.#fullRollResults.length==_dice_objects_array.length;
       if (this.#fullRollResults.length==0) {
-        console.error("pool-class-v1.js: No valid Dice objects passed to constructor.");
+        console.error("pool-class.js: No valid Dice objects passed to constructor.");
       } else if(this.#fullRollResults.length>0 && !all_dice_objects) {
-        console.warn("pool-class-v1.js: Not all objects are Dice objects, reducing to valid Dice objects.");
+        console.warn("pool-class.js: Not all objects are Dice objects, reducing to valid Dice objects.");
       }
       if(isNumeric(_iterations)) {this.#iterations=+_iterations;}
       else if(typeof _iterations!=="undefined") {
-        console.warn("pool-class-v1.js: Invalid iterations passed, assuming 10,000.");
+        console.warn("pool-class.js: Invalid iterations passed, assuming 10,000.");
       }
       this.rollPool();
     }
@@ -270,7 +270,7 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getAbove (_value) {//return Rolls with values above _value
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: getAbove requires a number for _value.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: getAbove requires a number for _value.");return undefined;}
     return this.#getOperation("above",+_value);
   };
   /**
@@ -279,7 +279,7 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getBelow (_value) {//return Rolls with values below _value
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: getBelow requires a number for _value.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: getBelow requires a number for _value.");return undefined;}
     return this.#getOperation("below",+_value);
   };
   /**
@@ -288,7 +288,7 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getEqual (_value) {//return Rolls with values equal to _value
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: getEqual requires a number for _value.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: getEqual requires a number for _value.");return undefined;}
     return this.#getOperation("equal",+_value);
   };
   /**
@@ -298,7 +298,7 @@ export class Pool {
    * @returns {Object[]} - [{index:number, values:number[]}]
    */
   getWithinRange (_min_value, _max_value) {//return Rolls with values within range of _min_value and _max_value, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class-v1.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
     return this.#getOperation("range",+_min_value,+_max_value);
   };
   /**
@@ -307,7 +307,7 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getSumAbove (_value) {//return Sums with values above _value
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: getAbove requires a number for _value.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: getAbove requires a number for _value.");return undefined;}
     return this.#getSumOperation("above",+_value);
   };
   /**
@@ -316,7 +316,7 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getSumBelow (_value) {//return Sums with values below _value
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: getBelow requires a number for _value.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: getBelow requires a number for _value.");return undefined;}
     return this.#getSumOperation("below",+_value);
   };
   /**
@@ -325,7 +325,7 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getSumEqual (_value) {//return Sums with values equal to _value
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: getEqual requires a number for _value.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: getEqual requires a number for _value.");return undefined;}
     return this.#getSumOperation("equal",+_value);
   };
   /**
@@ -335,7 +335,7 @@ export class Pool {
    * @returns {Object[]} - [{index:number, values:number[]}]
    */
   getSumWithinRange (_min_value, _max_value) {//return Sums with values within range of _min_value and _max_value, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class-v1.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
     return this.#getSumOperation("range",+_min_value,+_max_value);
   };
   /**
@@ -398,7 +398,7 @@ export class Pool {
           });
           break;
         default:
-          console.error("pool-class-v1.js: Invalid group type passed to getSequences()/getSets().")
+          console.error("pool-class.js: Invalid group type passed to getSequences()/getSets().")
           return;
         }
       //clear empty or 1-length elements and return results
@@ -456,7 +456,7 @@ export class Pool {
    * @returns {Object[]} - [{index:number, [set|sequences]:Array[ number[] ]}] 
    */
   #getGroupByProperty(_property, _target_group, _value){
-    if(!isNumeric(_value)){console.error("pool-class-v1.js: "+_property+" requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("pool-class.js: "+_property+" requires a number for input.");return undefined;}
     return this.#groupResults[_target_group].reduce((_results, _groups)=>{
       let found_groups=_groups[_target_group].reduce((_found_groups, _roll)=>{
         switch(_property){
@@ -660,11 +660,11 @@ export class Pool {
     //recalculates secondaries
     if(!["dropLowestValue","dropHighestValue","dropValue"].includes(_target_drop)) {
       // already at 1 Dice in Pool, error
-      console.error("pool-class-v1.js: Cannot "+_target_drop+"() is not a valid method.");
+      console.error("pool-class.js: Cannot "+_target_drop+"() is not a valid method.");
       return undefined;
     } else if(this.#fullRollResults.length===1) {
       //not a valid action
-      console.error("pool-class-v1.js: Cannot "+_target_drop+"(), already at 1 Dice in Pool.");
+      console.error("pool-class.js: Cannot "+_target_drop+"(), already at 1 Dice in Pool.");
       return undefined;
     }
     let drop_count = _drop_count===undefined || !isNumeric(_drop_count) ? 1 : +_drop_count ;
@@ -724,7 +724,7 @@ export class Pool {
    */
   dropDice(_dice_index) {
     if(!isNumeric(_dice_index) || _dice_index >= this.#fullRollResults.length) {
-      console.warn("pool-class-v1.js: Invalid value passed to dropDice() method.");
+      console.warn("pool-class.js: Invalid value passed to dropDice() method.");
       return undefined;
     }
     this.#fullRollResults.splice(_dice_index,1);
@@ -749,11 +749,11 @@ export class Pool {
    */
   updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier){
     if(!isNumeric(_minimum_value_or_dice) && !_minimum_value_or_dice instanceof Dice) {
-      console.warn("pool-class-v1.js: Invalid minimum value passed to updateDice() method.");
+      console.warn("pool-class.js: Invalid minimum value passed to updateDice() method.");
       return undefined;
     }
     if(!isNumeric(_minimum_value_or_dice) && !_minimum_value_or_dice instanceof Dice) {
-      console.error("pool-class-v1.js: Invalid maximum value passed to updateDice() method.");
+      console.error("pool-class.js: Invalid maximum value passed to updateDice() method.");
       return undefined
     }
     if(_minimum_value_or_dice instanceof Dice){
@@ -780,7 +780,7 @@ export class Pool {
    */
   reRollDice(_dice_index){
     if(!isNumeric(_dice_index) || _dice_index>=this.#fullRollResults.length) {
-      console.warn("pool-class-v1.js: Invalid value passed to reRollDice() method.");
+      console.warn("pool-class.js: Invalid value passed to reRollDice() method.");
       return undefined;
     }
     this.#fullRollResults[_dice_index].roll(this.#iterations);
@@ -800,15 +800,15 @@ export class Pool {
     //append new Dice arrays to this.#fullRollResults
     //recalc secondaries, etc
     if(![undefined,"max","min"].includes(_value_to_explode_on) && !isNumeric(_value_to_explode_on)){
-      console.error("pool-class-v1.js: Invalid ExplodingValue passed to explodeValue() method.; must be blank; 'max', 'min' or a number.");
+      console.error("pool-class.js: Invalid ExplodingValue passed to explodeValue() method.; must be blank; 'max', 'min' or a number.");
       return undefined;
     }
     if(_explode_limit!==undefined && !isNumeric(_explode_limit)) {
-      console.error("pool-class-v1.js: Invalid ExplodeLimit passed to explodeValue() method; must be a number.");
+      console.error("pool-class.js: Invalid ExplodeLimit passed to explodeValue() method; must be a number.");
       return undefined;
     }
     if(_additional_dice!==undefined && !(_additional_dice instanceof Dice)) {
-      console.error("pool-class-v1.js: Invalid AdditionalDice passed to explodeValue() method; must be a Dice object.");
+      console.error("pool-class.js: Invalid AdditionalDice passed to explodeValue() method; must be a Dice object.");
       return undefined;
     }
     let pool_explosion_results=[];

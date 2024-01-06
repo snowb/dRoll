@@ -1,7 +1,7 @@
 <script setup>
   import { toRaw, triggerRef, shallowRef } from 'vue';
   import PoolComponent from './PoolComponent.vue';
-  import { Pool } from '../libs/pool-class-v1';
+  import { Pool } from '../libs/pool-class';
   
   const pools=shallowRef([]);
   const forceRender=()=>{return Math.random()};//passing non-tracked objects, needed to trigger changes
