@@ -229,7 +229,12 @@ export class Pool {
             break;
           case "equal":
           default:
-            is_keep = dice_value == _first_value ? true : is_keep;
+            if(Array.isArray(_first_value)){
+              is_keep = _first_value.includes(dice_value) ? true : is_keep;
+            }
+            else{
+              is_keep = dice_value == +_first_value ? true : is_keep;
+            }
             break;
           }
       }
@@ -242,7 +247,7 @@ export class Pool {
   /**
    * core function for retrieving roll result comparison data for the Sum of all rolls
    * @param {string} [_operation="equal"] - operaton to execute
-   * @param {number} _first_value - first value to compare
+   * @param {number} _first_value - first value to compare, or Array of values if getEqual
    * @param {number} [_second_value] - second value for range compare
    * @returns {Object[]} - [{index:number, values:number[]}]
    */
@@ -250,6 +255,12 @@ export class Pool {
     return this.#secondaryResults.sum.reduce((_operation_result, _sum_value, _index)=>{
       let is_keep=false;
       switch(_operation) {
+        case "even":
+          is_keep = _sum_value%2 == 0? true : is_keep;
+          break;
+        case "odd":
+          is_keep = _sum_value%2 == 1 ? true : is_keep;
+          break;
         case "above":
           is_keep = _sum_value > _first_value ? true : is_keep;
           break;
@@ -261,7 +272,12 @@ export class Pool {
           break;
         case "equal":
         default:
-          is_keep = _sum_value == _first_value ? true : is_keep;
+          if(Array.isArray(_first_value)){
+            is_keep = _first_value.includes(+_sum_value) ? true : is_keep;
+          }
+          else{
+            is_keep = _sum_value == +_first_value ? true : is_keep;
+          }          
           break;
       }
       if(is_keep) {
@@ -306,8 +322,13 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getEqual (_value) {//return Rolls with values equal to _value
-    if(!isNumeric(_value)){console.error("pool-class.js: getEqual requires a number for _value.");return undefined;}
-    return this.#getOperation("equal",+_value);
+    let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
+    let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
+    if(is_invalid_array || is_invalid_number){
+      console.error("pool-class.js: getEqual requires a Number or an Array of Numbers for input");
+      return undefined;
+    } 
+    return this.#getOperation("equal",_value);
   };
   /**
    * returns numbers within the specified range, inclusive
@@ -319,6 +340,18 @@ export class Pool {
     if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
     return this.#getOperation("range",+_min_value,+_max_value);
   };
+  /**
+   * @returns {Dice[]} - even results
+   */
+    getSumEven(){
+      return this.#getSumOperation("even"); 
+    };
+    /**
+     * @returns {Dice[]} - odd results
+     */
+    getSumOdd(){
+      return this.#getSumOperation("odd"); 
+    };
   /**
   * returns roll sums above the provided value
   * @param {string|number} _value - numeric for value to compare
@@ -343,8 +376,13 @@ export class Pool {
   * @returns {Object[]} - [{index:number, values:number[]}]
   */
   getSumEqual (_value) {//return Sums with values equal to _value
-    if(!isNumeric(_value)){console.error("pool-class.js: getEqual requires a number for _value.");return undefined;}
-    return this.#getSumOperation("equal",+_value);
+    let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
+    let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
+    if(is_invalid_array || is_invalid_number){
+      console.error("pool-class.js: getEqual requires a Number or an Array of Numbers for input");
+      return undefined;
+    } 
+    return this.#getSumOperation("equal",_value);
   };
   /**
    * returns roll sums within the specified range, inclusive
