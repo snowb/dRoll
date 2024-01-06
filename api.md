@@ -63,13 +63,22 @@ Dice object takes in a minimum and maximum number, and optional modifier. Gener
 | minimum_value | <code>number</code> | Minimum value passed to Dice constructor |
 | maximum_value | <code>number</code> | Maximum value passed to Dice constructor |
 | modifer | <code>undefined</code> \| <code>function</code> | modifier function for modifying results |
+| additional_text | <code>string</code> | additional text to be available to outside libs/apps |
 
 
 * [Dice](#Dice) : <code>Object</code>
     * [.Dice](#Dice+Dice)
         * [new exports.Dice([_minimum_value], _maximum_value, _modifier)](#new_Dice+Dice_new)
     * [.getAverage()](#Dice+getAverage) ⇒ <code>number</code>
+    * [.getIterations()](#Dice+getIterations) ⇒ <code>number</code>
+    * [.getMinimum()](#Dice+getMinimum) ⇒ <code>number</code>
+    * [.getMaximum()](#Dice+getMaximum) ⇒ <code>number</code>
+    * [.getModifier()](#Dice+getModifier) ⇒ <code>undefined</code> \| <code>number</code> \| <code>function</code>
+    * [.getClone()](#Dice+getClone) ⇒ [<code>Dice</code>](#Dice)
+    * [.setAdditionalText(_text)](#Dice+setAdditionalText)
+    * [.getAdditionalText()](#Dice+getAdditionalText) ⇒ <code>text</code> \| <code>number</code>
     * [.roll(_iterations)](#Dice+roll)
+    * [.reRoll(_index)](#Dice+reRoll) ⇒ <code>undefined</code>
     * [.getAbove(_value)](#Dice+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBelow(_value)](#Dice+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getEqual(_value)](#Dice+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
@@ -104,6 +113,45 @@ Checks inputs and sets private properties. Does not auto-run roll().
 Returns the #average private property
 
 **Kind**: instance method of [<code>Dice</code>](#Dice)  
+<a name="Dice+getIterations"></a>
+
+### dice.getIterations() ⇒ <code>number</code>
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>number</code> - - returns number of iterations  
+<a name="Dice+getMinimum"></a>
+
+### dice.getMinimum() ⇒ <code>number</code>
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>number</code> - - returns unmodified minimum value  
+<a name="Dice+getMaximum"></a>
+
+### dice.getMaximum() ⇒ <code>number</code>
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>number</code> - - returns unmodified maximum value  
+<a name="Dice+getModifier"></a>
+
+### dice.getModifier() ⇒ <code>undefined</code> \| <code>number</code> \| <code>function</code>
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>undefined</code> \| <code>number</code> \| <code>function</code> - - returns modifier value  
+<a name="Dice+getClone"></a>
+
+### dice.getClone() ⇒ [<code>Dice</code>](#Dice)
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: [<code>Dice</code>](#Dice) - - returns a new Dice object with the same min, max, and modifiers  
+<a name="Dice+setAdditionalText"></a>
+
+### dice.setAdditionalText(_text)
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _text | <code>string</code> | input of number or text to be stored for outside lib/app use |
+
+<a name="Dice+getAdditionalText"></a>
+
+### dice.getAdditionalText() ⇒ <code>text</code> \| <code>number</code>
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>text</code> \| <code>number</code> - - returns additional_text property  
 <a name="Dice+roll"></a>
 
 ### dice.roll(_iterations)
@@ -114,6 +162,18 @@ calculates values between minimum and maximum values, applies modifier for numbe
 | Param | Type | Description |
 | --- | --- | --- |
 | _iterations | <code>string</code> \| <code>number</code> | number of iterations to run |
+
+<a name="Dice+reRoll"></a>
+
+### dice.reRoll(_index) ⇒ <code>undefined</code>
+Re-roll a value at a specific index
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>undefined</code> - - on error  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _index | <code>string</code> \| <code>number</code> | re-rolls the value at the specific index |
 
 <a name="Dice+getAbove"></a>
 
@@ -265,7 +325,10 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
     * [.getTotalRollsWithSequences()](#Pool+getTotalRollsWithSequences) ⇒ <code>number</code>
     * [.getTotalSetsCount()](#Pool+getTotalSetsCount) ⇒ <code>number</code>
     * [.getTotalRollsWithSets()](#Pool+getTotalRollsWithSets) ⇒ <code>number</code>
+    * [.getPoolSize()](#Pool+getPoolSize) ⇒ <code>number</code>
     * [.rollPool()](#Pool+rollPool)
+    * [.getEven()](#Pool+getEven) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+    * [.getOdd()](#Pool+getOdd) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
     * [.getAbove(_value)](#Pool+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBelow(_value)](#Pool+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getEqual(_value)](#Pool+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
@@ -386,12 +449,27 @@ return total number of sets
 return total number of rolls with sets
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+getPoolSize"></a>
+
+### pool.getPoolSize() ⇒ <code>number</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>number</code> - - length/size of pool  
 <a name="Pool+rollPool"></a>
 
 ### pool.rollPool()
 rolls all Dice in the Pool, calculates secondary values
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+getEven"></a>
+
+### pool.getEven() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - even results  
+<a name="Pool+getOdd"></a>
+
+### pool.getOdd() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - odd results  
 <a name="Pool+getAbove"></a>
 
 ### pool.getAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
