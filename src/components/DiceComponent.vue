@@ -3,6 +3,7 @@
   import { toRaw, ref, computed } from 'vue';
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
+  import DiceSettingComponent from './DiceSettingComponent.vue';
 
   const props=defineProps({
     dice: Object,
@@ -55,15 +56,9 @@
 </script>
 
 <template>
-  <!-- 
-
-    change to static width? container as Flex so they auto-flow to next line
-
-
-   -->
-  <div style="background-color: #242424; color: white; border-radius: 0.2em; padding:0em 0em 0.2em 0.5em; margin:0.2em;">
+  <div style="background-color: #242424; color: white; border-radius: 0.2em; padding:0em 0.2em 0em 0.2em; margin:0.2em;">
     <div>
-      <div>
+      <div style="position: relative; display: flex; flex-direction: row; align-items: center;">
         <span style="font-weight: bold;">
           Dice#{{ dice_index+1 }}
         </span> 
@@ -71,27 +66,33 @@
           @click="toggleMetrics">
           {{showDiceMetricsText}} Metrics
         </span> 
-        <v-icon @click="dropDice" class="pointer" style="margin-right: 0.2em; color:#ffb4b4" name="io-close-circle" scale="1" @mouseover="close_icon_hover=true" @mouseout="close_icon_hover=false" :fill="close_icon_color"></v-icon>
+        <v-icon @click="dropDice" class="pointer" style="position: absolute; right: 0em; color:#ffb4b4" name="io-close-circle" scale="1" @mouseover="close_icon_hover=true" @mouseout="close_icon_hover=false" :fill="close_icon_color"></v-icon>
       </div>
-      <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-        d <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-        contenteditable @keydown.enter="editValue($event,'max')" @keydown.tab="editValue($event,'max')">
-          {{toRaw(props.dice).getMaximum()}}
+      <div style="display: flex; flex-direction: row; align-items: center; position:relative"> 
+        <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
+          d <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
+          contenteditable @keydown.enter="editValue($event,'max')" @keydown.tab="editValue($event,'max')">
+            {{toRaw(props.dice).getMaximum()}}
+          </span>
         </span>
-      </span>
-      <span v-if="editMode=='advanced'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-        <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-        contenteditable @keydown.enter="editValue($event,'min')" @keydown.tab="editValue($event,'min')">
-          {{toRaw(props.dice).getMinimum()}}
-        </span> 
-        to 
-        <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-        contenteditable @keydown.enter="editValue($event,'max')" @keydown.tab="editValue($event,'max')">
-          {{toRaw(props.dice).getMaximum()}}
+        <span v-if="editMode=='advanced'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
+          <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
+          contenteditable @keydown.enter="editValue($event,'min')" @keydown.tab="editValue($event,'min')">
+            {{toRaw(props.dice).getMinimum()}}
+          </span> 
+          to 
+          <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
+          contenteditable @keydown.enter="editValue($event,'max')" @keydown.tab="editValue($event,'max')">
+            {{toRaw(props.dice).getMaximum()}}
+          </span>
         </span>
-      </span>
-      <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
-      <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
+        <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
+        <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
+        <v-icon class="pointer" style="position: absolute; right: 0em;" name="bi-gear-fill" hover animation="spin" speed="slow" title="Dice Settings" scale="1" fill="#dbdbdb"></v-icon>
+      </div>
+      <div style="border-top: thin solid #dbdbdb; margin-top: 0.2em;">
+        <DiceSettingComponent></DiceSettingComponent>
+      </div>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
       :force_render="force_render" :metrics="diceMetrics" :width="width" title="Roll Values"
