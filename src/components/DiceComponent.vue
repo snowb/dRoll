@@ -53,6 +53,11 @@
   const close_icon_color=computed(()=>{
     return close_icon_hover.value ? "#ffb4b4" : "#dbdbdb" ;
   });
+
+  let showSettings=ref(false);
+  const showSettingsToggle=()=>{
+    showSettings.value=!showSettings.value;
+  }
 </script>
 
 <template>
@@ -67,6 +72,7 @@
           {{showDiceMetricsText}} Metrics
         </span> 
         <v-icon @click="dropDice" class="pointer" style="position: absolute; right: 0em; color:#ffb4b4" name="io-close-circle" scale="1" @mouseover="close_icon_hover=true" @mouseout="close_icon_hover=false" :fill="close_icon_color"></v-icon>
+        <v-icon style="visibility: hidden;" name="io-close-circle" scale="1" fill="#00000000"></v-icon>
       </div>
       <div style="display: flex; flex-direction: row; align-items: center; position:relative"> 
         <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
@@ -88,10 +94,13 @@
         </span>
         <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
-        <v-icon class="pointer" style="position: absolute; right: 0em;" name="bi-gear-fill" hover animation="spin" speed="slow" title="Dice Settings" scale="1" fill="#dbdbdb"></v-icon>
+        <v-icon class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Settings'">
+          <v-icon name="bi-gear-fill" :scale="showSettings?0.75:1" fill="#dbdbdb"></v-icon>
+          <v-icon v-if="showSettings" name="oi-circle-slash" fill="#ff0000" scale="1"></v-icon>
+        </v-icon>
       </div>
       <div style="border-top: thin solid #dbdbdb; margin-top: 0.2em;">
-        <DiceSettingComponent></DiceSettingComponent>
+        <DiceSettingComponent v-if="showSettings"></DiceSettingComponent>
       </div>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"

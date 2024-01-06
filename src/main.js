@@ -9,6 +9,7 @@ import { IoCloseCircle,
   FaExchangeAlt,
   BiDice6Fill,
   GiCardBurn,
+  OiCircleSlash,
   FaDiceD20 } from "oh-vue-icons/icons";
 
 addIcons(IoCloseCircle, 
@@ -18,7 +19,7 @@ addIcons(IoCloseCircle,
   FaExchangeAlt,      //for switching between dX and X-to-Y Dikce
   BiDice6Fill,        //for Add Dice (maybe)
   GiCardBurn,         //for Add Deck (maybe, need to modify Path)
-                      // combined icon for show/hide Sets?
+  OiCircleSlash,            // combined icon for show/hide Sets?
                       // combined icon for show/hide Sequences?
                       // {FcCancel | FaSlash | FaSlashSolid | BiSlashLg | BiSlash} to combine with Sets/Sequences ... other?
                       // HiSolidFilter for filtering
