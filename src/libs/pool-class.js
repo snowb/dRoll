@@ -212,6 +212,12 @@ export class Pool {
         let dice_value=this.#fullRollResults[roll].getResults()[index].value
         dice_results.push(dice_value);
         switch(_operation) {
+          case "even":
+            is_keep = dice_value%2 == 0? true : is_keep;
+            break;
+          case "odd":
+            is_keep = dice_value%2 == 1 ? true : is_keep;
+            break;
           case "above":
             is_keep = dice_value > _first_value ? true : is_keep;
             break;
@@ -264,6 +270,18 @@ export class Pool {
       return _operation_result;
     },[]);    
   }
+  /**
+   * @returns {Dice[]} - even results
+   */
+  getEven(){
+    return this.#getOperation("even"); 
+  };
+  /**
+   * @returns {Dice[]} - odd results
+   */
+  getOdd(){
+    return this.#getOperation("odd"); 
+  };
   /**
   * returns numbers above the provided value
   * @param {string|number} _value - numeric for value to compare
