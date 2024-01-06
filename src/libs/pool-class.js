@@ -710,17 +710,19 @@ export class Pool {
    * @param {string|number} [_drop_count=1] - maximum number of Dice to drop, defaults to 1
    * @param {string|number} _drop_value - the specific value to drop
    * @returns {undefined} - on error
+   * 
+   * TODO: actually use _drop_count, currently only does the 1st 
    */
   #dropValue (_target_drop, _drop_count, _drop_value) {
     //drops value from all pools according to _target_drop argument (DropLowestValue, DropHighestValue, DropValue)
     //recalculates secondaries
     if(!["dropLowestValue","dropHighestValue","dropValue"].includes(_target_drop)) {
       // already at 1 Dice in Pool, error
-      console.error("pool-class.js: Cannot "+_target_drop+"() is not a valid method.");
+      console.error("pool-class.js: "+_target_drop+"() is not a valid method.");
       return undefined;
     } else if(this.#fullRollResults.length===1) {
       //not a valid action
-      console.error("pool-class.js: Cannot "+_target_drop+"(), already at 1 Dice in Pool.");
+      console.error("pool-class.js: "+_target_drop+"(), already at 1 Dice in Pool.");
       return undefined;
     }
     let drop_count = _drop_count===undefined || !isNumeric(_drop_count) ? 1 : +_drop_count ;
@@ -732,8 +734,11 @@ export class Pool {
         switch(true){
           //abuse JS switch fall-thru to capture target values
           case (target_value === undefined):
-          case (_target_drop=="dropLowestValue" && results[iteration].value <= target_value):
-          case (_target_drop=="dropHighestValue" && results[iteration].value >= target_value):
+          case (_target_drop=="dropLowestValue" && results[iteration].value < target_value):
+          case (_target_drop=="dropHighestValue" && results[iteration].value > target_value):
+            if(target_value !== undefined){
+              found_dice.pop();//remove previously pushed value from this iteration
+            }
             target_value=results[iteration].value;
             found_dice.push({iteration:iteration, dice:dice});
             break;
