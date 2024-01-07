@@ -256,27 +256,27 @@ export class Pool {
       let is_keep=false;
       switch(_operation) {
         case "even":
-          is_keep = _sum_value%2 == 0? true : is_keep;
+          is_keep = _sum_value%2 == 0? true : false;
           break;
         case "odd":
-          is_keep = _sum_value%2 == 1 ? true : is_keep;
+          is_keep = _sum_value%2 == 1 ? true : false;
           break;
         case "above":
-          is_keep = _sum_value > _first_value ? true : is_keep;
+          is_keep = _sum_value > _first_value ? true : false;
           break;
         case "below":
-          is_keep = _sum_value < _first_value ? true : is_keep;
+          is_keep = _sum_value < _first_value ? true : false;
           break;
         case "range":
-          is_keep = _sum_value >= _first_value && _sum_value <= _second_value ? true : is_keep;
+          is_keep = _sum_value >= _first_value && _sum_value <= _second_value ? true : false;
           break;
         case "equal":
         default:
           if(Array.isArray(_first_value)){
-            is_keep = _first_value.includes(+_sum_value) ? true : is_keep;
+            is_keep = _first_value.includes(+_sum_value) ? true : false;
           }
           else{
-            is_keep = _sum_value == +_first_value ? true : is_keep;
+            is_keep = _sum_value == +_first_value ? true : false;
           }          
           break;
       }
@@ -716,7 +716,7 @@ export class Pool {
   #dropValue (_target_drop, _drop_count, _drop_value) {
     //drops value from all pools according to _target_drop argument (DropLowestValue, DropHighestValue, DropValue)
     //recalculates secondaries
-    if(!["dropLowestValue","dropHighestValue","dropValue"].includes(_target_drop)) {
+    if(!["dropLowestValue","dropHighestValue","dropValue","dropValueAbove","dropValueBelow","dropEven","dropOdd"].includes(_target_drop)) {
       // already at 1 Dice in Pool, error
       console.error("pool-class.js: "+_target_drop+"() is not a valid method.");
       return undefined;
@@ -736,8 +736,12 @@ export class Pool {
           case (target_value === undefined):
           case (_target_drop=="dropLowestValue" && results[iteration].value < target_value):
           case (_target_drop=="dropHighestValue" && results[iteration].value > target_value):
-            if(target_value !== undefined){
-              found_dice.pop();//remove previously pushed value from this iteration
+          case (_target_drop=="dropValueAbove" && results[iteration].value > target_value):
+          case (_target_drop=="dropValueBelow" && results[iteration].value < target_value):
+          case (_target_drop=="dropEven" && results[iteration].value%2 == 0):
+          case (_target_drop=="dropOdd" && results[iteration].value%2 == 1):
+            if(target_value !== undefined && ["dropLowestValue","dropHighestValue"].includes(_target_drop)){
+              found_dice.pop();//remove previously pushed value from this iteration for dropHigh/Low
             }
             target_value=results[iteration].value;
             found_dice.push({iteration:iteration, dice:dice});
@@ -776,7 +780,48 @@ export class Pool {
    */
   dropValue (_drop_value, _drop_count) {
     //drops first occurance of _drop_value in roll
+    if(_drop_value===undefined || !isNumeric(_drop_value)){
+      console.warn("pool-class.js: Invalid value passed to dropValue() method.");
+    }
     this.#dropValue("dropValue", _drop_count, _drop_value);
+  };
+  /**
+   * calls dropValue for dropValueBelow with specified drop value and count
+   * @param {string|number} _drop_value - specific value to drop
+   * @param {string|number} _drop_count - number of dice to drop, default of 1
+   */
+  dropValueBelow(_drop_value, _drop_count){
+    if(_drop_value===undefined || !isNumeric(_drop_value)){
+      console.warn("pool-class.js: Invalid value passed to dropValueBelow() method.");
+    }
+    this.#dropValue("dropValueBelow", _drop_count, _drop_value);
+  };
+  /**
+   * calls dropValue for dropValueAbove with specified drop value and count
+   * @param {string|number} _drop_value - specific value to drop
+   * @param {string|number} _drop_count - number of dice to drop, default of 1
+   */
+  dropValueAbove(_drop_value, _drop_count){
+    if(_drop_value===undefined || !isNumeric(_drop_value)){
+      console.warn("pool-class.js: Invalid value passed to dropValueAbove() method.");
+    }
+    this.#dropValue("dropValueAbove", _drop_count, _drop_value);
+  };
+  /**
+   * calls dropValue for dropEven with specified drop value and count
+   * @param {string|number} _drop_value - specific value to drop
+   * @param {string|number} _drop_count - number of dice to drop, default of 1
+   */
+  dropEven(_drop_count){
+    this.#dropValue("dropEven", _drop_count);
+  };
+  /**
+   * calls dropValue for dropOdd with specified drop value and count
+   * @param {string|number} _drop_value - specific value to drop
+   * @param {string|number} _drop_count - number of dice to drop, default of 1
+   */
+  dropOdd(_drop_count){
+    this.#dropValue("dropOdd", _drop_count);
   };
   /**
    * drops specific index Dice from Pool and re-rolls
