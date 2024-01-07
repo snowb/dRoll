@@ -75,13 +75,13 @@
           @click="toggleMetrics">
           {{showPoolMetricsText}} Metrics</span>
         <span style="font-weight: bold;">Iterations:</span>
-        <span :id="props.pool_index+'_iterations'" contenteditable @blur="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
+        <span tabindex="0" :id="props.pool_index+'_iterations'" contenteditable @blur="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
         style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
           {{ props.pool.getIterations() }}
         </span>
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollPool" title="Re-Roll Pool" name="bi-arrow-repeat" scale="1" fill="#242424"></v-icon>
         <span class="pointer red-link" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
-          @click="dropPool"
+          @click="dropPool" tabindex="0"
         >Delete Pool</span>
       </div>
       <div style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap:wrap; max-width:99vw">
