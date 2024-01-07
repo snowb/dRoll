@@ -10,6 +10,7 @@ import { IoCloseCircle,
   BiDice6Fill,
   GiCardBurn,
   OiCircleSlash,
+  MdResettvRound,
   FaDiceD20 } from "oh-vue-icons/icons";
 
 addIcons(IoCloseCircle, 
@@ -20,8 +21,8 @@ addIcons(IoCloseCircle,
   BiDice6Fill,        //for Add Dice (maybe)
   GiCardBurn,         //for Add Deck (maybe, need to modify Path)
   OiCircleSlash,            // combined icon for show/hide Sets?
+  MdResettvRound,
                       // combined icon for show/hide Sequences?
-                      // {FcCancel | FaSlash | FaSlashSolid | BiSlashLg | BiSlash} to combine with Sets/Sequences ... other?
                       // HiSolidFilter for filtering
                       // Below X - BiArrowBarDown, FaLessThan
                       // Above X - BiArrowBarUp, FaGreaterThan
