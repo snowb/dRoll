@@ -8,11 +8,11 @@ const props=defineProps({
     force_render: Number
   });
 
-const emit=defineEmits(["explode","filter","drop"])
+const emit=defineEmits(["explode"])
 
 let showExplodeOptions=ref(false);
-let showFilterOptions=ref(false);
-let showDropOptions=ref(false);
+// let showFilterOptions=ref(false);
+// let showDropOptions=ref(false);
 </script>
 
 <template>
@@ -35,7 +35,8 @@ let showDropOptions=ref(false);
         </span>
       </span>
     </div>
-    <div class="small bold"><input type="checkbox" v-model="showFilterOptions" :checked="false"/>Filter</div>
+    <!-- THESE POOL FILTERS NOT DICE FILTERS, DOH -->
+    <!-- <div class="small bold"><input type="checkbox" v-model="showFilterOptions" :checked="false"/>Filter</div>
     <div v-if="showFilterOptions" class="small" style="padding-left:0.5em;">
       <span><input type="radio" name="filter_on" :checked="true"/>Equal To: <span class="editable" contenteditable>9</span></span>&nbsp;&nbsp;
       <span><input type="radio" name="filter_on" :checked="false"/>Equal To Or Above: <span class="editable" contenteditable>9</span></span>&nbsp;&nbsp;
@@ -50,13 +51,12 @@ let showDropOptions=ref(false);
       <span><input type="radio" name="drop_on" :checked="false"/>Highest</span>
       <br>
       <span><input type="radio" name="drop_on" :checked="false"/>Equal To: <span class="editable" contenteditable>9</span></span>
-      <span><input type="radio" name="drop_on" :checked="false"/>Equal To Or Above: <span class="editable" contenteditable>9</span></span>
-      <span><input type="radio" name="drop_on" :checked="false"/>Equal To Or Below: <span class="editable" contenteditable>9</span></span>
+      <span><input type="radio" name="drop_on" :checked="false"/>Above: <span class="editable" contenteditable>9</span></span>
+      <span><input type="radio" name="drop_on" :checked="false"/>Below: <span class="editable" contenteditable>9</span></span>
       <br>
       <span><input type="radio" name="drop_on" :checked="false"/>Even</span>&nbsp;&nbsp;
       <span><input type="radio" name="drop_on" :checked="false"/>Odd</span>
-    </div>
-
+    </div> -->
   </div>
 </template>
 
