@@ -1,5 +1,5 @@
 <script setup>
-  import { toRaw, triggerRef, shallowRef } from 'vue';
+  import { toRaw, triggerRef, shallowRef, reactive, ref} from 'vue';
   import PoolComponent from './PoolComponent.vue';
   import { Pool } from '../libs/pool-class';
   
@@ -14,6 +14,11 @@
     toRaw(pools.value[_arguments.pool_index]).addDice(_arguments.min, _arguments.max, _arguments.modifier);
     triggerRef(pools);
   };
+
+  const explodeDice=(_explode_dice)=>{
+    toRaw(pools.value[_explode_dice.pool_index]).addDice(_explode_dice.add_dice);
+    triggerRef(pools);
+  };
   const dropDice=(_target_pool_index, _target_dice_index)=>{
     toRaw(pools.value[_target_pool_index]).dropDice(_target_dice_index);
     triggerRef(pools);
@@ -26,8 +31,16 @@
     toRaw(pools.value).splice(_target_pool_index,1);
     triggerRef(pools);
   };
+
+  let re_roll_explodes=ref(0);
   const reRollPool=(_target_pool_index)=>{
+    toRaw(pools.value[_target_pool_index]).getFullRollResults().reduceRight((undefined,_dice,_dice_index)=>{
+      if(_dice.getAdditionalText()=="Exploding"){
+        dropDice(_target_pool_index, _dice_index);
+      }
+    },undefined);
     toRaw(pools.value[_target_pool_index]).rollPool(toRaw(pools.value[_target_pool_index]).getIterations());
+    re_roll_explodes.value++;
     triggerRef(pools);
   };
   const updateValue=(_value_to_update)=>{
@@ -71,9 +84,9 @@
     <span class="pools_container_title">Pools Container</span>
   </div>
   <PoolComponent v-for="(pool,pool_index) in pools" 
-    :pool=pool :pool_index=pool_index :force_render="forceRender()"
+    :pool=pool :pool_index=pool_index :force_render="forceRender()" :re_roll_explodes="re_roll_explodes"
     @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool"
-    @reRollPool="reRollPool" @reRollDice="reRollDice">
+    @reRollPool="reRollPool" @reRollDice="reRollDice" @explodeDice="explodeDice">
   </PoolComponent>
   <div> 
     <span class="button pointer add_pool" @click="addPool()">Add Pool</span>

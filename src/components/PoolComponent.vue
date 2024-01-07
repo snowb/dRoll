@@ -7,10 +7,11 @@
   const props=defineProps({
     pool: Object,
     pool_index: Number,
-    force_render: Number
+    force_render: Number,
+    re_roll_explodes: Number
   });
 
-  const emit=defineEmits(['addDice', 'updateValue', 'dropDice', 'dropPool', 'reRollPool', 'reRollDice']);
+  const emit=defineEmits(['addDice', 'updateValue', 'dropDice', 'dropPool', 'reRollPool', 'reRollDice', 'explodeDice']);
   const addDice=()=>{
     emit('addDice', {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
@@ -57,8 +58,7 @@
     });
 
   const explodeDice=(_exploded_dice)=>{
-    emit("addDice",{pool_index:props.pool_index, min:_exploded_dice});
-    console.log(_exploded_dice)
+    emit("explodeDice",{pool_index:props.pool_index, add_dice:_exploded_dice});
   };
 </script>
 
@@ -87,7 +87,7 @@
       <div style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap:wrap; max-width:99vw">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
-          :force_render="props.force_render"
+          :force_render="props.force_render" :re_roll_explodes="props.re_roll_explodes"
           @updateValue="updateValue" @dropDice="dropDice" @reRollDice="reRollDice" @explodeDice="explodeDice"
           ></DiceComponent>
       </div>

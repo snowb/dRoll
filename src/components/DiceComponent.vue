@@ -9,7 +9,8 @@ import { Dice } from '../libs/dice-class';
   const props=defineProps({
     dice: Object,
     dice_index: Number,
-    force_render: Number
+    force_render: Number,
+    re_roll_explodes: Number
   });
 
   const emit=defineEmits(["updateValue","dropDice", "reRollDice", "explodeDice"])
@@ -113,13 +114,13 @@ import { Dice } from '../libs/dice-class';
         </v-icon>
       </div>
       <div v-if="showSettings" style="border-top: thin solid #dbdbdb;">
-        <DiceSettingComponent @explode="explode_dice" 
+        <DiceSettingComponent @explode="explode_dice" :re_roll_explodes="props.re_roll_explodes"
           :dice="props.dice" :force_render="props.force_render"
         ></DiceSettingComponent>
       </div>
     </div>
-    <div style="border-top: thin solid #dbdbdb;">
-      <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
+    <div v-if="showDiceMetrics" style="border-top: thin solid #dbdbdb;">
+      <MetricsGraphComponent :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
         :force_render="force_render" :metrics="diceMetrics" :width="width" title="Roll Values"
       ></MetricsGraphComponent>
     </div>

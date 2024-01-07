@@ -6,7 +6,8 @@ import { ref, reactive, toRaw, computed, watchEffect } from 'vue';
 const props=defineProps({
     dice: Dice,
     dice_index: Number,
-    force_render: Number
+    force_render: Number,
+    re_roll_explodes: Number
   });
 
 const emit=defineEmits(["explode"]);
@@ -75,6 +76,12 @@ const updateExplodeOption=(_event, _target_option)=>{
     emit("explode", explode_options);
   }
 };
+
+watchEffect(()=>{
+  if(props.re_roll_explodes && showExplodeOptions.value){
+    emit("explode",explode_options);
+  }
+});
 </script>
 
 <template>
