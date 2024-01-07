@@ -838,12 +838,20 @@ export class Pool {
   };
   /**
    * calls updateDice and passes arguments to add a dice to pool
-   * @param {string|number|Dice} _minimum_value_or_dice - minimum value or Dice object to generate and add
+   * @param {string|number|Dice} _minimum_value_or_dice - minimum value or Dice object to generate and add, if Array of Dice objects loop and add all
    * @param {string|number} _maximum_value - maximum value of Dice, required if minimum value is non-Dice object
    * @param {undefined|number|function} [_modifier] - modifier to roll
    */
   addDice(_minimum_value_or_dice, _maximum_value, _modifier) {
-    this.updateDice(undefined, _minimum_value_or_dice, _maximum_value, _modifier);
+    if(Array.isArray(_minimum_value_or_dice)){
+      _minimum_value_or_dice.forEach((_dice)=>{
+        if(_dice instanceof Dice){
+          this.updateDice(undefined, _dice);
+        }
+      });
+    } else {
+      this.updateDice(undefined, _minimum_value_or_dice, _maximum_value, _modifier);
+    }
   };
   /**
    * Updates Dice array with provide data, including adding dice if _target_dice is not valid
