@@ -27,11 +27,12 @@ let showExplodeOptions=ref(false);
 const updateExplode=(_event)=>{
   explode_options.target_explode_on=_event.target.value;
   if(explode_emitted.value){
-    emit("explode", explode_options);
+    //emit("explode", explode_options);
   }
 };
 
 let explode_emitted=ref(false);
+
 const emitExplode=()=>{
   emit("explode",explode_options);
   explode_emitted.value=true;
@@ -73,7 +74,7 @@ const updateExplodeOption=(_event, _target_option)=>{
       break;
   }
   if(explode_emitted.value){
-    emit("explode", explode_options);
+    //emit("explode", explode_options);
   }
 };
 

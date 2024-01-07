@@ -4,6 +4,7 @@
   import { Pool } from '../libs/pool-class';
   
   const pools=shallowRef([]);
+
   const forceRender=()=>{return Math.random()};//passing non-tracked objects, needed to trigger changes
 
   const addPool=()=>{
@@ -16,11 +17,12 @@
   };
 
   const explodeDice=(_explode_dice)=>{
+    dropExplodeDice(_explode_dice.pool_index);
     toRaw(pools.value[_explode_dice.pool_index]).addDice(_explode_dice.add_dice);
     triggerRef(pools);
   };
-  const dropDice=(_target_pool_index, _target_dice_index)=>{
-    toRaw(pools.value[_target_pool_index]).dropDice(_target_dice_index);
+  const dropDice=(_target_pool_index, _target_dice_index, _no_pool_reroll)=>{
+    toRaw(pools.value[_target_pool_index]).dropDice(_target_dice_index, _no_pool_reroll);
     triggerRef(pools);
   };
   const reRollDice=(_target_pool_index, _target_dice_index)=>{
@@ -33,16 +35,22 @@
   };
 
   let re_roll_explodes=ref(0);
-  const reRollPool=(_target_pool_index)=>{
+
+  const dropExplodeDice=(_target_pool_index)=>{
     toRaw(pools.value[_target_pool_index]).getFullRollResults().reduceRight((undefined,_dice,_dice_index)=>{
       if(_dice.getAdditionalText()=="Exploding"){
-        dropDice(_target_pool_index, _dice_index);
+        dropDice(_target_pool_index, _dice_index, true);
       }
     },undefined);
-    toRaw(pools.value[_target_pool_index]).rollPool(toRaw(pools.value[_target_pool_index]).getIterations());
-    re_roll_explodes.value++;
-    triggerRef(pools);
   };
+
+  const reRollPool=(_target_pool_index)=>{
+    dropExplodeDice(_target_pool_index);
+    toRaw(pools.value[_target_pool_index]).rollPool(toRaw(pools.value[_target_pool_index]).getIterations());
+    triggerRef(pools);
+    re_roll_explodes.value++;
+  };
+
   const updateValue=(_value_to_update)=>{
     let target_dice=pools.value[_value_to_update.target_pool_index].getFullRollResults()[_value_to_update.target_dice_index];
     let new_values={
@@ -72,6 +80,7 @@
         break;
       case "updateIterations":
         pools.value[_value_to_update.target_pool_index].setIterations(+_value_to_update.new_value);
+        reRollPool(_value_to_update.target_pool_index);
         break;
     }
     triggerRef(pools);

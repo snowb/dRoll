@@ -4,7 +4,7 @@
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
   import DiceSettingComponent from './DiceSettingComponent.vue';
-import { Dice } from '../libs/dice-class';
+  import { Dice } from '../libs/dice-class';
 
   const props=defineProps({
     dice: Object,
@@ -34,10 +34,17 @@ import { Dice } from '../libs/dice-class';
       _event.preventDefault();
     }
     if(!isNumeric(_event.target.innerText)){
-      _event.target.innerText=_value_to_update=="max" ? toRaw(props.dice).getMaximum() : toRaw(props.dice).getMinimum();
+      _event.target.innerText=saved_focus_value;
       return undefined;
     }
-    emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:+_event.target.innerText});
+    if(_event.target.innerText!=saved_focus_value){
+      emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:+_event.target.innerText});
+    }
+  };
+
+  let saved_focus_value=null;
+  const saveFocusValue=(_event)=>{
+    saved_focus_value=_event.target.innerText;
   };
 
   let width=computed(()=>{
@@ -49,7 +56,10 @@ import { Dice } from '../libs/dice-class';
   };
   
   const reRollDice=()=>{
-    emit("reRollDice",props.dice_index);
+    if(!is_exploded_dice){
+      //don't re-roll exploded dice
+      emit("reRollDice",props.dice_index);
+    }
   }
   let close_icon_hover=ref(false);
   const close_icon_color=computed(()=>{
@@ -61,7 +71,7 @@ import { Dice } from '../libs/dice-class';
     showSettings.value=!showSettings.value;
   }
 
-  const explode_dice=(_explode_options)=>{
+  const explodeDice=(_explode_options)=>{
     let added_dice=new Dice(_explode_options.added_dice_minimum,_explode_options.added_dice_maximum);
     let value_to_explode_on = "max";
     if(_explode_options.target_explode_on=="min"){
@@ -95,31 +105,31 @@ import { Dice } from '../libs/dice-class';
       </div>
       <div style="display: flex; flex-direction: row; align-items: center; position:relative; margin-bottom:0.2em;"> 
         <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-          d <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-          contenteditable @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
+          d <span class="box" :class="{green:!is_exploded_dice}"  
+          :contenteditable="!is_exploded_dice" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
             {{toRaw(props.dice).getMaximum()}}
           </span>
         </span>
         <span v-if="editMode=='advanced'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-          <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-          contenteditable @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')">
+          <span class="box" :class="{green:!is_exploded_dice}"  
+          :contenteditable="!is_exploded_dice" @focus="saveFocusValue" @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')">
             {{toRaw(props.dice).getMinimum()}}
           </span> 
           to 
-          <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-          contenteditable @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
+          <span class="box" :class="{green:!is_exploded_dice}"  
+          :contenteditable="!is_exploded_dice" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
             {{toRaw(props.dice).getMaximum()}}
           </span>
         </span>
         <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
-        <v-icon class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Settings'">
+        <v-icon v-if="!is_exploded_dice" class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Settings'">
           <v-icon name="bi-gear-fill" :scale="showSettings?0.75:1" fill="#dbdbdb"></v-icon>
           <v-icon v-if="showSettings" name="oi-circle-slash" fill="#ff0000" scale="1"></v-icon>
         </v-icon>
       </div>
       <div v-if="showSettings" style="border-top: thin solid #dbdbdb;">
-        <DiceSettingComponent @explode="explode_dice" :re_roll_explodes="props.re_roll_explodes"
+        <DiceSettingComponent @explode="explodeDice" :re_roll_explodes="props.re_roll_explodes"
           :dice="props.dice" :force_render="props.force_render"
         ></DiceSettingComponent>
       </div>
@@ -134,10 +144,18 @@ import { Dice } from '../libs/dice-class';
 </template>
 
 <style scoped>
-.pointer:hover{
-    cursor: pointer;
-  }
+  .pointer:hover{
+      cursor: pointer;
+    }
   .blue-link:hover{
     color:rgb(130, 130, 255);
+  }
+  .box {
+    border:thin solid white; 
+    padding:0em 0.2em; 
+  }
+  .green{
+    background-color: rgb(120, 255, 101);  
+    color:#242424;
   }
 </style>
