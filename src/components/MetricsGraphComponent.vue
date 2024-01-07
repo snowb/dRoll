@@ -3,6 +3,7 @@
 import { computed, watchEffect } from 'vue';
 import { Bar } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, registerables } from 'chart.js'
+import { isNumeric } from '../libs/isNumeric';
 // import zoomPlugin from 'chartjs-plugin-zoom';
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
@@ -34,7 +35,7 @@ let chartData=computed(()=>{
     labels:props.metrics.labels ? props.metrics.labels : []
   };
 });
-
+//need to add in Average somewhere
 watchEffect(()=>{
   if(props.style!==undefined){
   }
@@ -92,19 +93,25 @@ let chartOptions=computed(()=>{
   }
   return options;
 });
+
+let showAverage=computed(()=>{
+  return isNumeric(props.metrics.labels[0]);
+});
+let average=computed(()=>{
+  let sum = props.metrics.labels.reduce((_sum, _value)=>{
+    return _sum+_value;
+  },0);
+  return sum/props.metrics.labels.length;
+});
 </script>
 
 <template>
-  <!-- 
-
-    needs a max-width based on viewwidth property (99vw?)
-
-   -->
   <div>
     <div v-if="props.title!==undefined" style="font-weight: bold; margin-left:1em;">{{ props.title }}</div>
     <div v-if="props.metrics" :style="{width: props.width, position:'relative'}" style="max-width:90vw;">
       <bar :data="chartData" :options="chartOptions"></bar>
     </div>
+    <div v-if="showAverage" style="margin-left:2em; font-size: small; font-weight: bold;">Average: {{ average }}</div>
   </div>
 </template>
 
