@@ -160,11 +160,13 @@ export class Pool {
       let temp_rolls=[];
       for(;roll<this.#fullRollResults.length;roll++){
         let roll_result_value=this.#fullRollResults[roll].getResults()[index].value;
-        this.#secondaryResults.sum[index]+=roll_result_value;
-        if(min === null) {min=roll_result_value;}
-        else if(min > roll_result_value) {min = roll_result_value;}
-        if(max === null) {max=roll_result_value;}
-        else if(max < roll_result_value) {max = roll_result_value;}
+        this.#secondaryResults.sum[index]+=roll_result_value===undefined ? 0 : roll_result_value;
+        if(min === null || min > roll_result_value) {
+          min = roll_result_value;
+        }
+        if(max === null || max < roll_result_value) {
+          max = roll_result_value;
+        }
         temp_rolls.push(this.#fullRollResults[roll].getResults()[index].value);
       }
       this.#secondaryResults.average[index]=this.#secondaryResults.sum[index]/roll;
@@ -549,9 +551,11 @@ export class Pool {
     let metrics={};
     let min_value=0;
     let max_value=0;
-    metrics.dice_metrics=this.#fullRollResults.reduce((_metrics, _roll)=>{
-      let roll_metrics=_roll.getMetrics();
-      min_value+=roll_metrics[0].value;
+    metrics.dice_metrics=this.#fullRollResults.reduce((_metrics, _dice)=>{
+      // NEED TO ACCOUNT EXPLODING DICE WITH 0 VALUE
+      // _dice.getAdditionalText()
+      let roll_metrics=_dice.getMetrics();
+      min_value+=_dice.getAdditionalText()=="Exploding" ? min_value : roll_metrics[0].value;
       max_value+=roll_metrics[roll_metrics.length-1].value;
       _metrics.push(roll_metrics);
       return _metrics;
