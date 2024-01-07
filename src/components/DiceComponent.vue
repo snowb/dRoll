@@ -78,7 +78,7 @@
         <v-icon @click="dropDice" class="pointer" style="position: absolute; right: 0em; color:#ffb4b4" name="io-close-circle" scale="1" @mouseover="close_icon_hover=true" @mouseout="close_icon_hover=false" :fill="close_icon_color"></v-icon>
         <v-icon style="visibility: hidden;" name="io-close-circle" scale="1" fill="#00000000"></v-icon>
       </div>
-      <div style="display: flex; flex-direction: row; align-items: center; position:relative"> 
+      <div style="display: flex; flex-direction: row; align-items: center; position:relative; margin-bottom:0.2em;"> 
         <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
           d <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
           contenteditable @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
@@ -103,15 +103,17 @@
           <v-icon v-if="showSettings" name="oi-circle-slash" fill="#ff0000" scale="1"></v-icon>
         </v-icon>
       </div>
-      <div style="border-top: thin solid #dbdbdb; margin-top: 0.2em;">
-        <DiceSettingComponent v-if="showSettings" @explode="explode_dice" 
+      <div v-if="showSettings" style="border-top: thin solid #dbdbdb;">
+        <DiceSettingComponent @explode="explode_dice" 
           :dice="props.dice" :force_render="props.force_render"
         ></DiceSettingComponent>
       </div>
     </div>
-    <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
-      :force_render="force_render" :metrics="diceMetrics" :width="width" title="Roll Values"
-    ></MetricsGraphComponent>
+    <div style="border-top: thin solid #dbdbdb;">
+      <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
+        :force_render="force_render" :metrics="diceMetrics" :width="width" title="Roll Values"
+      ></MetricsGraphComponent>
+    </div>
   </div>
   
 </template>
