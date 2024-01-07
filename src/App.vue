@@ -15,7 +15,7 @@ const toggleInformation=()=>{
       <span class="bold info_button" @click="toggleInformation">Hide Information</span><br>
       <span class="green_box bold">Green Boxes</span> are editable.<br>
       Click <span class="add_pool button_shape">Add Pool</span> to add a Pool.<br>
-      &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span class="bold">Iterations</span> box for the number of rolls to model. <span class="smaller">(Updates on Enter, Tab or focus change)</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span class="bold">Iterations</span> box for the number of rolls to model. <span class="smaller">(Updates on Enter, Tab or focus change EXCEPT for Explode Dice settings)</span><br>
       &nbsp;&nbsp;&nbsp;&nbsp; Click <v-icon name="bi-arrow-repeat" scale="1" fill="#242424" style="background-color:#dbdbdb"></v-icon> to re-roll the entire Pool.<br>
       &nbsp;&nbsp;&nbsp;&nbsp; Click "Delete Pool" to delete the Pool.<br><br>
 
