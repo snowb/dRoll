@@ -72,12 +72,17 @@ import { Dice } from '../libs/dice-class';
     let exploded_dice=props.dice.explodeValue(value_to_explode_on,_explode_options.explosion_limit,added_dice);
     emit("explodeDice",exploded_dice);
   }
+
+  let is_exploded_dice=computed(()=>{
+    return props.dice.getAdditionalText()=="Exploding";
+  });
 </script>
 
 <template>
   <div style="background-color: #242424; color: white; border-radius: 0.2em; padding:0em 0.2em 0em 0.2em; margin:0.2em;">
     <div>
       <div style="position: relative; display: flex; flex-direction: row; align-items: center;">
+        <v-icon v-if="is_exploded_dice" title="Additional/Explode Dice" name="gi-crowned-explosion" scale="1" fill="orange"></v-icon>
         <span style="font-weight: bold;">
           Dice#{{ dice_index+1 }}
         </span> 
