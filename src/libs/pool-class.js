@@ -136,10 +136,13 @@ export class Pool {
    */
   rollPool () {
     this.#fullRollResults.forEach((_element)=>{_element.roll(this.#iterations)});
+    this.#calculatePoolOtherValues();
+  };
+  #calculatePoolOtherValues(){
     this.#calculateSecondaryValues();
     this.#calculateSequences();
     this.#calculateSets();
-  };
+  }
   /**
    * private property
    * calculates secondary values; sum, average, min, max and stores in #secondaryResults private prop
@@ -759,9 +762,7 @@ export class Pool {
         this.#fullRollResults[_found_dice.dice].dropValueAtIndex(_found_dice.iteration);
       });
     }
-    this.#calculateSecondaryValues();
-    this.#calculateSequences();
-    this.#calculateSets();
+    this.#calculatePoolOtherValues();
   };
   /**
    * calls dropValue for dropLowestValue with specified drop count
@@ -830,15 +831,20 @@ export class Pool {
   /**
    * drops specific index Dice from Pool and re-rolls
    * @param {Number} _dice_index - index of the specified Dice
+   * @param {Boolean} _no_pool_reroll - whether to NOT re-roll the pool, defaults to False (do re-roll)
    * @returns {undefined} - if error
    */
-  dropDice(_dice_index) {
+  dropDice(_dice_index, _no_pool_reroll) {
     if(!isNumeric(_dice_index) || _dice_index >= this.#fullRollResults.length) {
       console.warn("pool-class.js: Invalid value passed to dropDice() method.");
       return undefined;
     }
     this.#fullRollResults.splice(_dice_index,1);
-    this.rollPool();
+    if(!_no_pool_reroll){
+      this.rollPool();
+    } else {
+      this.#calculatePoolOtherValues();
+    }
   };
   /**
    * calls updateDice and passes arguments to add a dice to pool
