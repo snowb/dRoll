@@ -55,11 +55,11 @@
     props.pool;
     props.force_render
     });
-    /**
-     * 
-     * add Re-Roll capability
-     * 
-     */
+
+  const explodeDice=(_exploded_dice)=>{
+    emit("addDice",{pool_index:props.pool_index, min:_exploded_dice});
+    console.log(_exploded_dice)
+  };
 </script>
 
 <template>
@@ -88,7 +88,7 @@
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
           :force_render="props.force_render"
-          @updateValue="updateValue" @dropDice="dropDice" @reRollDice="reRollDice"
+          @updateValue="updateValue" @dropDice="dropDice" @reRollDice="reRollDice" @explodeDice="explodeDice"
           ></DiceComponent>
       </div>
       <PoolMetricsComponent v-if="props.pool!==undefined && showPoolMetrics"

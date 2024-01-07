@@ -4,6 +4,7 @@
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
   import DiceSettingComponent from './DiceSettingComponent.vue';
+import { Dice } from '../libs/dice-class';
 
   const props=defineProps({
     dice: Object,
@@ -11,7 +12,7 @@
     force_render: Number
   });
 
-  const emit=defineEmits(["updateValue","dropDice", "reRollDice"])
+  const emit=defineEmits(["updateValue","dropDice", "reRollDice", "explodeDice"])
   let diceMetrics=computed(()=>{
     return props.dice.getMetrics().reduce((_graph_values, _metric)=>{
       //format dice metrics for graphing
@@ -59,8 +60,16 @@
     showSettings.value=!showSettings.value;
   }
 
-  const explode_dice=(target_explode_on, _value)=>{
-    console.log(target_explode_on, _value)
+  const explode_dice=(_explode_options)=>{
+    let added_dice=new Dice(_explode_options.added_dice_minimum,_explode_options.added_dice_maximum);
+    let value_to_explode_on = "max";
+    if(_explode_options.target_explode_on=="min"){
+      value_to_explode_on = "min";
+    } else if(_explode_options.target_explode_on=="value"){
+      value_to_explode_on = _explode_options.explode_on_value;
+    }
+    let exploded_dice=props.dice.explodeValue(value_to_explode_on,_explode_options.explosion_limit,added_dice);
+    emit("explodeDice",exploded_dice);
   }
 </script>
 
