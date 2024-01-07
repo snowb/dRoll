@@ -872,6 +872,9 @@ export class Pool {
     }
     if(_minimum_value_or_dice instanceof Dice){
       this.#fullRollResults.push(_minimum_value_or_dice);
+      this.#calculateSecondaryValues();
+      this.#calculateSequences();
+      this.#calculateSets();
       return;
     }
     let target_dice;
