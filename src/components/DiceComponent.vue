@@ -58,6 +58,10 @@
   const showSettingsToggle=()=>{
     showSettings.value=!showSettings.value;
   }
+
+  const explode_dice=(target_explode_on, _value)=>{
+    console.log(target_explode_on, _value)
+  }
 </script>
 
 <template>
@@ -77,18 +81,18 @@
       <div style="display: flex; flex-direction: row; align-items: center; position:relative"> 
         <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
           d <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-          contenteditable @keydown.enter="editValue($event,'max')" @keydown.tab="editValue($event,'max')">
+          contenteditable @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
             {{toRaw(props.dice).getMaximum()}}
           </span>
         </span>
         <span v-if="editMode=='advanced'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
           <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-          contenteditable @keydown.enter="editValue($event,'min')" @keydown.tab="editValue($event,'min')">
+          contenteditable @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')">
             {{toRaw(props.dice).getMinimum()}}
           </span> 
           to 
           <span style="border:thin solid white; padding:0em 0.2em; background-color: rgb(120, 255, 101); color:#242424;" 
-          contenteditable @keydown.enter="editValue($event,'max')" @keydown.tab="editValue($event,'max')">
+          contenteditable @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
             {{toRaw(props.dice).getMaximum()}}
           </span>
         </span>
@@ -100,7 +104,9 @@
         </v-icon>
       </div>
       <div style="border-top: thin solid #dbdbdb; margin-top: 0.2em;">
-        <DiceSettingComponent v-if="showSettings"></DiceSettingComponent>
+        <DiceSettingComponent v-if="showSettings" @explode="explode_dice" 
+          :dice="props.dice" :force_render="props.force_render"
+        ></DiceSettingComponent>
       </div>
     </div>
     <MetricsGraphComponent v-if="showDiceMetrics" :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
