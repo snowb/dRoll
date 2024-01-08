@@ -2,6 +2,7 @@
   import { defineProps, toRaw, watchEffect, ref, computed} from 'vue';
   import DiceComponent from './DiceComponent.vue';
   import PoolMetricsComponent from './PoolMetricsComponent.vue';
+  import PoolSettingComponent from './PoolSettingComponent.vue';
   import { isNumeric } from '../libs/isNumeric';
 
   const props=defineProps({
