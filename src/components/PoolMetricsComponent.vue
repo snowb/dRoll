@@ -18,15 +18,16 @@ import { ref, watchEffect, computed } from 'vue';
   const computedPoolEqualMetrics=computed(()=>{
     props.pool;
     props.force_render;
-    return props.pool.getMetrics().pool_metrics.reduce((_graph_values, _metric)=>{
+    let temp_metrics=props.pool.getMetrics();
+    return temp_metrics.pool_metrics.reduce((_graph_values, _metric)=>{
       //format pool metrics for graphing
       _graph_values.labels.push(_metric.value);
       _graph_values.values.push(_metric.ratio*100);
       return _graph_values;
-    },{labels:[],values:[]});
+    },{labels:[],values:[], mean:temp_metrics.mean, median:temp_metrics.median, mode:temp_metrics.mode});
   });
 
-  let computedPoolEqualAboveMetrics=computed(()=>{
+  const computedPoolEqualAboveMetrics=computed(()=>{
     //calculate sum of values equal to above the given value 
     props.pool;
     props.force_render;
@@ -40,10 +41,13 @@ import { ref, watchEffect, computed } from 'vue';
       },0);
       above_equal.values.push(Math.round(summed_occurances*iterations.value)/iterations.value)
     });
+    above_equal.mean=computedPoolEqualMetrics.value.mean;
+    above_equal.median=computedPoolEqualMetrics.value.median;
+    above_equal.mode=computedPoolEqualMetrics.value.mode;
     return above_equal;
   });
 
-  let computedPoolEqualBelowMetrics=computed(()=>{
+  const computedPoolEqualBelowMetrics=computed(()=>{
     //calculate sum of values equal to below the given value 
     props.pool;
     props.force_render;
@@ -57,6 +61,9 @@ import { ref, watchEffect, computed } from 'vue';
       },0);
       below_equal.values.push(Math.round(summed_occurances*iterations.value)/iterations.value)
     });
+    below_equal.mean=computedPoolEqualMetrics.value.mean;
+    below_equal.median=computedPoolEqualMetrics.value.median;
+    below_equal.mode=computedPoolEqualMetrics.value.mode;
     return below_equal;
   });
 
@@ -81,7 +88,7 @@ import { ref, watchEffect, computed } from 'vue';
     return _value==poolMetricsDisplay.value;
   };
 
-  let computedPoolSetMetrics=computed(()=>{
+  const computedPoolSetMetrics=computed(()=>{
     props.pool;
     props.force_render;
     return props.pool.getSetMetrics().reduce((_graph_values, _metric)=>{
@@ -92,7 +99,7 @@ import { ref, watchEffect, computed } from 'vue';
     },{labels:[],values:[]});
   });
 
-  let computedPoolSequenceMetrics=computed(()=>{
+  const computedPoolSequenceMetrics=computed(()=>{
     props.pool;
     props.force_render;
     return props.pool.getSequenceMetrics().reduce((_graph_values, _metric)=>{

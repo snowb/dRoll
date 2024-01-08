@@ -23,7 +23,7 @@ const props=defineProps({
   width: String
 });
 
-let chartData=computed(()=>{
+const chartData=computed(()=>{
   props.force_render;
   return {
     datasets:[
@@ -41,7 +41,7 @@ watchEffect(()=>{
   }
 });
 
-let chartOptions=computed(()=>{
+const chartOptions=computed(()=>{
   let options={};
   options.responsive=true;
   options.maintainAspectRatio=false;
@@ -94,14 +94,24 @@ let chartOptions=computed(()=>{
   return options;
 });
 
-let showAverage=computed(()=>{
+const showAverage=computed(()=>{
   return isNumeric(props.metrics.labels[0]);
 });
-let average=computed(()=>{
-  let sum = props.metrics.labels.reduce((_sum, _value)=>{
-    return _sum+_value;
-  },0);
-  return sum/props.metrics.labels.length;
+
+const pool_mean=computed(()=>{
+  props.force_render;
+  console.log(props.metrics)
+  return props.metrics.mean;
+});
+
+const pool_median=computed(()=>{
+  props.force_render;
+  return props.metrics.median;
+});
+
+const pool_mode=computed(()=>{
+  props.force_render;
+  return props.metrics.mode;
 });
 </script>
 
@@ -111,7 +121,11 @@ let average=computed(()=>{
     <div v-if="props.metrics" :style="{width: props.width, position:'relative'}" style="max-width:90vw;">
       <bar :data="chartData" :options="chartOptions"></bar>
     </div>
-    <div v-if="showAverage" style="margin-left:2em; font-size: small; font-weight: bold;">Average: {{ average }}</div>
+    <div v-if="showAverage" style="margin-left:2em; font-size: small; font-weight: bold;">
+      <span>Pool Mean: {{ pool_mean }}</span>&nbsp;&nbsp;
+      <span>Median: {{ pool_median }}</span>&nbsp;&nbsp;
+      <span>Mode: {{ pool_mode }}</span>
+    </div>
   </div>
 </template>
 
