@@ -15,7 +15,7 @@ export class Pool {
   #iterations=10000;
   #fullRollResults=null;
   #rollResults=null;
-  #secondaryResults={sum:[],average:[],min:[],max:[]};
+  #secondaryResults={sum:[],average:[],min:[],max:[],pool_max:null,pool_min:null,pool_average:null};
   #groupResults={
     sets:[], 
     sequences:[], 
@@ -105,6 +105,9 @@ export class Pool {
    * @returns {number[]}
    */
   getMaxRolled () { return this.#secondaryResults.max; };
+  getPoolMin(){ return this.#secondaryResults.pool_min; }
+  getPoolMax(){ return this.#secondaryResults.pool_max; }
+  getPoolAverage(){ return this.#secondaryResults.pool_average; }
   /**
    * return total number of sequences
    * @returns {number}
@@ -157,7 +160,7 @@ export class Pool {
     for(let index=0;index<this.#iterations;index++){
       //generate secondary results; sums, mins, maxes, averages
       this.#secondaryResults.sum[index]=0;
-      let roll=0;
+      let roll=0;//for determine average in next step
       let min=null;
       let max=null;
       let temp_rolls=[];
@@ -170,13 +173,30 @@ export class Pool {
         if(max === null || max < roll_result_value) {
           max = roll_result_value;
         }
-        temp_rolls.push(this.#fullRollResults[roll].getResults()[index].value);
+        temp_rolls.push(roll_result_value);
       }
       this.#secondaryResults.average[index]=this.#secondaryResults.sum[index]/roll;
       this.#secondaryResults.min[index]=min;
       this.#secondaryResults.max[index]=max;
       this.#rollResults[index]={index:index,roll:temp_rolls.sort()};
     }
+    this.#secondaryResults.pool_min=this.#rollResults.reduce((_min, _values_array)=>{
+      let values_sum=_values_array.roll.reduce((_sum, _value)=>{
+        return _sum + (_value===undefined ? 0 : _value);
+      },0);
+      if(values_sum<_min){return values_sum}
+      return _min;
+    },Infinity);
+    this.#secondaryResults.pool_max=this.#rollResults.reduce((_max, _values_array)=>{
+      let values_sum=_values_array.roll.reduce((_sum, _value)=>{
+        return _sum + (_value===undefined ? 0 : _value);
+      },0);
+      if(values_sum>_max){return values_sum}
+      return _max;
+    },-Infinity);
+    this.#secondaryResults.pool_average=this.#secondaryResults.sum.reduce((_avg,_value)=>{
+      return _avg + _value;
+    },0) / this.#iterations;
   }
   /**
    * calls #getGroups private function for Sequences
