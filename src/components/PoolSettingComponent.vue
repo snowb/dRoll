@@ -9,9 +9,9 @@ const props=defineProps({
   });
 
 let filter_options=reactive({});
-filter_options.filter_value=Math.floor(props.pool.getPoolAverage());
+filter_options.filter_value=Math.floor(props.pool.getPoolMean());
 filter_options.filter_type="lowest";
-filter_options.drop_value=Math.floor(props.pool.getPoolAverage());
+filter_options.drop_value=Math.floor(props.pool.getPoolMean());
 filter_options.drop_type="lowest";
 
 const emit=defineEmits([]);
