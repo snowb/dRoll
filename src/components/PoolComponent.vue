@@ -105,9 +105,8 @@
       </div>
       <div v-if="showSettings" style="border-top: thin solid #242424;">
         PoolSettingComponent
-        <!-- <PoolSettingComponent @explode="explodeDice" :re_roll_explodes="props.re_roll_explodes"
-          :dice="props.dice" :force_render="props.force_render"
-        ></PoolSettingComponent> -->
+        <PoolSettingComponent :force_render="props.force_render" :pool="props.pool"
+        ></PoolSettingComponent>
       </div>
       <div v-if="showDice" class="testclass" style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap: wrap; max-width:99vw; border-top: thin solid #242424;">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
