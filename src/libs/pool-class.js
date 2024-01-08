@@ -20,7 +20,6 @@ export class Pool {
     min:[],max:[],
     pool_max:null,pool_min:null,
     pool_mean:null, pool_mode:null, pool_median:null
-    //not implementing pool_mode right now ...
   }; 
   #groupResults={
     sets:[], 
@@ -607,8 +606,13 @@ export class Pool {
       metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
     }
     metrics.mean=this.#secondaryResults.pool_mean;
-    metrics.mode=this.#secondaryResults.pool_mode;
     metrics.median=this.#secondaryResults.pool_median;
+    metrics.mode=metrics.pool_metrics.reduce((_mode_object, _metric_object)=>{
+      if(_metric_object.count >= _mode_object.count){
+        return _metric_object;
+      }
+      return _mode_object;
+    },{count:0}).value;
     return metrics;
   };
   /**
