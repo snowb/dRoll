@@ -8,14 +8,20 @@ import { Dice } from "./dice-class.js";
  * @property {number} iterations - number of iterations
  * @property {Object[]} fullRollResults - Array of objects containing Dice objects
  * @property {Object[]} rollResults - Array of objects containing abbreviated data [{index:number, roll:number[]}]
- * @property {Object} secondaryResults - Contains sum, average, min, and max values for all roll
+ * @property {Object} secondaryResults - Contains sum, mean, min, and max values for all roll
  * @property {Object} groupResults - contains sets, sequences, and metrics for both
  */
 export class Pool {
   #iterations=10000;
   #fullRollResults=null;
   #rollResults=null;
-  #secondaryResults={sum:[],average:[],min:[],max:[],pool_max:null,pool_min:null,pool_average:null};
+  #secondaryResults={
+    sum:[],mean:[],
+    min:[],max:[],
+    pool_max:null,pool_min:null,
+    pool_mean:null, pool_mode:null, pool_median:null
+    //not implementing pool_mode right now ...
+  }; 
   #groupResults={
     sets:[], 
     sequences:[], 
@@ -91,10 +97,10 @@ export class Pool {
    */
   getSumRolled () { return this.#secondaryResults.sum; };
   /**
-   * return average from #secondaryResults
+   * return mean from #secondaryResults
    * @returns {number[]}
    */
-  getAverageRolled () { return this.#secondaryResults.average; };
+  getMeanRolled () { return this.#secondaryResults.mean; };
   /**
    * return min from #secondaryResults
    * @returns {number[]}
@@ -107,7 +113,7 @@ export class Pool {
   getMaxRolled () { return this.#secondaryResults.max; };
   getPoolMin(){ return this.#secondaryResults.pool_min; }
   getPoolMax(){ return this.#secondaryResults.pool_max; }
-  getPoolAverage(){ return this.#secondaryResults.pool_average; }
+  getPoolMean(){ return this.#secondaryResults.pool_mean; }
   /**
    * return total number of sequences
    * @returns {number}
@@ -148,19 +154,19 @@ export class Pool {
   }
   /**
    * private property
-   * calculates secondary values; sum, average, min, max and stores in #secondaryResults private prop
+   * calculates secondary values; sum, mean, min, max and stores in #secondaryResults private prop
    * calculates abbreviated and sorted roll data and stores in #rollResults private prop
    */
   #calculateSecondaryValues () {
     this.#secondaryResults.sum=Array(this.#iterations);
-    this.#secondaryResults.average=Array(this.#iterations);
+    this.#secondaryResults.mean=Array(this.#iterations);
     this.#secondaryResults.min=Array(this.#iterations);
     this.#secondaryResults.max=Array(this.#iterations);
     this.#rollResults=Array(this.#iterations);
     for(let index=0;index<this.#iterations;index++){
-      //generate secondary results; sums, mins, maxes, averages
+      //generate secondary results; sums, mins, maxes, means
       this.#secondaryResults.sum[index]=0;
-      let roll=0;//for determine average in next step
+      let roll=0;//for determine mean in next step
       let min=null;
       let max=null;
       let temp_rolls=[];
@@ -175,7 +181,7 @@ export class Pool {
         }
         temp_rolls.push(roll_result_value);
       }
-      this.#secondaryResults.average[index]=this.#secondaryResults.sum[index]/roll;
+      this.#secondaryResults.mean[index]=this.#secondaryResults.sum[index]/roll;
       this.#secondaryResults.min[index]=min;
       this.#secondaryResults.max[index]=max;
       this.#rollResults[index]={index:index,roll:temp_rolls.sort()};
@@ -194,9 +200,18 @@ export class Pool {
       if(values_sum>_max){return values_sum}
       return _max;
     },-Infinity);
-    this.#secondaryResults.pool_average=this.#secondaryResults.sum.reduce((_avg,_value)=>{
+    this.#secondaryResults.pool_mean=this.#secondaryResults.sum.reduce((_avg,_value)=>{
       return _avg + _value;
     },0) / this.#iterations;
+    let temp_median=this.#secondaryResults.sum.sort((_a, _b)=>{
+      return _a >= _b ? 1 : -1;
+    });
+    if(this.#iterations%2==0){
+      this.#secondaryResults.pool_median=(temp_median[this.#iterations/2]+temp_median[(this.#iterations/2)-1])/2;
+    } else {
+      this.#secondaryResults.pool_median=temp_median[Math.floor(this.#iterations/2)];
+    }
+    
   }
   /**
    * calls #getGroups private function for Sequences
@@ -591,6 +606,9 @@ export class Pool {
       let ratio=count/this.#iterations;
       metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
     }
+    metrics.mean=this.#secondaryResults.pool_mean;
+    metrics.mode=this.#secondaryResults.pool_mode;
+    metrics.median=this.#secondaryResults.pool_median;
     return metrics;
   };
   /**
