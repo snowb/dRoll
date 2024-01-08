@@ -106,7 +106,7 @@ watchEffect(()=>{
         </span>
       </span>
       <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
-        <span style="visibility: hidden;" class="explode_button">button</span>
+        <span style="visibility: hidden;" class="explode_button">Explode</span>
         <span class="explode_button" style="position: absolute; right: 0em;" @click="emitExplode">Explode</span>
       </div>
     </div>
