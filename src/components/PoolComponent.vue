@@ -1,5 +1,5 @@
 <script setup>
-  import { defineProps, toRaw, watchEffect, ref, computed, triggerRef} from 'vue';
+  import { defineProps, toRaw, watchEffect, ref, computed} from 'vue';
   import DiceComponent from './DiceComponent.vue';
   import PoolMetricsComponent from './PoolMetricsComponent.vue';
   import { isNumeric } from '../libs/isNumeric';
@@ -52,6 +52,7 @@
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
   let showPoolMetrics=ref(true);
   let showPoolMetricsText=computed(()=>{return showPoolMetrics.value ? "Hide" : "Show"});
+
   watchEffect(()=>{
     props.pool;
     props.force_render
@@ -60,6 +61,17 @@
   const explodeDice=(_exploded_dice)=>{
     emit("explodeDice",{pool_index:props.pool_index, add_dice:_exploded_dice});
   };
+
+  let showSettings=ref(false);
+
+  const showSettingsToggle=()=>{
+    showSettings.value=!showSettings.value;
+  }
+
+  let showDice=computed(()=>{
+    props.force_render;
+    return toRaw(props.pool).getFullRollResults().length>0;
+  });
 </script>
 
 <template>
@@ -69,8 +81,6 @@
         <span style="padding: 0em 0.5em 0em 0.5em; font-weight: bold;">
           Pool#{{ pool_index+1 }}
         </span>
-        <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
-          @click="addDice">Add Dice</span>
         <span class="pointer blue-link" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em;"
           @click="toggleMetrics">
           {{showPoolMetricsText}} Metrics</span>
@@ -84,7 +94,22 @@
           @click="dropPool" tabindex="0"
         >Delete Pool</span>
       </div>
-      <div style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap:wrap; max-width:99vw">
+      <div style="position: relative; display: flex; flex-direction: row; margin-bottom:0.2em;">
+        <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
+          @click="addDice">Add Dice</span>
+        <v-icon class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em; align-self: center;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Pool Settings'">
+          <v-icon name="bi-gear-fill" :scale="showSettings?0.75:1" fill="#242424"></v-icon>
+          <v-icon v-if="showSettings" name="oi-circle-slash" fill="#ff0000" scale="1">
+          </v-icon>
+        </v-icon>
+      </div>
+      <div v-if="showSettings" style="border-top: thin solid #242424;">
+        PoolSettingComponent
+        <!-- <PoolSettingComponent @explode="explodeDice" :re_roll_explodes="props.re_roll_explodes"
+          :dice="props.dice" :force_render="props.force_render"
+        ></PoolSettingComponent> -->
+      </div>
+      <div v-if="showDice" class="testclass" style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap: wrap; max-width:99vw; border-top: thin solid #242424;">
         <DiceComponent v-for="(dice,dice_index) in props.pool.getFullRollResults()" 
           :key="'pool'+props.pool_index+'dice'+dice_index" :dice="dice" :dice_index="dice_index" 
           :force_render="props.force_render" :re_roll_explodes="props.re_roll_explodes"
