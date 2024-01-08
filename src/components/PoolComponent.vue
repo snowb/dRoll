@@ -96,7 +96,7 @@
         >Delete Pool</span>
       </div>
       <div style="position: relative; display: flex; flex-direction: row; margin-bottom:0.2em;">
-        <span class="button pointer" style="display:inline-block; border:thin solid black; border-radius: 0.2em; padding: 0em 0.5em 0em 0.5em"
+        <span class="button pointer" style=""
           @click="addDice">Add Dice</span>
         <v-icon class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em; align-self: center;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Pool Settings'">
           <v-icon name="bi-gear-fill" :scale="showSettings?0.75:1" fill="#242424"></v-icon>
@@ -105,7 +105,6 @@
         </v-icon>
       </div>
       <div v-if="showSettings" style="border-top: thin solid #242424;">
-        PoolSettingComponent
         <PoolSettingComponent :force_render="props.force_render" :pool="props.pool"
         ></PoolSettingComponent>
       </div>
@@ -131,6 +130,10 @@
   }
   .button {
     box-shadow: 2px 2px 1px 0px #242424;
+    display:inline-block; 
+    border:thin solid black; 
+    border-radius: 0.2em; 
+    padding: 0em 0.5em 0em 0.5em
   }
   .button:active {
     box-shadow: 0px 0px 0px 0px #242424;
