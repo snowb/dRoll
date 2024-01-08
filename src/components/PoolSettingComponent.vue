@@ -56,6 +56,8 @@ const updateDropValue=(_event)=>{
   filter_options.drop_value = +_event.target.drop_value;
 };
 
+
+let showExplodeOptions=ref(false);
 </script>
 
 <template>
@@ -89,6 +91,13 @@ const updateDropValue=(_event)=>{
         <span style="visibility: hidden;" class="button">Drop</span>
         <span class="button far_right_position" @click="emitDrop">Drop</span>
       </div>
+    </div>
+    <div v-if="false" class="small bold" style="border-top:thin solid #242424;"><input type="checkbox" v-model="showExplodeOptions" :checked="false"/>Explode Pool Dice</div>
+    <div v-if="showExplodeOptions" class="small" style="padding-left:0.5em;">
+      <!--
+
+        need explode based on each Dice (max, min, value) and Pool (max, min, value) 
+      -->
     </div>
   </div>
 </template>
