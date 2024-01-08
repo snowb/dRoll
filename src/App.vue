@@ -13,6 +13,9 @@ const toggleInformation=()=>{
     <span class="bold info_button" @click="toggleInformation" v-if="!showInformation">Show Information</span>
     <span class="shown_info" v-if="showInformation">
       <span class="bold info_button" @click="toggleInformation">Hide Information</span><br>
+      This is dRoll, the Dice Roll Simulator. A large number <span class="smaller">(default 10,000)</span> of values are 'rolled' via a cryptographically strong random value generator.<br>
+      This is not a purely statistical output simulator. Although higher iteration values will approach the statistically accurate values, it is meant to capture a more realistic feel.<br> 
+      <br>
       <span class="green_box bold">Green Boxes</span> are editable.<br>
       Click <span class="add_pool button_shape">Add Pool</span> to add a Pool.<br>
       &nbsp;&nbsp;&nbsp;&nbsp; Change the number in the <span class="bold">Iterations</span> box for the number of rolls to model. <span class="smaller">(Updates on Enter, Tab or focus change EXCEPT for Explode Dice settings)</span><br>
