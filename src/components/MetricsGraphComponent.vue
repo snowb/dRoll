@@ -100,7 +100,7 @@ const showAverage=computed(()=>{
 
 const pool_mean=computed(()=>{
   props.force_render;
-  return props.metrics.mean;
+  return Math.round(props.metrics.mean*100)/100;
 });
 
 const pool_median=computed(()=>{

@@ -5,9 +5,12 @@ import { ref, watchEffect, computed } from 'vue';
 
   const props=defineProps({
     pool: Object,
+    metrics: Object,
     force_render: Number,
     show_set_metrics: Boolean,
-    show_sequence_metrics: Boolean
+    show_sequence_metrics: Boolean,
+    filter_options: Object,
+    metrics_type: String
   });
 
   const iterations=computed(()=>{
@@ -16,9 +19,10 @@ import { ref, watchEffect, computed } from 'vue';
   });
 
   const computedPoolEqualMetrics=computed(()=>{
-    props.pool;
+    props.metrics;
     props.force_render;
-    let temp_metrics=props.pool.getMetrics();
+    //let temp_metrics=props.pool.getMetrics();
+    let temp_metrics=props.metrics;
     return temp_metrics.pool_metrics.reduce((_graph_values, _metric)=>{
       //format pool metrics for graphing
       _graph_values.labels.push(_metric.value);
@@ -73,7 +77,7 @@ import { ref, watchEffect, computed } from 'vue';
     poolMetricsDisplay.value=_value;
   };
 
-  let computedPoolMetrics=computed(()=>{
+  const computedPoolMetrics=computed(()=>{
     switch(poolMetricsDisplay.value){
       case "equal":
         return computedPoolEqualMetrics.value;
@@ -117,12 +121,13 @@ import { ref, watchEffect, computed } from 'vue';
 
   const getWidth=(_array, _multipler)=>{
     let multiplier=_multipler===undefined ? 1 : +_multipler;
-    return _array.length*150/6*multiplier+"px";
+    let width=_array.length*150/6*multiplier;
+    return (width > 150 ? width : 150)+"px";
   };
 </script>
 
 <template>
-  <div style="display:flex; flex-direction: row;" v-if="computedPoolMetrics.values.length>1" >
+  <div style="display:flex; flex-direction: row; border-top:thin solid #242424;" v-if="computedPoolMetrics.values.length>0">
     <MetricsGraphComponent :metrics="computedPoolMetrics" :force_render="props.force_render"
       :pool_maximum="props.pool.getMetrics().maximum_value" :width="getWidth(computedPoolMetrics.values, 1)"
       :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" title="Pool Sums"
@@ -139,15 +144,17 @@ import { ref, watchEffect, computed } from 'vue';
       <span @click="setPoolMetricsDiplay('equal_below')" class="pointer red-link space_around" :class="{selected:isSelectedMetricsDisplay('equal_below')}">Equal To Or Below</span>
     </span>
   </div>
-    
+  <div v-else style="font-weight: bold; margin-left:1em;">
+    No Data
+  </div>
   <MetricsGraphComponent :metrics="computedPoolSetMetrics" :force_render="props.force_render"
     :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(computedPoolSetMetrics.values, 1.5)"
-    v-if="computedPoolSetMetrics.values.length>1"
+    v-if="computedPoolSetMetrics.values.length>1 && props.metrics_type=='full'" style="border-top:thin solid #242424;"
     title="Set Metrics"
   ></MetricsGraphComponent>
   <MetricsGraphComponent :metrics="computedPoolSequenceMetrics" :force_render="props.force_render"
     :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(computedPoolSequenceMetrics.values, 1.25)"
-    v-if="computedPoolSequenceMetrics.values.length>1"
+    v-if="computedPoolSequenceMetrics.values.length>1 && props.metrics_type=='full'"
     title="Sequence Metrics"
   ></MetricsGraphComponent>
 </template>

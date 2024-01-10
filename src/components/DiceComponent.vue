@@ -10,21 +10,36 @@
     dice: Object,
     dice_index: Number,
     force_render: Number,
-    re_roll_explodes: Number
+    re_roll_explodes: Number,
+    //filter_options: Object
   });
 
   const emit=defineEmits(["updateValue","dropDice", "reRollDice", "explodeDice"])
-  let diceMetrics=computed(()=>{
+  const diceMetrics=computed(()=>{
+    props.force_render;
     return props.dice.getMetrics().reduce((_graph_values, _metric)=>{
       //format dice metrics for graphing
+      /* switch(true){
+        also wrong place
+        case props.filter_options==undefined || props.filter_options.type==undefined:
+        case props.filter_options.type=="lowest" && _metric.value==props.dice.getMinimum():
+        case props.filter_options.type=="highest" && _metric.value==props.dice.getMaximum():
+        case props.filter_options.type=="even" && _metric.value%2==0:
+        case props.filter_options.type=="odd" && _metric.value%2==1:
+        case props.filter_options.type=="equal" && _metric.value==props.filter_options.value:
+        case props.filter_options.type=="equal_above" && _metric.value>=props.filter_options.value:
+        case props.filter_options.type=="equal_below" && _metric.value<=props.filter_options.value:
+          _graph_values.labels.push(_metric.value);
+          _graph_values.values.push(_metric.ratio*100);
+      } */
       _graph_values.labels.push(_metric.value);
       _graph_values.values.push(_metric.ratio*100);
       return _graph_values;
     },{labels:[],values:[]});
-    });
+  });
 
   let showDiceMetrics=ref(false);
-  let showDiceMetricsText=computed(()=>{return showDiceMetrics.value ? "Hide" : "Show"});
+  const showDiceMetricsText=computed(()=>{return showDiceMetrics.value ? "Hide" : "Show"});
   let editMode=ref("basic");
   const toggleMode=()=>{editMode.value=editMode.value=="basic" ? "advanced" : "basic"};
   const toggleMetrics=()=>{showDiceMetrics.value=!showDiceMetrics.value;};
@@ -47,7 +62,7 @@
     saved_focus_value=_event.target.innerText;
   };
 
-  let width=computed(()=>{
+  const width=computed(()=>{
     return toRaw(props.dice).getMaximum()*150/6+"px";
   });
 
@@ -83,7 +98,7 @@
     emit("explodeDice",exploded_dice);
   }
 
-  let is_exploded_dice=computed(()=>{
+  const is_exploded_dice=computed(()=>{
     return props.dice.getAdditionalText()=="Exploding";
   });
 </script>
