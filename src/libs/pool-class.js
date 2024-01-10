@@ -423,7 +423,7 @@ export class Pool {
     }
     metrics.pool_metrics=metrics.pool_metrics.filter((_metrics_object)=>{return _metrics_object.count>0});
     //maybe use the zero-count-cleared array for secondaries but still include full array?
-    let metrics_secondaries=this.#calculateMetricSecondaries(metrics.pool_metrics);
+    let metrics_secondaries=this.#calculateMetricSecondaries(metrics.pool_metrics, filtered_array);
     metrics.median=metrics_secondaries.median;
     metrics.mean=metrics_secondaries.mean;
     metrics.mode=metrics_secondaries.mode;
@@ -464,7 +464,7 @@ export class Pool {
    * @param {Object[]} _counts_values_object - array of objects of form {value, count}
    * @returns {Object} - of form {mean:Number, median:Number, mode:Number}
    */
-  #calculateMetricSecondaries(_counts_values_object){
+  #calculateMetricSecondaries(_counts_values_object, _filter_array){
     let metrics_secondaries={};
 
     let intermediate_mean = _counts_values_object.reduce((_pool_total, _metric)=>{
@@ -473,16 +473,15 @@ export class Pool {
       return _pool_total;
     },{total_value:0, total_count:0});
     metrics_secondaries.mean = intermediate_mean.total_value / intermediate_mean.total_count;
-    let temp_median=_counts_values_object.reduce((_values_array, _metric)=>{
-      _values_array.push(_metric.value);
-      return _values_array;
-    },[]);
 
-    if(temp_median.length%2==0){
-      metrics_secondaries.median = (temp_median[temp_median.length/2]+temp_median[(temp_median.length/2)-1])/2;
-    } else {
-      metrics_secondaries.median = temp_median[Math.floor(temp_median.length/2)];
-    }
+    metrics_secondaries.median=undefined;
+    let target_median_location=Math.floor(_filter_array.length/2) - 1;
+    let median_cheat = _counts_values_object.reduce((_current_location, _object)=>{
+      if(_current_location>=target_median_location && metrics_secondaries.median===undefined){
+        metrics_secondaries.median=_object.value;
+      }
+      return _current_location+_object.count;
+    },0);
 
     metrics_secondaries.mode=_counts_values_object.reduce((_mode_object, _metric_object)=>{
       if(_metric_object.count >= _mode_object.count){
