@@ -85,6 +85,7 @@
     filter_options.value=_options.value;
     filter_options.max_value=_options.max_value;
     filter_options.type_modifier=_options.type_modifier;    
+    filter_options.drop_count=_options.drop_count;    
   };
 
   const getFilteredMetrics=computed(()=>{
@@ -105,6 +106,11 @@
         return props.pool.getOddMetrics(pool_or_dice);
       case "range":
         return props.pool.getWithinRangeMetrics(filter_options.value, filter_options.max_value, pool_or_dice);
+      case "highest":
+        console.log(filter_options)
+        return props.pool.getHighestMetrics(filter_options.drop_count);
+      case "lowest":
+        return props.pool.getLowestMetrics(filter_options.drop_count);
       case "full":
       default:
         return props.pool.getMetrics();
