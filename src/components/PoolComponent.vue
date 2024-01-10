@@ -107,7 +107,6 @@
       case "range":
         return props.pool.getWithinRangeMetrics(filter_options.value, filter_options.max_value, pool_or_dice);
       case "highest":
-        console.log(filter_options)
         return props.pool.getHighestMetrics(filter_options.drop_count);
       case "lowest":
         return props.pool.getLowestMetrics(filter_options.drop_count);
