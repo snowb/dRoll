@@ -583,14 +583,16 @@ export class Pool {
       console.error("pool-class.js: getLowestMetric argument must be Numeric and less than the number of Dice.");
       return undefined;
     }
-    return this.#getFilterMetrics("lowest", +_dice_count, undefined, "dice");
+    let dice_count = _dice_count===undefined ? 1 : +_dice_count
+    return this.#getFilterMetrics("lowest", dice_count, undefined, "dice");
   };
   getHighestMetrics(_dice_count){
     if(_dice_count!==undefined && (!isNumeric(_dice_count) || _dice_count >= this.#fullRollResults.length)){
       console.error("pool-class.js: getHighestMetrics argument must be Numeric and less than the number of Dice.");
       return undefined;
     }
-    return this.#getFilterMetrics("highest", +_dice_count, undefined, "dice");
+    let dice_count = _dice_count===undefined ? 1 : +_dice_count
+    return this.#getFilterMetrics("highest", dice_count, undefined, "dice");
   };
   /**
    * @returns {Dice[]} - even results
