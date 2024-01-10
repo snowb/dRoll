@@ -14,9 +14,11 @@
     //filter_options: Object
   });
 
-  const emit=defineEmits(["updateValue","dropDice", "reRollDice", "explodeDice"])
+  const emit=defineEmits(["updateValue","dropDice", "reRollDice", "explodeDice"]);
+
   const diceMetrics=computed(()=>{
     props.force_render;
+    console.log(props.dice.getMetrics())
     return props.dice.getMetrics().reduce((_graph_values, _metric)=>{
       //format dice metrics for graphing
       /* switch(true){
@@ -152,6 +154,7 @@
     <div v-if="showDiceMetrics" style="border-top: thin solid #dbdbdb;">
       <MetricsGraphComponent :style="{color:'#ddd',backgroundColor:'#ddd',gridColor:'#dddddd1a'}"
         :force_render="force_render" :metrics="diceMetrics" :width="width" title="Roll Values"
+        :no_show_average="true"
       ></MetricsGraphComponent>
     </div>
   </div>

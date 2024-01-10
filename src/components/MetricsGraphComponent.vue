@@ -20,7 +20,8 @@ const props=defineProps({
   pool_maximum: Number,
   title: String,
   style: Object,
-  width: String
+  width: String,
+  no_show_average: Boolean
 });
 
 const chartData=computed(()=>{
@@ -95,7 +96,7 @@ const chartOptions=computed(()=>{
 });
 
 const showAverage=computed(()=>{
-  return isNumeric(props.metrics.labels[0]);
+  return !props.no_show_average && isNumeric(props.metrics.labels[0]);
 });
 
 const pool_mean=computed(()=>{
