@@ -15,6 +15,7 @@ export class Pool {
   #iterations=10000;
   #fullRollResults=null;
   #rollResults=null;
+  #diceCount=0;
   #secondaryResults={
     sum:[],mean:[],
     min:[],max:[],
@@ -183,7 +184,7 @@ export class Pool {
       this.#secondaryResults.mean[index]=this.#secondaryResults.sum[index]/roll;
       this.#secondaryResults.min[index]=min;
       this.#secondaryResults.max[index]=max;
-      this.#rollResults[index]={index:index,roll:temp_rolls.sort()};
+      this.#rollResults[index]={index:index,roll:temp_rolls.sort((_a, _b)=>{return +_a > +_b ? 1 : -1})};
     }
     this.#secondaryResults.pool_min=this.#rollResults.reduce((_min, _values_array)=>{
       let values_sum=_values_array.roll.reduce((_sum, _value)=>{
@@ -355,6 +356,12 @@ export class Pool {
       case "range":
         filtered_array=this.getWithinRange(_first_target_value,_second_target_value);
         break;
+      case "highest":
+        filtered_array=this.#rollResults;
+        break;
+      case "lowest":
+        filtered_array=this.#rollResults;
+        break;
     }
     let with_sums_array=filtered_array.reduce((_pool_array, _pool_object)=>{
       let new_pool_object={
@@ -387,6 +394,13 @@ export class Pool {
             break;
           case "range":
             new_pool_object.values=_pool_object.values.filter((_value)=>{return _value>=_first_target_value && _value<=_second_target_value});
+            break;
+          case "highest":
+            let start_index=_pool_object.roll.length - _first_target_value - 1;
+            new_pool_object.values=_pool_object.roll.filter((_roll, _index)=>{return _index > start_index});
+            break;
+          case "lowest":
+            new_pool_object.values=_pool_object.roll.filter((_roll, _index)=>{return _index < _first_target_value});
             break;
         }
         new_pool_object.sum=new_pool_object.values.reduce((_sum, _value)=>{
@@ -563,6 +577,20 @@ export class Pool {
   getWithinRangeMetrics(_min_value, _max_value, _result_target){
     if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRangeMetrics requires a number for Minimum and Maximum values.");return undefined;}
     return this.#getFilterMetrics("range", +_min_value, +_max_value, _result_target);
+  };
+  getLowestMetrics(_dice_count){
+    if(_dice_count!==undefined && (!isNumeric(_dice_count) || _dice_count >= this.#fullRollResults.length)){
+      console.error("pool-class.js: getLowestMetric argument must be Numeric and less than the number of Dice.");
+      return undefined;
+    }
+    return this.#getFilterMetrics("lowest", +_dice_count, undefined, "dice");
+  };
+  getHighestMetrics(_dice_count){
+    if(_dice_count!==undefined && (!isNumeric(_dice_count) || _dice_count >= this.#fullRollResults.length)){
+      console.error("pool-class.js: getHighestMetrics argument must be Numeric and less than the number of Dice.");
+      return undefined;
+    }
+    return this.#getFilterMetrics("highest", +_dice_count, undefined, "dice");
   };
   /**
    * @returns {Dice[]} - even results
@@ -1179,13 +1207,13 @@ export class Pool {
     this.#calculateSets();
   };
 
-  filterOutLowestDice(){
+/*   filterOutLowestDice(){
     return this.#rollResults.reduce((_filtered_result, _roll_result)=>{
       let result={index:_roll_result.index};
       result.roll;
        //{index:0, roll:[]}
     },[]);
-  };
+  }; */
   /**
    * filterOutLowestDice
    * filterToLowestDice
