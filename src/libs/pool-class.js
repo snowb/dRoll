@@ -202,15 +202,15 @@ export class Pool {
     this.#secondaryResults.pool_mean=this.#secondaryResults.sum.reduce((_avg,_value)=>{
       return _avg + _value;
     },0) / this.#iterations;
-    let temp_median=this.#secondaryResults.sum.sort((_a, _b)=>{
+    let temp_median=this.#secondaryResults.sum.toSorted((_a, _b)=>{
       return _a >= _b ? 1 : -1;
     });
-    if(this.#iterations%2==0){
-      this.#secondaryResults.pool_median=(temp_median[this.#iterations/2]+temp_median[(this.#iterations/2)-1])/2;
+
+    if(temp_median.length%2==0){
+      this.#secondaryResults.pool_median = (temp_median[temp_median.length/2]+temp_median[(temp_median.length/2)-1])/2;
     } else {
-      this.#secondaryResults.pool_median=temp_median[Math.floor(this.#iterations/2)];
-    }
-    
+      this.#secondaryResults.pool_median = temp_median[Math.floor(temp_median.length/2)];
+    } 
   }
   /**
    * calls #getGroups private function for Sequences
@@ -244,6 +244,7 @@ export class Pool {
   #getOperation (_operation, _first_value, _second_value) {
     let operation_result=[];
     const rolls=this.#fullRollResults.length;
+    let is_even=[];
     for(let index=0;index<this.#iterations;index++){
       let dice_results=[];
       let is_keep=false;
@@ -252,7 +253,7 @@ export class Pool {
         dice_results.push(dice_value);
         switch(_operation) {
           case "even":
-            is_keep = dice_value%2 == 0? true : is_keep;
+            is_keep = dice_value%2 == 0 ? true : is_keep;
             break;
           case "odd":
             is_keep = dice_value%2 == 1 ? true : is_keep;
@@ -274,7 +275,6 @@ export class Pool {
             else{
               is_keep = dice_value == +_first_value ? true : is_keep;
             }
-            break;
           }
       }
       if(is_keep) {
@@ -326,17 +326,158 @@ export class Pool {
     },[]);    
   }
   /**
-   * @returns {Dice[]} - even results
+   * 
+   * @param {String} _filter_type - which filtered array to get metrics on (Even, Odd, Equal, etc)
+   * @param {Number|String} _target_value - Numeric, the comparison value for Equal, Above, Below
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH target Dice or only the Pool Value OF target Dice.
+   * @returns 
+   */
+  #getFilterMetrics(_filter_type, _first_target_value, _second_target_value, _result_target){
+    let metrics={pool_metrics:[]};
+    let filtered_array=undefined;
+    switch(_filter_type){
+      case "even":
+        filtered_array=this.getEven();
+        break;
+      case "odd":
+        filtered_array=this.getOdd();
+        break;
+      case "equal":
+        filtered_array=this.getEqual(_first_target_value);
+        break;
+      case "above":
+        filtered_array=this.getAbove(_first_target_value);
+        break;
+      case "below":
+        filtered_array=this.getBelow(_first_target_value);
+        break;
+      case "range":
+        filtered_array=this.getWithinRange(_first_target_value,_second_target_value);
+        break;
+    }
+    let with_sums_array=filtered_array.reduce((_pool_array, _pool_object)=>{
+      let new_pool_object={
+        index:undefined, 
+        values:undefined,
+        sum:undefined
+      };
+      new_pool_object.index=_pool_object.index;
+      if(_result_target!="dice"){
+        new_pool_object.values=_pool_object.values;
+        new_pool_object.sum=_pool_object.values.reduce((_sum, _value)=>{
+          return _sum+_value;
+        },0);
+      } else {
+        switch(_filter_type){
+          case "even":
+            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value%2==0});
+            break;
+          case "odd":
+            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value%2==1});
+            break;
+          case "equal":
+            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value==_first_target_value});
+            break;
+          case "above":
+            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value>_first_target_value});
+            break;
+          case "below":
+            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value<_first_target_value});
+            break;
+          case "range":
+            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value>=_first_target_value && _value<=_second_target_value});
+            break;
+        }
+        new_pool_object.sum=new_pool_object.values.reduce((_sum, _value)=>{
+          return _sum+_value;
+        },0);
+      }
+      _pool_array.push(new_pool_object);
+      return _pool_array;
+    },[]);
+    let lowest_dice_minimum=this.#fullRollResults.reduce((_min_value, _dice)=>{
+      if(_dice.getMinimum()<_min_value){return _dice.getMinimum()}
+      return _min_value;
+    },Infinity);
+    for(let value=lowest_dice_minimum; value<=this.#secondaryResults.pool_max; value++) {
+      let count=with_sums_array.filter((_pool_object)=>{
+        return _pool_object.sum==value;
+      }).length;
+      let ratio=count/this.#iterations;
+      metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
+    }
+    metrics.pool_metrics=metrics.pool_metrics.filter((_metrics_object)=>{return _metrics_object.count>0});
+    //maybe use the zero-count-cleared array for secondaries but still include full array?
+    let metrics_secondaries=this.#calculateMetricSecondaries(metrics.pool_metrics);
+    metrics.median=metrics_secondaries.median;
+    metrics.mean=metrics_secondaries.mean;
+    metrics.mode=metrics_secondaries.mode;
+    return metrics;
+  }
+  /**
+   * @returns {Dice[]} - Pools with Even results within Dice
    */
   getEven(){
     return this.#getOperation("even"); 
   };
+  /**
+   * Return metrics for the given filter
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Even Dice or only the Pool Value OF Even Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getEvenMetrics(_result_target){
+    return this.#getFilterMetrics("even", undefined, undefined, _result_target);
+   };
   /**
    * @returns {Dice[]} - odd results
    */
   getOdd(){
     return this.#getOperation("odd"); 
   };
+  /**
+   * Return metrics for the given filter
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Odd Dice or only the Pool Value OF Odd Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getOddMetrics(_result_target){
+    return this.#getFilterMetrics("odd", undefined, undefined, _result_target);
+  };
+  /**
+   * calculates mean, median, and mode of a provided {value, count} Array
+   * @param {Object[]} _counts_values_object - array of objects of form {value, count}
+   * @returns {Object} - of form {mean:Number, median:Number, mode:Number}
+   */
+  #calculateMetricSecondaries(_counts_values_object){
+    let metrics_secondaries={};
+
+    let intermediate_mean = _counts_values_object.reduce((_pool_total, _metric)=>{
+      _pool_total.total_value+=_metric.value*_metric.count;
+      _pool_total.total_count+=_metric.count;
+      return _pool_total;
+    },{total_value:0, total_count:0});
+    metrics_secondaries.mean = intermediate_mean.total_value / intermediate_mean.total_count;
+    let temp_median=_counts_values_object.reduce((_values_array, _metric)=>{
+      _values_array.push(_metric.value);
+      return _values_array;
+    },[]);
+
+    if(temp_median.length%2==0){
+      metrics_secondaries.median = (temp_median[temp_median.length/2]+temp_median[(temp_median.length/2)-1])/2;
+    } else {
+      metrics_secondaries.median = temp_median[Math.floor(temp_median.length/2)];
+    }
+
+    metrics_secondaries.mode=_counts_values_object.reduce((_mode_object, _metric_object)=>{
+      if(_metric_object.count >= _mode_object.count){
+        return _metric_object;
+      }
+      return _mode_object;
+    },{count:0}).value;
+    return metrics_secondaries;
+  }
   /**
   * returns numbers above the provided value
   * @param {string|number} _value - numeric for value to compare
@@ -347,6 +488,17 @@ export class Pool {
     return this.#getOperation("above",+_value);
   };
   /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Above Dice or only the Pool Value OF Above Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getAboveMetrics(_value, _result_target){
+    if(!isNumeric(_value)){console.error("pool-class.js: getAboveMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("above", +_value, undefined, _result_target);
+  };
+  /**
   * returns numbers below the provided value
   * @param {string|number} _value - numeric for value to compare
   * @returns {Object[]} - [{index:number, values:number[]}]
@@ -354,6 +506,17 @@ export class Pool {
   getBelow (_value) {//return Rolls with values below _value
     if(!isNumeric(_value)){console.error("pool-class.js: getBelow requires a number for _value.");return undefined;}
     return this.#getOperation("below",+_value);
+  };
+  /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getBelowMetrics(_value, _result_target){
+    if(!isNumeric(_value)){console.error("pool-class.js: getBelowMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("below", +_value, undefined, _result_target);
   };
   /**
   * returns numbers equal to the provided value
@@ -370,6 +533,17 @@ export class Pool {
     return this.#getOperation("equal",_value);
   };
   /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getEqualMetrics(_value, _result_target){
+    if(!isNumeric(_value)){console.error("pool-class.js: getEqualMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("equal", +_value, undefined, _result_target);
+  };
+  /**
    * returns numbers within the specified range, inclusive
    * @param {string|number} _min_value 
    * @param {string|number} _max_value 
@@ -380,17 +554,28 @@ export class Pool {
     return this.#getOperation("range",+_min_value,+_max_value);
   };
   /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getWithinRangeMetrics(_min_value, _max_value, _result_target){
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRangeMetrics requires a number for Minimum and Maximum values.");return undefined;}
+    return this.#getFilterMetrics("range", +_min_value, +_max_value, _result_target);
+  };
+  /**
    * @returns {Dice[]} - even results
    */
-    getSumEven(){
-      return this.#getSumOperation("even"); 
-    };
-    /**
-     * @returns {Dice[]} - odd results
-     */
-    getSumOdd(){
-      return this.#getSumOperation("odd"); 
-    };
+  getSumEven(){
+    return this.#getSumOperation("even"); 
+  };
+  /**
+   * @returns {Dice[]} - odd results
+   */
+  getSumOdd(){
+    return this.#getSumOperation("odd"); 
+  };
   /**
   * returns roll sums above the provided value
   * @param {string|number} _value - numeric for value to compare
@@ -589,8 +774,6 @@ export class Pool {
     let min_value=0;
     let max_value=0;
     metrics.dice_metrics=this.#fullRollResults.reduce((_metrics, _dice)=>{
-      // NEED TO ACCOUNT EXPLODING DICE WITH 0 VALUE
-      // _dice.getAdditionalText()
       let roll_metrics=_dice.getMetrics();
       min_value+=_dice.getAdditionalText()=="Exploding" ? min_value : roll_metrics[0].value;
       max_value+=roll_metrics[roll_metrics.length-1].value;
@@ -995,7 +1178,29 @@ export class Pool {
     this.#calculateSequences();
     this.#calculateSets();
   };
+
+  filterOutLowestDice(){
+    return this.#rollResults.reduce((_filtered_result, _roll_result)=>{
+      let result={index:_roll_result.index};
+      result.roll;
+       //{index:0, roll:[]}
+    },[]);
+  };
   /**
+   * filterOutLowestDice
+   * filterToLowestDice
+   * filterOutHighestDice
+   * filterToHighestDice
+   * filterOutValue
+   * filterToValue
+   * filterOutValueAbove
+   * filterToValueAbove
+   * filterOutValueBelow
+   * filterToValueBelow
+   * filterToEven
+   * filterToOdd
+   * 
+   * 
    * getMin ... ?
    * getMax ... ?
    *  ... Above, Below, Equal, WithinRange
