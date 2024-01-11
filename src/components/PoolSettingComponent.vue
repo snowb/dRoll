@@ -47,6 +47,16 @@ const updateFilterValue=(_event)=>{
 };
 
 const emitFilter=()=>{
+  if(filter_options.filter_type=="range"){
+    if(filter_options.filter_value > filter_options.filter_value_max){
+      let value_swap = filter_options.filter_value;
+      filter_options.filter_value = filter_options.filter_value_max;
+      filter_options.filter_value_max = value_swap;
+    }
+    else if(filter_options.filter_value == filter_options.filter_value_max){
+      filter_options.filter_value_max += 1;
+    }
+  }
   emit("filterPoolDice",{
     type: filter_options.filter_type, 
     type_modifier: filter_options.filter_type_modifier, 
@@ -56,22 +66,6 @@ const emitFilter=()=>{
   });
 };
 
-let showDropOptions=ref(false);
-
-const updateDropOption=(_event, _drop_type)=>{
-
-};
-
-const updateDropValue=(_event)=>{
-  if(_event.key=="Enter"){
-    _event.preventDefault();
-  }
-  if(!isNumeric(_event.target.innerText)){
-    _event.target.innerText = filter_options.drop_value;
-    return
-  }
-  filter_options.drop_value = +_event.target.drop_value;
-};
 
 let showExplodeOptions=ref(false);
 
@@ -91,11 +85,6 @@ const inputSize=computed(()=>{
   <div>
     <div class="small bold"><input type="checkbox" v-model="showFitlerOptions" :checked="false"/>Filter Pool By Dice</div>
     <div v-if="showFitlerOptions" class="small" style="padding-left:0.5em;">
-      <!-- 
-        needs to be in different section. Drop style filtering
-      <span title="Show Lowest Dice in the Pool."><input type="radio" name="filter_on" :checked="true" @change="updateFilterOption($event, 'lowest')"/>Lowest</span>&nbsp;&nbsp;
-      <span title="Show Highest Dice in the Pool."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'highest')"/>Highest</span>&nbsp;&nbsp;&nbsp;&nbsp; 
-      -->
       <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool">Pool Contains Dice ...</div>
       <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
       <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
@@ -120,26 +109,6 @@ const inputSize=computed(()=>{
       <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
         <span style="visibility: hidden;" class="button">Filter</span>
         <span class="button far_right_position" @click="emitFilter">Filter</span>
-      </div>
-    </div>
-    <div v-if="false" class="small bold" style="border-top:thin solid #242424;"><input type="checkbox" v-model="showDropOptions" :checked="false"/>Drop Pool Dice</div>
-    <div v-if="showDropOptions" class="small" style="padding-left:0.5em;">
-      <!--
-        implement after filter stuff is working
-
-        don't use actual dropDice? insted just use filtering?
-      -->
-      <span><input type="radio" name="drop_on" :checked="true" @change="updateDropOption($event, 'lowest')"/>Lowest</span>&nbsp;&nbsp;
-      <span><input type="radio" name="drop_on" :checked="false" @change="updateDropOption($event, 'highest')"/>Highest</span>&nbsp;&nbsp;&nbsp;&nbsp;
-      <span><input type="radio" name="drop_on" :checked="false" @change="updateDropOption($event, 'even')"/>Even</span>&nbsp;&nbsp;
-      <span><input type="radio" name="drop_on" :checked="false" @change="updateDropOption($event, 'odd')"/>Odd</span>
-      <br>
-      <span><input type="radio" name="drop_on" :checked="false" @change="updateDropOption($event, 'equal')"/>Equal To</span>
-      <span><input type="radio" name="drop_on" :checked="false" @change="updateDropOption($event, 'equal_above')"/>Above</span>
-      <span><input type="radio" name="drop_on" :checked="false" @change="updateDropOption($event, 'equal_below')"/>Below: <span class="editable" contenteditable @keydown.enter="updateDropValue" @blur="updateDropValue">{{ filter_options.drop_value }}</span></span>
-      <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
-        <span style="visibility: hidden;" class="button">Drop</span>
-        <span class="button far_right_position" @click="emitDrop">Drop</span>
       </div>
     </div>
     <div v-if="false" class="small bold" style="border-top:thin solid #242424;"><input type="checkbox" v-model="showExplodeOptions" :checked="false"/>Explode Pool Dice</div>
