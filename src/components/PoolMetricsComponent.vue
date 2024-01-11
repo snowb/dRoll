@@ -21,7 +21,9 @@ import { ref, watchEffect, computed } from 'vue';
   const computedPoolEqualMetrics=computed(()=>{
     props.metrics;
     props.force_render;
-    //let temp_metrics=props.pool.getMetrics();
+    if(props.metrics===undefined){
+      return [];
+    }
     let temp_metrics=props.metrics;
     return temp_metrics.pool_metrics.reduce((_graph_values, _metric)=>{
       //format pool metrics for graphing
