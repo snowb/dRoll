@@ -113,6 +113,14 @@ const pool_mode=computed(()=>{
   props.force_render;
   return props.metrics.mode;
 });
+
+const pool_total=computed(()=>{
+  props.force_render;
+  let total = props.metrics.values.reduce((_sum,_value)=>{
+    return _sum+_value;
+  },0);
+  return Math.round(total*100)/100;
+});
 </script>
 
 <template>
@@ -122,9 +130,10 @@ const pool_mode=computed(()=>{
       <bar :data="chartData" :options="chartOptions"></bar>
     </div>
     <div v-if="showAverage" style="margin-left:2em; font-size: small; font-weight: bold;">
-      <span>Pool Mean: {{ pool_mean }}</span>&nbsp;&nbsp;
-      <span>Median: {{ pool_median }}</span>&nbsp;&nbsp;
-      <span>Mode: {{ pool_mode }}</span>
+      <span title="Average of all values generated.">Pool Mean: {{ pool_mean }}</span>&nbsp;&nbsp;
+      <span title="Value in the center of all generated values.">Median: {{ pool_median }}</span>&nbsp;&nbsp;
+      <span title="Value with the highest occurances.">Mode: {{ pool_mode }}</span>&nbsp;&nbsp;
+      <span title="Total occurances.">Total: {{ pool_total }}%</span>
     </div>
   </div>
 </template>
