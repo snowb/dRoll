@@ -5,7 +5,8 @@ import { ref, reactive, computed, watchEffect } from 'vue';
 
 const props=defineProps({
     pool: Pool,
-    force_render: Number
+    force_render: Number,
+    pool_index: Number
   });
 
 let filter_options=reactive({});
@@ -96,26 +97,26 @@ const inputSize=computed(()=>{
       <span title="Show Highest Dice in the Pool."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'highest')"/>Highest</span>&nbsp;&nbsp;&nbsp;&nbsp; 
       -->
       <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool">Pool Contains Dice ...</div>
-      <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
-      <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
+      <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
+      <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
       <br>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'equal','pool')"/>Equal To</span>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'above','pool')"/>Above</span>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','pool')"/>Equal To</span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','pool')"/>Above</span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
       <br>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
       <div style="border-top: thin solid #242424; margin-top:0.2em;"></div>
       <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool, others are removed">Pool Composed Of Dice ...</div>
-      <span title="Show Lowest Dice in the Pool."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'lowest')"/>Lowest</span>&nbsp;&nbsp;
-      <span title="Show Highest Dice in the Pool."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'highest')"/>Highest <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.drop_count"/></span>&nbsp;&nbsp;&nbsp;&nbsp; 
-      <span title="Show Pool with non-Even Dice removed."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'even','dice')"/>Even</span>&nbsp;&nbsp;
-      <span title="Show Pool with non-Odd Dice removed."><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event, 'odd','dice')"/>Odd</span>
+      <span title="Show Lowest Dice in the Pool."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'lowest')"/>Lowest</span>&nbsp;&nbsp;
+      <span title="Show Highest Dice in the Pool."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'highest')"/>Highest <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.drop_count"/></span>&nbsp;&nbsp;&nbsp;&nbsp; 
+      <span title="Show Pool with non-Even Dice removed."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','dice')"/>Even</span>&nbsp;&nbsp;
+      <span title="Show Pool with non-Odd Dice removed."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','dice')"/>Odd</span>
       <br>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'equal','dice')"/>Equal To</span>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'above','dice')"/>Above</span>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'below','dice')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','dice')"/>Equal To</span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','dice')"/>Above</span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','dice')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
       <br>
-      <span><input type="radio" name="filter_on" :checked="false" @change="updateFilterOption($event,'range','dice')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
+      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','dice')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
       <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
         <span style="visibility: hidden;" class="button">Filter</span>
         <span class="button far_right_position" @click="emitFilter">Filter</span>

@@ -155,7 +155,7 @@
       </div>
       <div v-if="showSettings" style="border-top: thin solid #242424;">
         <PoolSettingComponent :force_render="props.force_render" :pool="props.pool"
-          @filterPoolDice="filterPoolDice"
+          @filterPoolDice="filterPoolDice" :pool_index="props.pool_index"
         ></PoolSettingComponent>
       </div>
       <div v-if="showDice" class="testclass" style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap: wrap; max-width:99vw; border-top: thin solid #242424;">

@@ -92,11 +92,13 @@
   <div>
     <span class="pools_container_title">Pools Container</span>
   </div>
-  <PoolComponent v-for="(pool,pool_index) in pools" 
-    :pool=pool :pool_index=pool_index :force_render="forceRender()" :re_roll_explodes="re_roll_explodes"
-    @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool"
-    @reRollPool="reRollPool" @reRollDice="reRollDice" @explodeDice="explodeDice">
-  </PoolComponent>
+  <div style="display:flex; flex-direction: row; flex-wrap: wrap;">
+    <PoolComponent v-for="(pool,pool_index) in pools" 
+      :pool=pool :pool_index=pool_index :force_render="forceRender()" :re_roll_explodes="re_roll_explodes"
+      @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool"
+      @reRollPool="reRollPool" @reRollDice="reRollDice" @explodeDice="explodeDice">
+    </PoolComponent>
+  </div>
   <div> 
     <span class="button pointer add_pool" @click="addPool()">Add Pool</span>
   </div>
