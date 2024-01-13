@@ -1,3 +1,9 @@
+//modify constructor to allow for input of an array of numbers
+//constructor(_minimum_value, _maximum_value, _modifier) 
+//or
+//constructor(_array_of_numbers, _modifier)
+// -- min and max values are read from Array
+// -- array need not be in a specific order
 import { getRandomInt } from "./getRandomInt.js";
 import { isNumeric } from "./isNumeric.js";
 /**
@@ -6,7 +12,6 @@ import { isNumeric } from "./isNumeric.js";
  * @typedef {Object} Dice - The Dice object
  * @property {number} iterations - number of iterations
  * @property {Object[]} results - Array of objects containing {index, value}
- * @property {number} average - Average of all numbers generated
  * @property {number} minimum_value - Minimum value passed to Dice constructor
  * @property {number} maximum_value - Maximum value passed to Dice constructor
  * @property {undefined|function} modifer - modifier function for modifying results
@@ -15,7 +20,6 @@ import { isNumeric } from "./isNumeric.js";
 export class Dice {
   #iterations=10000;
   #results;
-  #average;
   #minimum_value=1;
   #maximum_value=1;
   #modifer=undefined;
@@ -39,11 +43,6 @@ export class Dice {
     }
   };
   /**
-   * Returns the #average private property
-   * @returns {number}
-   */
-  getAverage () {return this.#average};//get average, Number
-  /**
    * @returns {number} - returns number of iterations
    */
   getIterations () {return this.#iterations;}//get number of iterations
@@ -59,6 +58,20 @@ export class Dice {
    * @returns {undefined|number|function} - returns modifier value
    */
   getModifier () {return this.#modifer;}//get modifier
+  /**
+   * @returns {function} - returns modifier function
+   */
+  getModifierFunction () {
+    let modifierFunction;
+    if(isNumeric(this.#modifer)){
+      modifierFunction=(_value)=>{return _value + +this.#modifer};
+    } else if (typeof this.#modifer==="function"){
+      modifierFunction=this.#modifer;
+    } else {
+      modifierFunction=(_value)=>{return _value};
+    }
+    return modifierFunction;
+  }//get modifier
   /**
    * @returns {Dice} - returns a new Dice object with the same min, max, and modifiers
    */
@@ -102,12 +115,12 @@ export class Dice {
       this.modifyValues((_value)=>{ return _value + +this.#modifer });
     } else if (this.#modifer!==undefined && typeof this.#modifer==="function"){
       this.modifyValues(this.#modifer);
-    } else {
+    } /* else {
       this.#average = this.#results.reduce((_avg,_element)=>{
       //calculate average of all generated values
       return _avg+=_element.value;
       },0)/this.#iterations;
-    }
+    } */
   };
   /**
    * Re-roll a value at a specific index
@@ -125,43 +138,13 @@ export class Dice {
       this.modifyValues((_value)=>{ return _value + +this.#modifer });
     } else if (this.#modifer!==undefined && typeof this.#modifer==="function"){
       this.modifyValues(this.#modifer);
-    } else {
+    }/*  else {
       this.#average = this.#results.reduce((_avg,_element)=>{
       //calculate average of all generated values
       return _avg+=_element.value;
       },0)/this.#iterations;
-    }
+    } */
   }
-  /**
-   * returns all values above the input value
-   * @param {string|number} _value - value to match
-   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
-   */
-  getAbove (_value) {//get all values above _value
-    if(!isNumeric(_value)){console.error("dice-class.js: getAbove requires a number for input.");return undefined;}
-    let above_results = this.#results.filter((_element)=>{return _element.value>+_value;});//.map((_element)=>{return _element.value});
-    return {count:above_results.length, values:above_results};
-  };
-  /**
-   * returns all values below the input value
-   * @param {string|number} _value - value to match
-   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
-   */
-  getBelow (_value) {//get all values below _value
-    if(!isNumeric(_value)){console.error("dice-class.js: getBelow requires a number for input.");return undefined;}
-    let below_results = this.#results.filter((_element)=>{return _element.value<+_value;});//.map((_element)=>{return _element.value});
-    return {count:below_results.length, values:below_results};
-  };
-  /**
-   * returns all values equal to the input value
-   * @param {string|number} _value - value to match
-   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
-   */
-  getEqual (_value) {//get all values equal to _value
-    if(!isNumeric(_value)){console.error("dice-class.js: getEqual requires a number for input.");return undefined;}
-    let equal = this.#results.filter((_element)=>{return _element.value==+_value;});//.map((_element)=>{return _element.value});
-    return {count:equal.length, values:equal};
-  };
   /**
    * returns the results Array
    * @returns {Object[]}
@@ -169,47 +152,11 @@ export class Dice {
   getResults () {//return raw results
     return this.#results;
   };
-  /**
-   * returns all values within the to the input range, inclusive
-   * @param {string|number} _min_value - starting value to compare
-   * @param {string|number} _max_value - ending value to compare
-   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
-   */
-  getWithinRange (_min_value, _max_value) {//return all values within the specified range, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("dice-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
-    let range = this.#results.filter((_element)=>{return _element.value>=+_value && _element.value<=+_value;});//.map((_element)=>{return _element.value});
-    return {count:equal.length, values:range};
-  };
-  /**
-   * runs all getAbove/Below/Equal/etc functions
-   * returns all generated results
-   * also returns the private properties of average and results
-   * @param {string|number} _value - value to match
-   * @returns {Object}
-   */
-  getAllForValue (_value) {//get above, below, equal, average, and all results
-    if(!isNumeric(_value)){console.error("dice-class.js: getAllForValue requires a number for input.");return undefined;}
-    let allForValue={};
-    allForValue["Above_"+_value]=this.getAbove(_value);
-    allForValue["Below_"+_value]=this.getBelow(_value);
-    allForValue["Equal_To_"+_value]=this.getEqual(_value);
-    allForValue["Average"]=this.#average;
-    allForValue["All_Results"]=this.#results;
-    return allForValue;
-  };
-  /**
-   * modifies all values within #results private property, 
-   * updates #averge private property
-   * @param {function} _function - function to modify generated values
-   */
   modifyValues (_function) {
     //pass a function to modify all values within and recalculate average
     this.#results=this.#results.map((_element)=>{
       return {index:_element.index, value:_function(_element.value)};
     });
-    this.#average = this.#results.reduce((_avg,_element)=>{
-      return _avg+=_element.value;
-    },0)/this.#iterations;
   };
   /**
    * modifies a single value using the #modifier private property
@@ -224,31 +171,6 @@ export class Dice {
     }
     return +_value;
   }
-  /**
-   * generates output of all possible modified values,
-   * then counts how many actual occurances of that value,
-   * and provides ratio
-   * @returns {Object[]} - [{value:{number}, count:{number}, ratio:{number}}]
-   */
-  getMetrics (){
-    //return all possible values, the occurance count, and the ratio of occurance
-    let metrics=[];
-    let localModifyValue;
-    if(isNumeric(this.#modifer)){
-      localModifyValue=(_value)=>{return _value + +this.#modifer};
-    } else if (typeof this.#modifer==="function"){
-      localModifyValue=this.#modifer;
-    } else {
-      localModifyValue=(_value)=>{return _value};
-    }
-    for(let value=this.#minimum_value; value<=this.#maximum_value; value++) {
-      let modifiedValue=localModifyValue(value);
-      let count=this.getEqual(modifiedValue).count;
-      let ratio=count/this.#iterations;
-      metrics.push({value:modifiedValue, count:count, ratio:ratio});
-    }
-    return metrics;
-  };
   /**
    * sets the value at the specified index to undefined
    * @param {string|number} _index - index of value to undefine
@@ -326,4 +248,21 @@ export class Dice {
 
     return explosion_dice;
   };
+
+  updateValues(_values_array){
+    if(!Array.isArray(_values_array)){
+      console.error("dice-class.js: updateValues requires an Array as input.");
+      return
+    }
+    if(_values_array.length==this.#iterations){
+      this.#results=_values_array;
+    } else if(_values_array.length>this.#iterations){
+      console.warn("dice-class.js: updateValues passed array that is longer than current iterations, reducing to iterations length.");
+      this.#results = _values_array.toSpliced(0,this.#iterations);
+    } else if(_values_array.length<this.#iterations){
+      console.warn("dice-class.js: updateValues passed array that is shoter than current iterations, padding with undefined.");
+      this.#results = _values_array.toSpliced(0);
+      this.#results.fill(undefined,_values_array.length);
+    }
+  }
 };
