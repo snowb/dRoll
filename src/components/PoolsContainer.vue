@@ -1,14 +1,14 @@
 <script setup>
   import { toRaw, triggerRef, shallowRef, reactive, ref} from 'vue';
   import PoolComponent from './PoolComponent.vue';
-  import { Pool } from '../libs/pool-class';
+  import { Metrics_Pool } from '../libs/metrics-pool-class';
   
   const pools=shallowRef([]);
 
   const forceRender=()=>{return Math.random()};//passing non-tracked objects, needed to trigger changes
 
   const addPool=()=>{
-    pools.value=[...pools.value, new Pool()];
+    pools.value=[...pools.value, new Metrics_Pool()];
     triggerRef(pools);
   };
   const addDice=(_arguments)=>{

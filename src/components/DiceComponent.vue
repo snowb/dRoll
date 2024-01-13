@@ -4,10 +4,10 @@
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
   import DiceSettingComponent from './DiceSettingComponent.vue';
-  import { Dice } from '../libs/dice-class';
+  import { Metrics_Dice } from '../libs/metrics-dice-class';
 
   const props=defineProps({
-    dice: Object,
+    dice: Metrics_Dice,
     dice_index: Number,
     force_render: Number,
     re_roll_explodes: Number,
@@ -89,7 +89,7 @@
   }
 
   const explodeDice=(_explode_options)=>{
-    let added_dice=new Dice(_explode_options.added_dice_minimum,_explode_options.added_dice_maximum);
+    let added_dice=new Metrics_Dice(_explode_options.added_dice_minimum,_explode_options.added_dice_maximum);
     let value_to_explode_on = "max";
     if(_explode_options.target_explode_on=="min"){
       value_to_explode_on = "min";

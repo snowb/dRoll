@@ -4,9 +4,10 @@
   import PoolMetricsComponent from './PoolMetricsComponent.vue';
   import PoolSettingComponent from './PoolSettingComponent.vue';
   import { isNumeric } from '../libs/isNumeric';
+  import { Metrics_Pool } from '../libs/metrics-pool-class';
 
   const props=defineProps({
-    pool: Object,
+    pool: Metrics_Pool,
     pool_index: Number,
     force_render: Number,
     re_roll_explodes: Number
@@ -57,6 +58,7 @@
 
   const showPoolMetricsValue=computed(()=>{
     props.force_render;
+    console.log(props.pool.getFullRollResults())
     if(props.pool.getFullRollResults().length>0 && showPoolMetrics.value===true) {
       return {text:"Hide",value:true};
     }

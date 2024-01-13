@@ -1,10 +1,10 @@
 <script setup>
-import { Dice } from '../libs/dice-class';
+import { Metrics_Dice } from '../libs/metrics-dice-class';
 import { isNumeric } from '../libs/isNumeric';
 import { ref, reactive, toRaw, computed, watchEffect } from 'vue';
 
 const props=defineProps({
-    dice: Dice,
+    dice: Metrics_Dice,
     dice_index: Number,
     force_render: Number,
     re_roll_explodes: Number

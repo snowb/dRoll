@@ -1,10 +1,10 @@
 <script setup>
 import { isNumeric } from '../libs/isNumeric';
-import { Pool } from '../libs/pool-class';
+import { Metrics_Pool } from '../libs/metrics-pool-class';
 import { ref, reactive, computed, watchEffect } from 'vue';
 
 const props=defineProps({
-    pool: Pool,
+    pool: Metrics_Pool,
     force_render: Number,
     pool_index: Number
   });

@@ -2,9 +2,10 @@
 //Component for displaying metrics of associated Pool object
 import MetricsGraphComponent from './MetricsGraphComponent.vue';
 import { ref, watchEffect, computed } from 'vue';
+import { Metrics_Pool } from '../libs/metrics-pool-class';
 
   const props=defineProps({
-    pool: Object,
+    pool: Metrics_Pool,
     metrics: Object,
     force_render: Number,
     show_set_metrics: Boolean,
