@@ -1060,11 +1060,12 @@ export class Metrics_Pool extends Pool {
   addDice(_minimum_value_or_dice, _maximum_value, _modifier) {
     if(Array.isArray(_minimum_value_or_dice)){
       _minimum_value_or_dice.forEach((_dice)=>{
-        if(_dice instanceof Dice){
+        if(_dice instanceof Metrics_Dice) {
+          this.updateDice(undefined, _dice);
+        } else if(_dice instanceof Dice){
           let to_metrics_dice = new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifierFunction());
           this.updateDice(undefined, to_metrics_dice);
-        } else if(_dice instanceof Metrics_Dice)
-        this.updateDice(undefined, _dice);
+        } 
       });
     } else {
       this.updateDice(undefined, _minimum_value_or_dice, _maximum_value, _modifier);
@@ -1080,8 +1081,12 @@ export class Metrics_Pool extends Pool {
    */
   updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier){
     let new_dice;
-    if(_minimum_value_or_dice instanceof Dice){
+    if(_minimum_value_or_dice instanceof Dice && !_minimum_value_or_dice instanceof Metrics_Dice){
       new_dice = new Metrics_Dice(_minimum_value_or_dice.getMinimum(), _minimum_value_or_dice.getMaximum(), _minimum_value_or_dice.getModifierFunction());
+      super.updateDice(undefined, new_dice);
+    } else if(_minimum_value_or_dice instanceof Metrics_Dice){
+      new_dice=_minimum_value_or_dice;
+      super.updateDice(undefined, new_dice);
     } else {
       if(!isNumeric(_minimum_value_or_dice)) {
       console.error("metrics-pool-class.js: Invalid minimum value passed to updateDice() method.");
@@ -1092,9 +1097,11 @@ export class Metrics_Pool extends Pool {
         return undefined
       }
       new_dice = new Metrics_Dice(_minimum_value_or_dice, _maximum_value, _modifier);
+      new_dice.roll();
+      super.updateDice(undefined, new_dice);
     }
     //super.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier);
-    super.updateDice(undefined, new_dice);
+    //super.updateDice(undefined, new_dice);
     
     let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, super.getIterations());
     this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
@@ -1147,19 +1154,23 @@ export class Metrics_Pool extends Pool {
     let pool_explosion_results=[];
     super.getFullRollResults().forEach((_dice, _index)=>{
       let exploded_dice=_dice.explodeValue(_value_to_explode_on, _explode_limit, _additional_dice);
-      exploded_dice.forEach((_exploded_dice)=>{
+      /* exploded_dice.forEach((_exploded_dice)=>{
         _exploded_dice.setAdditionalText("#"+(_index+1)+" Explode");
-      });
+      }); */
+      
       pool_explosion_results=[...pool_explosion_results,...exploded_dice];
     });
-    pool_explosion_results=pool_explosion_results.map((_dice)=>{
+    pool_explosion_results=pool_explosion_results.map((_dice, _index)=>{
       let new_dice = new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifierFunction());
+      //new_dice.updateValues(_dice.getResults());
       new_dice.updateValues(_dice.getResults());
+      new_dice.setAdditionalText("#"+(_index+1)+" Explode");
       return new_dice;
     });
     //map from Dice to Metrics_Dice
-    pool_explosion_results.forEach((_new_dice)=>{
+    /* pool_explosion_results.forEach((_new_dice)=>{
       this.addDice(_new_dice);
-    });
+    }); */
+    this.addDice(pool_explosion_results);
   };
 };

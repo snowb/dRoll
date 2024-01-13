@@ -336,7 +336,7 @@ export class Pool {
    * @returns {undefined} - on error
    */
   updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier){
-    if(!isNumeric(_minimum_value_or_dice) && !(_minimum_value_or_dice instanceof Dice || _minimum_value_or_dice instanceof Metrics_Dice)) {
+    if(!isNumeric(_minimum_value_or_dice) && !(_minimum_value_or_dice instanceof Dice)) {
       console.warn("pool-class.js: Invalid minimum value passed to updateDice() method.");
       return undefined;
     }
@@ -344,9 +344,9 @@ export class Pool {
       console.error("pool-class.js: Invalid maximum value passed to updateDice() method.");
       return undefined
     }
-    if(_target_dice===undefined && (_minimum_value_or_dice instanceof Dice || _minimum_value_or_dice instanceof Metrics_Dice)){
+    if(_target_dice===undefined && (_minimum_value_or_dice instanceof Dice)){
       this.#fullRollResults.push(_minimum_value_or_dice);
-      this.#fullRollResults[this.#fullRollResults.length-1].roll();
+      //this.#fullRollResults[this.#fullRollResults.length-1].roll();
       this.#calculateSecondaryValues();
       return;
     }
