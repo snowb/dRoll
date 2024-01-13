@@ -196,6 +196,7 @@ export class Metrics_Pool extends Pool {
       let dice_results=[];
       let is_keep=false;
       for(let roll=0;roll<rolls;roll++){
+        
         let dice_value=super.getFullRollResults()[roll].getResults()[index].value
         dice_results.push(dice_value);
         switch(_operation) {
@@ -1065,10 +1066,12 @@ export class Metrics_Pool extends Pool {
         } else if(_dice instanceof Dice){
           let to_metrics_dice = new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifierFunction());
           this.updateDice(undefined, to_metrics_dice);
-        } 
+        }
+        this.#dice_count++;
       });
     } else {
       this.updateDice(undefined, _minimum_value_or_dice, _maximum_value, _modifier);
+      this.#dice_count++;
     }
   };
   /**
