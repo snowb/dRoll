@@ -58,7 +58,6 @@
 
   const showPoolMetricsValue=computed(()=>{
     props.force_render;
-    console.log(props.pool.getFullRollResults())
     if(props.pool.getFullRollResults().length>0 && showPoolMetrics.value===true) {
       return {text:"Hide",value:true};
     }
