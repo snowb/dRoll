@@ -346,6 +346,7 @@ export class Pool {
     }
     if(_target_dice===undefined && (_minimum_value_or_dice instanceof Dice || _minimum_value_or_dice instanceof Metrics_Dice)){
       this.#fullRollResults.push(_minimum_value_or_dice);
+      this.#fullRollResults[this.#fullRollResults.length-1].roll();
       this.#calculateSecondaryValues();
       return;
     }

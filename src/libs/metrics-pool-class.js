@@ -113,7 +113,7 @@ export class Metrics_Pool extends Pool {
    * return #fullRollResults private property
    * @returns {Metrics_Dice[]}
    */
-  getFullRollResults () { return super.getFullRollResults; };
+  getFullRollResults () { return super.getFullRollResults(); };
   /**
    * return #rollResults private property
    * @returns {Object[]} - [{index:number, roll:number[]}]
@@ -1084,15 +1084,18 @@ export class Metrics_Pool extends Pool {
       new_dice = new Metrics_Dice(_minimum_value_or_dice.getMinimum(), _minimum_value_or_dice.getMaximum(), _minimum_value_or_dice.getModifierFunction());
     } else {
       if(!isNumeric(_minimum_value_or_dice)) {
-      console.warn("metrics-pool-class.js: Invalid minimum value passed to updateDice() method.");
+      console.error("metrics-pool-class.js: Invalid minimum value passed to updateDice() method.");
       return undefined;
       } 
       if(!isNumeric(_maximum_value)) {
         console.error("metrics-pool-class.js: Invalid maximum value passed to updateDice() method.");
         return undefined
       }
+      new_dice = new Metrics_Dice(_minimum_value_or_dice, _maximum_value, _modifier);
     }
-    super.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier);
+    //super.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier);
+    super.updateDice(undefined, new_dice);
+    
     let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, super.getIterations());
     this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
     this.#secondaryMetrics.pool_median = metrics_secondaries.median;
