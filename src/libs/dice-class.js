@@ -43,6 +43,17 @@ export class Dice {
     }
   };
   /**
+   * @param {number|string} _iterations - number of iterations for Dice to roll
+   * @returns {undefined} - on bad input
+   */
+  setIterations (_iterations) {
+    if(!isNumeric(_iterations)){
+      console.warn("dice-class.js: setIterations requires a number as input. No changes made.");
+      return;
+    }
+    this.#iterations = +_iterations;
+  }
+  /**
    * @returns {number} - returns number of iterations
    */
   getIterations () {return this.#iterations;}//get number of iterations
@@ -101,11 +112,11 @@ export class Dice {
    */
   roll (_iterations) {
     //mutating method to enable re-rolling
-    if(!isNumeric(_iterations) || _iterations===undefined){
+    /* if(!isNumeric(_iterations) || _iterations===undefined){
       console.warn("dice-class.js: Invalid iteration value, assuming 10,000.");
       this.#iterations=10000;
     }
-    this.#iterations=isNumeric(_iterations) ? +_iterations : this.#iterations;
+    this.#iterations=isNumeric(_iterations) ? +_iterations : this.#iterations; */
     this.#results = Array(this.#iterations).fill(null).map((_element, _index)=>{
       //create an array equal to iterations, fill with 0s, map to object with index and random integer between minimum and maximum values
       return {index:_index, value:getRandomInt(this.#minimum_value,this.#maximum_value)};
@@ -235,7 +246,8 @@ export class Dice {
         console.warn("dice-class.js: ExplodeValue is above Dice maximum or below Dice minimum, skipping iteration "+added_dice+".");
         continue;
       }
-      new_dice.roll(this.getIterations());
+      new_dice.setIterations(this.#iterations);
+      new_dice.roll();
       new_dice.setAdditionalText("Exploding");
       explosion_dice_source.getResults().filter((_element)=>{
         return _element.value!=explode_on_value;
@@ -245,7 +257,6 @@ export class Dice {
       explosion_dice.push(new_dice);
       explosion_dice_source=new_dice;
     }
-
     return explosion_dice;
   };
 

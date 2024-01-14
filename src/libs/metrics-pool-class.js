@@ -169,13 +169,13 @@ export class Metrics_Pool extends Pool {
      */
   };
 
-  getIterations(){
+ /*  getIterations(){
     return super.getIterations();
-  };
+  }; */
   
-  setIterations(_input){
+/*   setIterations(_input){
     super.setIterations(_input);
-  };
+  }; */
 
   getDiceCount(){
     return this.#dice_count;
@@ -1061,14 +1061,20 @@ export class Metrics_Pool extends Pool {
   addDice(_minimum_value_or_dice, _maximum_value, _modifier) {
     if(Array.isArray(_minimum_value_or_dice)){
       _minimum_value_or_dice.forEach((_dice)=>{
+        _dice.setIterations(this.getIterations());
         if(_dice instanceof Metrics_Dice) {
           this.updateDice(undefined, _dice);
         } else if(_dice instanceof Dice){
           let to_metrics_dice = new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifierFunction());
+          to_metrics_dice.setIterations(this.getIterations());
+          to_metrics_dice.updateValues(_dice.getResults());
           this.updateDice(undefined, to_metrics_dice);
         }
         this.#dice_count++;
       });
+    } else if(_minimum_value_or_dice instanceof Metrics_Dice){
+      _minimum_value_or_dice.setIterations(this.getIterations());
+      this.updateDice(undefined, _minimum_value_or_dice);
     } else {
       this.updateDice(undefined, _minimum_value_or_dice, _maximum_value, _modifier);
       this.#dice_count++;
@@ -1086,9 +1092,11 @@ export class Metrics_Pool extends Pool {
     let new_dice;
     if(_minimum_value_or_dice instanceof Dice && !_minimum_value_or_dice instanceof Metrics_Dice){
       new_dice = new Metrics_Dice(_minimum_value_or_dice.getMinimum(), _minimum_value_or_dice.getMaximum(), _minimum_value_or_dice.getModifierFunction());
+      new_dice.setIterations(this.getIterations());
       super.updateDice(undefined, new_dice);
     } else if(_minimum_value_or_dice instanceof Metrics_Dice){
       new_dice=_minimum_value_or_dice;
+      new_dice.setIterations(this.getIterations());
       super.updateDice(undefined, new_dice);
     } else {
       if(!isNumeric(_minimum_value_or_dice)) {
@@ -1100,6 +1108,7 @@ export class Metrics_Pool extends Pool {
         return undefined
       }
       new_dice = new Metrics_Dice(_minimum_value_or_dice, _maximum_value, _modifier);
+      new_dice.setIterations(this.getIterations());
       new_dice.roll();
       super.updateDice(_target_dice, new_dice);
     }
@@ -1156,6 +1165,7 @@ export class Metrics_Pool extends Pool {
     }
     let pool_explosion_results=[];
     super.getFullRollResults().forEach((_dice, _index)=>{
+      _dice.setIterations(this.getIterations());
       let exploded_dice=_dice.explodeValue(_value_to_explode_on, _explode_limit, _additional_dice);
       /* exploded_dice.forEach((_exploded_dice)=>{
         _exploded_dice.setAdditionalText("#"+(_index+1)+" Explode");
@@ -1166,6 +1176,7 @@ export class Metrics_Pool extends Pool {
     pool_explosion_results=pool_explosion_results.map((_dice, _index)=>{
       let new_dice = new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifierFunction());
       //new_dice.updateValues(_dice.getResults());
+      new_dice.setIterations(this.getIterations());
       new_dice.updateValues(_dice.getResults());
       new_dice.setAdditionalText("#"+(_index+1)+" Explode");
       return new_dice;

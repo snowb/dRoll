@@ -55,7 +55,11 @@ export class Pool {
       else if(typeof _iterations!=="undefined") {
         console.warn("pool-class.js: Invalid iterations passed, assuming 10,000.");
       }
-      this.#fullRollResults.forEach((_element)=>{_element.roll(this.#iterations)});
+      this.#fullRollResults.forEach((_element)=>{
+        _element.setIterations(this.#iterations);
+        _element.roll();
+        //_element.roll(this.#iterations);
+      });
       this.#calculateSecondaryValues();
     }
   };
@@ -116,7 +120,11 @@ export class Pool {
    * rolls all Dice in the Pool, calculates secondary values
    */
   rollPool () {
-    this.#fullRollResults.forEach((_element)=>{_element.roll(this.#iterations)});
+    this.#fullRollResults.forEach((_element)=>{
+      _element.setIterations(this.#iterations);
+      _element.roll();
+      //_element.roll(this.#iterations);
+    });
     //this.#calculatePoolOtherValues();
     this.#calculateSecondaryValues();
   };
@@ -319,6 +327,7 @@ export class Pool {
   addDice(_minimum_value_or_dice, _maximum_value, _modifier) {
     if(Array.isArray(_minimum_value_or_dice)){
       _minimum_value_or_dice.forEach((_dice)=>{
+        _dice.setIterations(this.#iterations);
         if(_dice instanceof Dice || _dice instanceof Metrics_Dice){
           this.updateDice(undefined, _dice);
         }
@@ -345,6 +354,7 @@ export class Pool {
       return undefined
     }
     if(_target_dice===undefined && (_minimum_value_or_dice instanceof Dice)){
+      _minimum_value_or_dice.setIterations(this.#iterations);
       this.#fullRollResults.push(_minimum_value_or_dice);
       //this.#fullRollResults[this.#fullRollResults.length-1].roll();
       this.#calculateSecondaryValues();
@@ -358,11 +368,14 @@ export class Pool {
       } else {
         this.#fullRollResults[target_dice]=new Dice(_minimum_value_or_dice, _maximum_value, _modifier);
       }
+      this.#fullRollResults[target_dice].setIterations(this.#iterations);
     } else {
       this.#fullRollResults.push(new Dice(_minimum_value_or_dice, _maximum_value, _modifier));
       target_dice = this.#fullRollResults.length-1;
+      this.#fullRollResults[target_dice].setIterations(this.#iterations);
     }
-    this.#fullRollResults[target_dice].roll(this.#iterations);
+    //this.#fullRollResults[target_dice].roll(this.#iterations);
+    this.#fullRollResults[target_dice].roll();
     this.#calculateSecondaryValues();
   };
   /**
@@ -375,7 +388,8 @@ export class Pool {
       console.warn("pool-class.js: Invalid value passed to reRollDice() method.");
       return undefined;
     }
-    this.#fullRollResults[_dice_index].roll(this.#iterations);
+    //this.#fullRollResults[_dice_index].roll(this.#iterations);
+    this.#fullRollResults[_dice_index].roll();
     this.#calculateSecondaryValues();
     /* this.#calculateSequences();
     this.#calculateSets(); */
