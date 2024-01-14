@@ -268,7 +268,7 @@ export class Metrics_Pool extends Pool {
           break;
       }
       if(is_keep) {
-        _operation_result.push({index:_index, values:_sum_value});
+        _operation_result.push({index:_index, values:[_sum_value]});
       }
       return _operation_result;
     },[]);    
@@ -288,20 +288,37 @@ export class Metrics_Pool extends Pool {
       case "even":
         filtered_array=this.getEven();
         break;
+      case "sum_even":
+        filtered_array=this.getSumEven();
+        break;
       case "odd":
         filtered_array=this.getOdd();
+        break;
+      case "sum_odd":
+        filtered_array=this.getSumOdd();
         break;
       case "equal":
         filtered_array=this.getEqual(_first_target_value);
         break;
+      case "sum_equal":
+        filtered_array=this.getSumEqual(_first_target_value);
+        break;
       case "above":
         filtered_array=this.getAbove(_first_target_value);
         break;
+      case "sum_above":
+        filtered_array=this.getSumAbove(_first_target_value);
+        break;
       case "below":
         filtered_array=this.getBelow(_first_target_value);
+      case "sum_below":
+        filtered_array=this.getSumBelow(_first_target_value);
         break;
       case "range":
         filtered_array=this.getWithinRange(_first_target_value,_second_target_value);
+        break;
+      case "sum_range":
+        filtered_array=this.getSumWithinRange(_first_target_value,_second_target_value);
         break;
       case "highest":
         filtered_array=this.getRollResults();
@@ -320,7 +337,7 @@ export class Metrics_Pool extends Pool {
       if(_result_target!="dice"){
         new_pool_object.values=_pool_object.values;
         new_pool_object.sum=_pool_object.values.reduce((_sum, _value)=>{
-          return _sum+_value;
+          return _sum + _value;
         },0);
       } else {
         switch(_filter_type){
@@ -392,6 +409,15 @@ export class Metrics_Pool extends Pool {
     return this.#getFilterMetrics("even", undefined, undefined, _result_target);
    };
   /**
+   * Return metrics for the given filter
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Even Dice or only the Pool Value OF Even Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getSumEvenMetrics(_result_target){
+    return this.#getFilterMetrics("sum_even", undefined, undefined, _result_target);
+   };
+  /**
    * @returns {Dice[]} - odd results
    */
   getOdd(){
@@ -405,6 +431,15 @@ export class Metrics_Pool extends Pool {
    */
   getOddMetrics(_result_target){
     return this.#getFilterMetrics("odd", undefined, undefined, _result_target);
+  };
+  /**
+   * Return metrics for the given filter
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Odd Dice or only the Pool Value OF Odd Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getSumOddMetrics(_result_target){
+    return this.#getFilterMetrics("sum_odd", undefined, undefined, _result_target);
   };
   /**
    * Updates the dice_metrics private property based on current Pool
@@ -484,6 +519,15 @@ export class Metrics_Pool extends Pool {
     return this.#getFilterMetrics("above", +_value, undefined, _result_target);
   };
   /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getSumAboveMetrics(_value){
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumAboveMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("sum_above", +_value, undefined, undefined);
+  };
+  /**
   * returns numbers below the provided value
   * @param {string|number} _value - numeric for value to compare
   * @returns {Object[]} - [{index:number, values:number[]}]
@@ -502,6 +546,15 @@ export class Metrics_Pool extends Pool {
   getBelowMetrics(_value, _result_target){
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getBelowMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("below", +_value, undefined, _result_target);
+  };
+  /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getSumBelowMetrics(_value){
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumBelowMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("sum_below", +_value, undefined, undefined);
   };
   /**
   * returns numbers equal to the provided value
@@ -529,6 +582,17 @@ export class Metrics_Pool extends Pool {
     return this.#getFilterMetrics("equal", +_value, undefined, _result_target);
   };
   /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getSumEqualMetrics(_value){
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumEqualMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("sum_equal", +_value, undefined, undefined);
+  };
+  /**
    * returns numbers within the specified range, inclusive
    * @param {string|number} _min_value 
    * @param {string|number} _max_value 
@@ -548,6 +612,15 @@ export class Metrics_Pool extends Pool {
   getWithinRangeMetrics(_min_value, _max_value, _result_target){
     if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getWithinRangeMetrics requires a number for Minimum and Maximum values.");return undefined;}
     return this.#getFilterMetrics("range", +_min_value, +_max_value, _result_target);
+  };
+  /**
+   * Return metrics for the given filter
+   * @param {string|number} _value - numeric for value to compare
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getSumWithinRangeMetrics(_min_value, _max_value){
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getSumWithinRangeMetrics requires a number for Minimum and Maximum values.");return undefined;}
+    return this.#getFilterMetrics("sum_range", +_min_value, +_max_value, undefined);
   };
   getLowestMetrics(_dice_count){
     if(_dice_count!==undefined && (!isNumeric(_dice_count) || _dice_count >= this.#dice_count)){
