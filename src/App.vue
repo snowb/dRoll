@@ -1,11 +1,16 @@
 <script setup>
-import { ref } from 'vue';
+import { onMounted, ref } from 'vue';
 import PoolsContainer from './components/PoolsContainer.vue';
 
 let showInformation=ref(false);
 const toggleInformation=()=>{
   showInformation.value=!showInformation.value;
-}
+};
+
+onMounted(()=>{
+  let queryString=new URLSearchParams(document.location.search);
+  //console.log(queryString.get("test"))
+});
 </script>
 
 <template>
