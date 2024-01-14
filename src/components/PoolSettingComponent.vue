@@ -1,7 +1,7 @@
 <script setup>
 import { isNumeric } from '../libs/isNumeric';
 import { Metrics_Pool } from '../libs/metrics-pool-class';
-import { ref, reactive, computed, watchEffect } from 'vue';
+import { ref, reactive, computed, watchEffect, watch } from 'vue';
 
 const props=defineProps({
     pool: Metrics_Pool,
@@ -20,7 +20,7 @@ filter_options.drop_count=1;
 
 const emit=defineEmits(["filterPoolDice","dropPoolDice"]);
 
-let showFitlerOptions=ref(false);
+let showDiceFilterOptions=ref(false);
 
 const updateFilterOption=(_event, _filter_type, _filter_type_modifier)=>{
   filter_options.filter_type=_filter_type;
@@ -66,12 +66,22 @@ const emitFilter=()=>{
   });
 };
 
+let showPoolFilterOptions=ref(false);
 
-let showExplodeOptions=ref(false);
+//let showExplodeOptions=ref(false);
 
 watchEffect(()=>{
-  if(showFitlerOptions.value==false){
+  if(showDiceFilterOptions.value==false && showPoolFilterOptions.value==false){
     emit("filterPoolDice",{type:"full"});
+  }
+});
+
+watch([showDiceFilterOptions, showPoolFilterOptions], ([_new_dice_value, _new_pool_value],[_old_dice_value, _old_pool_value])=>{
+  if(_new_dice_value==true && _old_dice_value==false){
+    showPoolFilterOptions.value=false;
+  }
+  if (_new_pool_value==true && _old_pool_value==false){
+    showDiceFilterOptions.value=false;
   }
 });
 
@@ -82,47 +92,71 @@ const inputSize=computed(()=>{
 </script>
 
 <template>
-  <div>
-    <div class="small bold"><input type="checkbox" v-model="showFitlerOptions" :checked="false"/>Filter Pool By Dice</div>
-    <div v-if="showFitlerOptions" class="small" style="padding-left:0.5em;">
-      <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool">Pool Contains Dice ...</div>
-      <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
-      <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
-      <br>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','pool')"/>Equal To</span>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','pool')"/>Above</span>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
-      <br>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
-      <div style="border-top: thin solid #242424; margin-top:0.2em;"></div>
-      <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool, others are removed">Pool Composed Of Dice ...</div>
-      <span title="Show Lowest Dice in the Pool."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'lowest')"/>Lowest</span>&nbsp;&nbsp;
-      <span title="Show Highest Dice in the Pool."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'highest')"/>Highest <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.drop_count"/></span>&nbsp;&nbsp;&nbsp;&nbsp; 
-      <span title="Show Pool with non-Even Dice removed."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','dice')"/>Even</span>&nbsp;&nbsp;
-      <span title="Show Pool with non-Odd Dice removed."><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','dice')"/>Odd</span>
-      <br>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','dice')"/>Equal To</span>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','dice')"/>Above</span>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','dice')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
-      <br>
-      <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','dice')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
-      <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
-        <span style="visibility: hidden;" class="button">Filter</span>
-        <span class="button far_right_position" @click="emitFilter">Filter</span>
+  <div style="overflow:hidden;">
+    <div class="small bold check_box_root"><input type="checkbox" v-model="showDiceFilterOptions" :checked="false"/>Filter By Dice Value</div>
+    <Transition>
+      <div v-if="showDiceFilterOptions" class="small" style="padding-left:0.5em;">
+        <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool">Pool Contains Dice ...</div>
+        <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
+        <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
+        <br>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','pool')"/>Equal To</span>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','pool')"/>Above</span>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+        <br>
+        <span><input type="radio" :name="'filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
+        <div style="border-top: thin solid #242424; margin-top:0.2em;"></div>
+        <div style="font-weight: bold;" title="At least 1 Dice of selected value is in pool, others are removed">Pool Composed Of Dice ...</div>
+        <span title="Show Lowest Dice in the Pool."><input type="radio" :name="'fdice_ilter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'lowest')"/>Lowest</span>&nbsp;&nbsp;
+        <span title="Show Highest Dice in the Pool."><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'highest')"/>Highest <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.drop_count"/></span>&nbsp;&nbsp;&nbsp;&nbsp; 
+        <span title="Show Pool with non-Even Dice removed."><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','dice')"/>Even</span>&nbsp;&nbsp;
+        <span title="Show Pool with non-Odd Dice removed."><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','dice')"/>Odd</span>
+        <br>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','dice')"/>Equal To</span>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','dice')"/>Above</span>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','dice')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+        <br>
+        <span><input type="radio" :name="'dice_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','dice')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
+        <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
+          <span style="visibility: hidden;" class="button">Filter</span>
+          <span class="button far_right_position" @click="emitFilter">Filter</span>
+        </div>
       </div>
-    </div>
-    <div v-if="false" class="small bold" style="border-top:thin solid #242424;"><input type="checkbox" v-model="showExplodeOptions" :checked="false"/>Explode Pool Dice</div>
-    <div v-if="showExplodeOptions" class="small" style="padding-left:0.5em;">
+    </Transition>
+    <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolFilterOptions" :checked="false"/>Filter By Pool Value</div>
+    <Transition>
+      <div v-if="showPoolFilterOptions" class="small" style="padding-left:0.5em;">
+        <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'sum_even','pool')"/>Even</span>&nbsp;&nbsp;
+        <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'sum_odd','pool')"/>Odd</span>      
+        <br>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_equal','pool')"/>Equal To</span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_above','pool')"/>Above</span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+        <br>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
+        <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
+          <span style="visibility: hidden;" class="button">Filter</span>
+          <span class="button far_right_position" @click="emitFilter">Filter</span>
+        </div>
+      </div>
+    </Transition>
+    <!-- <div v-if="false" class="small bold" style="border-top:thin solid #242424;"><input type="checkbox" v-model="showExplodeOptions" :checked="false"/>Explode Pool Dice</div> -->
+    <!-- <div v-if="showExplodeOptions" class="small" style="padding-left:0.5em;"> -->
       <!--
 
         need explode based on each Dice (max, min, value) and Pool (max, min, value) 
         maybe not Pool? Leave as individual dice option 
       -->
-    </div>
+    <!-- </div> -->
   </div>
 </template>
 
 <style scoped>
+.check_box_root{
+  background-color: #e7e7e7; 
+  position: relative; 
+  z-index: 10;
+}
  .small{
     font-size:small;
   }
@@ -154,5 +188,16 @@ const inputSize=computed(()=>{
   .button:active {
     box-shadow: 0px 0px 0px 0px #242424;
     transform: translate(2px,2px);
+  }
+
+  .v-enter-active,
+  .v-leave-active {
+    transition: transform 0.25s ease;
+    transform: translateY(0%);
+  }
+
+  .v-enter-from,
+  .v-leave-to {
+    transform: translateY(-100%);
   }
 </style>
