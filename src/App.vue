@@ -9,7 +9,8 @@ const toggleInformation=()=>{
 
 onMounted(()=>{
   let queryString=new URLSearchParams(document.location.search);
-  //console.log(queryString.get("test"))
+  //console.log(JSON.parse(queryString.get("pools")));
+  //console.log(JSON.stringify([{f:1,t:10}])) = [{"f":1,"t":10}]
 });
 </script>
 

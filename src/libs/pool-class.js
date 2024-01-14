@@ -351,17 +351,19 @@ export class Pool {
       return;
     }
     let target_dice;
-    if(_target_dice!==undefined && isNumeric(_target_dice) && _target_dice<this.#fullRollResults.length){
-      this.#fullRollResults[_target_dice]=new Dice(_minimum_value_or_dice, _maximum_value, _modifier);
+    if(isNumeric(_target_dice) && _target_dice<this.#fullRollResults.length){
       target_dice = +_target_dice;
+      if(_minimum_value_or_dice instanceof Dice){
+        this.#fullRollResults[target_dice]=_minimum_value_or_dice;
+      } else {
+        this.#fullRollResults[target_dice]=new Dice(_minimum_value_or_dice, _maximum_value, _modifier);
+      }
     } else {
       this.#fullRollResults.push(new Dice(_minimum_value_or_dice, _maximum_value, _modifier));
       target_dice = this.#fullRollResults.length-1;
     }
     this.#fullRollResults[target_dice].roll(this.#iterations);
     this.#calculateSecondaryValues();
-    /* this.#calculateSequences();
-    this.#calculateSets(); */
   };
   /**
    * re-rolls the Dice object at the specified index

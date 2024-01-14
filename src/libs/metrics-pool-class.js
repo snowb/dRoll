@@ -1101,7 +1101,7 @@ export class Metrics_Pool extends Pool {
       }
       new_dice = new Metrics_Dice(_minimum_value_or_dice, _maximum_value, _modifier);
       new_dice.roll();
-      super.updateDice(undefined, new_dice);
+      super.updateDice(_target_dice, new_dice);
     }
     //super.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier);
     //super.updateDice(undefined, new_dice);
