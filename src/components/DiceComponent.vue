@@ -122,13 +122,12 @@
         <v-icon style="visibility: hidden;" name="io-close-circle" scale="1" fill="#00000000"></v-icon>
       </div>
       <div style="display: flex; flex-direction: row; align-items: center; position:relative; margin-bottom:0.2em;"> 
-        {{ is_exploded_dice }}
         <span v-if="editMode=='basic'" style="display:inline-flex; padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
           d&nbsp;<input :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
         </span>
-        <span v-if="editMode=='advanced'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
+        <span v-if="editMode=='advanced'" style="display:inline-flex; padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
           <input :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')" v-model="new_dice.minimum"/>
-          to 
+          &nbsp;to&nbsp;
           <input :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
         </span>
         <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
