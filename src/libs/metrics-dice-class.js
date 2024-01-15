@@ -20,7 +20,7 @@ export class Metrics_Dice extends Dice {
 
   constructor(_minimum_value, _maximum_value, _modifier){
     super(_minimum_value, _maximum_value, _modifier);
-    this.#modifier_function = this.getModifierFunction();
+    this.#modifier_function = super.getModifierFunction();
     this.#maximum_modified_value = this.#modifier_function(_maximum_value);
     this.#minimum_modified_value = this.#modifier_function(_minimum_value);
   }
