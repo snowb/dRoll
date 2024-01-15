@@ -54,21 +54,22 @@
   const updateValue=(_value_to_update)=>{
     let target_dice=pools.value[_value_to_update.target_pool_index].getFullRollResults()[_value_to_update.target_dice_index];
     let new_values={
-      target_dice:_value_to_update.target_dice_index
+      target_dice: _value_to_update.target_dice_index,
+      min: target_dice.getMinimum(),
+      max: target_dice.getMaximum(),
+      mod: target_dice.getModifier()
     };
-    let action="";
+
+    let action="updateDice";
     switch(_value_to_update.target_value){
       case "min":
-        new_values.min=_value_to_update.new_value;
-        new_values.max=target_dice.getMaximum();
-        new_values.modifier=target_dice.getModifier();
-        action="updateDice";
+        new_values.min = _value_to_update.new_value;
         break;
       case "max":
-        new_values.max=_value_to_update.new_value;
-        new_values.min=target_dice.getMinimum();
-        new_values.modifier=target_dice.getModifier();
-        action="updateDice";
+        new_values.max = _value_to_update.new_value;
+        break;
+      case "mod":
+        new_values.mod = _value_to_update.new_value;
         break;
       case "iterations":
         action="updateIterations";
@@ -76,7 +77,7 @@
     }
     switch(action){
       case "updateDice":
-        pools.value[_value_to_update.target_pool_index].updateDice(new_values.target_dice, new_values.min, new_values.max, new_values.modifier);
+        pools.value[_value_to_update.target_pool_index].updateDice(new_values.target_dice, new_values.min, new_values.max, new_values.mod);
         break;
       case "updateIterations":
         pools.value[_value_to_update.target_pool_index].setIterations(+_value_to_update.new_value);
