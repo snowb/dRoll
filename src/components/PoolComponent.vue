@@ -13,6 +13,8 @@
     re_roll_explodes: Number
   });
 
+  let pool_iterations=ref(toRaw(props.pool).getIterations());
+
   const emit=defineEmits([
     'addDice', 'updateValue', 'dropDice', 'dropPool', 
     'reRollPool', 'reRollDice', 'explodeDice', 'filterPoolDice']);
@@ -24,18 +26,19 @@
     emit("updateValue",_value_to_update);
   };
   const editValue=(_event, _value_to_update)=>{
+    let updated_value = undefined;
     if(_event.key=="Enter"){
       _event.preventDefault();
     }
-    if(!isNumeric(_event.target.innerText)){
-      switch(_value_to_update){
-        case "iterations":
-          _event.target.innerText=toRaw(props.pool).getIterations();
-          break;
-      }
-      return undefined;
+    switch(true){
+      case _value_to_update=="iterations" && !isNumeric(_event.target.value):
+        _event.target.value=toRaw(props.pool).getIterations();
+        return undefined;
+      case _value_to_update=="iterations" && isNumeric(_event.target.value):
+        updated_value = +_event.target.value;
+        break;
     }
-    updateValue({target_value:_value_to_update, new_value:+_event.target.innerText});
+    updateValue({target_value: _value_to_update, new_value: updated_value});
   };
 
   const dropDice=(_target_dice_index)=>{
@@ -132,7 +135,10 @@
     props.force_render;
   });
 
-
+  const inputSize=computed(()=>{
+    props.force_render;
+    return props.pool.getIterations().toString().length+2;
+  });
 </script>
 
 <template>
@@ -146,10 +152,7 @@
           @click="toggleMetrics">
           {{showPoolMetricsValue.text}} Metrics</span>
         <span style="font-weight: bold;">Iterations:</span>
-        <span tabindex="0" :id="props.pool_index+'_iterations'" contenteditable @blur="editValue($event,'iterations')" @keydown.enter="editValue($event,'iterations')"
-        style="border:thin solid black; margin-left:0.1em; padding:0em 0.1em; background-color: rgb(120, 255, 101); color:#242424;">
-          {{ props.pool.getIterations() }}
-        </span>
+        <input step="10000" tabindex="0" type="number" :id="props.pool_index+'_iterations'" :size="inputSize" class="editable" @keydown.enter="editValue($event,'iterations')" @blur="editValue($event,'iterations')" v-model="pool_iterations"/>
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollPool" title="Re-Roll Pool" name="bi-arrow-repeat" scale="1" fill="#242424"></v-icon>
         <span class="pointer red-link" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
           @click="dropPool" tabindex="0"
@@ -188,6 +191,13 @@
 </template>
 
 <style scoped>
+.editable{
+    border:thin solid #242424; 
+    padding:0em 0.2em; 
+    background-color: rgb(120, 255, 101); 
+    color:#000000;
+    font-weight: bold;
+  }
   .button:hover {
     background-color: rgb(120, 255, 101);
   }

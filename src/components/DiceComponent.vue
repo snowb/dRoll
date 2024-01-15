@@ -1,6 +1,6 @@
 <script setup>
 //Component for displaying Dice object
-  import { toRaw, ref, computed } from 'vue';
+  import { toRaw, ref, computed, reactive } from 'vue';
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
   import DiceSettingComponent from './DiceSettingComponent.vue';
@@ -18,22 +18,7 @@
 
   const diceMetrics=computed(()=>{
     props.force_render;
-    console.log(props.dice.getMetrics())
     return props.dice.getMetrics().reduce((_graph_values, _metric)=>{
-      //format dice metrics for graphing
-      /* switch(true){
-        also wrong place
-        case props.filter_options==undefined || props.filter_options.type==undefined:
-        case props.filter_options.type=="lowest" && _metric.value==props.dice.getMinimum():
-        case props.filter_options.type=="highest" && _metric.value==props.dice.getMaximum():
-        case props.filter_options.type=="even" && _metric.value%2==0:
-        case props.filter_options.type=="odd" && _metric.value%2==1:
-        case props.filter_options.type=="equal" && _metric.value==props.filter_options.value:
-        case props.filter_options.type=="equal_above" && _metric.value>=props.filter_options.value:
-        case props.filter_options.type=="equal_below" && _metric.value<=props.filter_options.value:
-          _graph_values.labels.push(_metric.value);
-          _graph_values.values.push(_metric.ratio*100);
-      } */
       _graph_values.labels.push(_metric.value);
       _graph_values.values.push(_metric.ratio*100);
       return _graph_values;
@@ -47,15 +32,20 @@
   const toggleMetrics=()=>{showDiceMetrics.value=!showDiceMetrics.value;};
 
   const editValue=(_event, _value_to_update)=>{
+    let updated_value=undefined;
     if(_event.key=="Enter"){
       _event.preventDefault();
     }
-    if(!isNumeric(_event.target.innerText)){
-      _event.target.innerText=saved_focus_value;
-      return undefined;
+    switch(true){
+      case (_value_to_update=="max" || _value_to_update=="min") && isNumeric(_event.target.value):
+        updated_value = +_event.target.value;
+        break;
+      case (_value_to_update=="max" || _value_to_update=="min") && !isNumeric(_event.target.value):
+        _event.target.value = saved_focus_value.value;
+        return undefined;
     }
-    if(_event.target.innerText!=saved_focus_value){
-      emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:+_event.target.innerText});
+    if(updated_value != saved_focus_value){
+      emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:updated_value});
     }
   };
 
@@ -101,7 +91,18 @@
   }
 
   const is_exploded_dice=computed(()=>{
-    return props.dice.getAdditionalText()=="Exploding";
+    console.log(props.dice.getAdditionalText())
+    return props.dice.getAdditionalText().search(/explod/gi) !== -1; //"Exploding";
+  });
+
+  let new_dice = reactive({
+    minimum: toRaw(props.dice).getMinimum(), 
+    maximum: toRaw(props.dice).getMaximum()
+  });
+
+  const inputSize=computed(()=>{
+    props.force_render;
+    return new_dice.maximum.toString().length+2;
   });
 </script>
 
@@ -121,22 +122,14 @@
         <v-icon style="visibility: hidden;" name="io-close-circle" scale="1" fill="#00000000"></v-icon>
       </div>
       <div style="display: flex; flex-direction: row; align-items: center; position:relative; margin-bottom:0.2em;"> 
-        <span v-if="editMode=='basic'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-          d <span class="box" :class="{green:!is_exploded_dice}"  
-          :contenteditable="!is_exploded_dice" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
-            {{toRaw(props.dice).getMaximum()}}
-          </span>
+        {{ is_exploded_dice }}
+        <span v-if="editMode=='basic'" style="display:inline-flex; padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
+          d&nbsp;<input :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
         </span>
         <span v-if="editMode=='advanced'" style="padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-          <span class="box" :class="{green:!is_exploded_dice}"  
-          :contenteditable="!is_exploded_dice" @focus="saveFocusValue" @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')">
-            {{toRaw(props.dice).getMinimum()}}
-          </span> 
+          <input :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')" v-model="new_dice.minimum"/>
           to 
-          <span class="box" :class="{green:!is_exploded_dice}"  
-          :contenteditable="!is_exploded_dice" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')">
-            {{toRaw(props.dice).getMaximum()}}
-          </span>
+          <input :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
         </span>
         <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
@@ -171,6 +164,7 @@
   .box {
     border:thin solid white; 
     padding:0em 0.2em; 
+    font-weight: bold;
   }
   .green{
     background-color: rgb(120, 255, 101);  
