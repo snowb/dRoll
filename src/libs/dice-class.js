@@ -233,17 +233,19 @@ export class Dice {
       let new_dice=_additional_dice!==undefined ? _additional_dice.getClone() : this.getClone();
       let max_new_value=new_dice.modifySingleValue(new_dice.getMaximum());
       let min_new_value=new_dice.modifySingleValue(new_dice.getMinimum());
+      new_dice.setIterations(this.getIterations());
       if(explode_on_value > max_new_value || explode_on_value < min_new_value){
         //can never explode as the explode value explode_on_value is below the minimum
         //or above the maximum, alert, continue loop
         console.warn("dice-class.js: ExplodeValue is above Dice maximum or below Dice minimum, skipping iteration "+added_dice+".");
         continue;
       }
-      new_dice.roll(this.getIterations());
+      new_dice.roll();
       new_dice.setAdditionalText("Exploding");
-      explosion_dice_source.getResults().filter((_element)=>{
+      let filtered_dice = explosion_dice_source.getResults().filter((_element)=>{
         return _element.value!=explode_on_value;
-      }).forEach((_roll)=>{
+      });
+      filtered_dice.forEach((_roll)=>{
         new_dice.dropValueAtIndex(_roll.index);
       });
       explosion_dice.push(new_dice);
