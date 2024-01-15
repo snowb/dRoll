@@ -130,10 +130,11 @@ const pool_total=computed(()=>{
       <bar :data="chartData" :options="chartOptions"></bar>
     </div>
     <div v-if="showAverage" style="margin-left:2em; font-size: small; font-weight: bold;">
+      <span title="Total occurances.">Total: {{ pool_total }}%</span>
+      <br>
       <span title="Average of all values generated.">Pool Mean: {{ pool_mean }}</span>&nbsp;&nbsp;
       <span title="Value in the center of all generated values.">Median: {{ pool_median }}</span>&nbsp;&nbsp;
       <span title="Value with the highest occurances.">Mode: {{ pool_mode }}</span>&nbsp;&nbsp;
-      <span title="Total occurances.">Total: {{ pool_total }}%</span>
     </div>
   </div>
 </template>
