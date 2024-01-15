@@ -1141,6 +1141,7 @@ export class Metrics_Pool extends Pool {
           let to_metrics_dice = new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifierFunction());
           to_metrics_dice.setIterations(this.getIterations());
           to_metrics_dice.updateValues(_dice.getResults());
+          to_metrics_dice.setAdditionalText(_dice.getAdditionalText());
           this.updateDice(undefined, to_metrics_dice);
         }
         this.#dice_count++;
@@ -1166,6 +1167,7 @@ export class Metrics_Pool extends Pool {
     if(_minimum_value_or_dice instanceof Dice && !_minimum_value_or_dice instanceof Metrics_Dice){
       new_dice = new Metrics_Dice(_minimum_value_or_dice.getMinimum(), _minimum_value_or_dice.getMaximum(), _minimum_value_or_dice.getModifierFunction());
       new_dice.setIterations(this.getIterations());
+      new_dice.setAdditionalText(_minimum_value_or_dice.getAdditionalText());
       super.updateDice(undefined, new_dice);
     } else if(_minimum_value_or_dice instanceof Metrics_Dice){
       new_dice=_minimum_value_or_dice;
