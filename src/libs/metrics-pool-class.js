@@ -279,7 +279,7 @@ export class Metrics_Pool extends Pool {
    * @param {Number|String} _target_value - Numeric, the comparison value for Equal, Above, Below
    * @param {String} _result_target - "pool" (default) or "dice", 
    *                                   whether to return the Pool Value WITH target Dice or only the Pool Value OF target Dice.
-   * @returns 
+   * @returns {object} - Metrics object {pool_metrics: Array, median: Number, mode: Number, mean: Number}
    */
   #getFilterMetrics(_filter_type, _first_target_value, _second_target_value, _result_target){
     let metrics={pool_metrics:[]};

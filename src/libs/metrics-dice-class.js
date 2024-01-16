@@ -90,7 +90,7 @@ export class Metrics_Dice extends Dice {
   };
   /**
    * Returns Even values from Dice object
-   * @returns {count: Number, values: Number[]} - object with count and Array of values
+   * @returns {Object} - object with count and Array of values
    */
   getEven(){
     let even = this.getResults().filter((_element)=>{return _element.value%2==0;});
@@ -98,7 +98,7 @@ export class Metrics_Dice extends Dice {
   };
   /**
    * Returns Odd values from Dice object
-   * @returns {count: Number, values: Number[]} - object with count and Array of values
+   * @returns {Object} - object with count and Array of values
    */
   getOdd(){
     let odd = this.getResults().filter((_element)=>{return _element.value%2==1;});
