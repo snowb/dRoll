@@ -129,9 +129,8 @@ const pool_total=computed(()=>{
     <div v-if="props.metrics" :style="{width: props.width, position:'relative'}" style="max-width:90vw;">
       <bar :data="chartData" :options="chartOptions"></bar>
     </div>
+    <span style="margin-left:2em; font-size: small; font-weight: bold;" title="Total occurances.">Total Occurances: {{ pool_total }}%</span>
     <div v-if="showAverage" style="margin-left:2em; font-size: small; font-weight: bold;">
-      <span title="Total occurances.">Total: {{ pool_total }}%</span>
-      <br>
       <span title="Average of all values generated.">Pool Mean: {{ pool_mean }}</span>&nbsp;&nbsp;
       <span title="Value in the center of all generated values.">Median: {{ pool_median }}</span>&nbsp;&nbsp;
       <span title="Value with the highest occurances.">Mode: {{ pool_mode }}</span>&nbsp;&nbsp;
