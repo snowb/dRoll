@@ -22,5 +22,4 @@ dist-ssr
 *.sln
 *.sw?
 *.code-workspace
-*codeql*
 *.ql
