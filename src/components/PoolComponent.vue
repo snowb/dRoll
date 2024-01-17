@@ -172,7 +172,7 @@
           </v-icon>
         </v-icon>
       </div>
-      <div v-if="showSettings" style="border-top: thin solid #242424;">
+      <div v-if="showSettings && allowShowSetting" style="border-top: thin solid #242424;">
         <PoolSettingComponent :force_render="props.force_render" :pool="props.pool"
           @filterPoolDice="filterPoolDice" :pool_index="props.pool_index"
         ></PoolSettingComponent>
