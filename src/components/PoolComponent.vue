@@ -139,6 +139,11 @@
     props.force_render;
     return props.pool.getIterations().toString().length+2;
   });
+
+  const allowShowSetting=computed(()=>{
+    props.force_render;
+    return props.pool && props.pool.getFullRollResults().length>0;
+  });
 </script>
 
 <template>
@@ -161,7 +166,7 @@
       <div style="position: relative; display: flex; flex-direction: row; margin-bottom:0.2em;">
         <span class="button pointer"
           @click="addDice">Add Dice</span>
-        <v-icon class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em; align-self: center;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Pool Settings'">
+        <v-icon v-if="allowShowSetting" class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em; align-self: center;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Pool Settings'">
           <v-icon name="bi-gear-fill" :scale="showSettings?0.75:1" fill="#242424"></v-icon>
           <v-icon v-if="showSettings" name="oi-circle-slash" fill="#ff0000" scale="1">
           </v-icon>
