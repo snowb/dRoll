@@ -433,32 +433,202 @@ export class Pool {
     this.#calculateSets(); */
   };
 
-/*   filterOutLowestDice(){
-    return this.#rollResults.reduce((_filtered_result, _roll_result)=>{
-      let result={index:_roll_result.index};
-      result.roll;
-       //{index:0, roll:[]}
-    },[]);
-  }; */
   /**
-   * filterOutLowestDice
-   * filterToLowestDice
-   * filterOutHighestDice
-   * filterToHighestDice
-   * filterOutValue
-   * filterToValue
-   * filterOutValueAbove
-   * filterToValueAbove
-   * filterOutValueBelow
-   * filterToValueBelow
-   * filterToEven
-   * filterToOdd
-   * 
-   * 
-   * getMin ... ?
-   * getMax ... ?
-   *  ... Above, Below, Equal, WithinRange
-   * 
-   *
+   * core function for retrieving roll result comparison data for the Sum of all rolls
+   * @param {string} [_operation="equal"] - operaton to execute
+   * @param {number} _first_value - first value to compare, or Array of values if getEqual
+   * @param {number} [_second_value] - second value for range compare
+   * @returns {Object[]} - [{index:number, values:number[]}]
    */
+  #getSumOperation (_operation, _first_value, _second_value) {
+    return this.getSumRolled().reduce((_operation_result, _sum_value, _index)=>{
+      let is_keep=false;
+      switch(_operation) {
+        case "even":
+          is_keep = _sum_value%2 == 0? true : false;
+          break;
+        case "odd":
+          is_keep = _sum_value%2 == 1 ? true : false;
+          break;
+        case "above":
+          is_keep = _sum_value > _first_value ? true : false;
+          break;
+        case "below":
+          is_keep = _sum_value < _first_value ? true : false;
+          break;
+        case "range":
+          is_keep = _sum_value >= _first_value && _sum_value <= _second_value ? true : false;
+          break;
+        case "equal":
+        default:
+          if(Array.isArray(_first_value)){
+            is_keep = _first_value.includes(+_sum_value) ? true : false;
+          }
+          else{
+            is_keep = _sum_value == +_first_value ? true : false;
+          }          
+          break;
+      }
+      if(is_keep) {
+        _operation_result.push({index:_index, values:[_sum_value]});
+      }
+      return _operation_result;
+    },[]);    
+  };
+/**
+   * @returns {Dice[]} - even results
+   */
+getSumEven(){
+  return this.#getSumOperation("even"); 
+};
+/**
+ * @returns {Dice[]} - odd results
+ */
+getSumOdd(){
+  return this.#getSumOperation("odd"); 
+};
+/**
+* returns roll sums above the provided value
+* @param {string|number} _value - numeric for value to compare
+* @returns {Object[]} - [{index:number, values:number[]}]
+*/
+getSumAbove (_value) {//return Sums with values above _value
+  if(!isNumeric(_value)){console.error("metrics-pool-class.js: getAbove requires a number for _value.");return undefined;}
+  return this.#getSumOperation("above",+_value);
+};
+/**
+* returns roll sums below the provided value
+* @param {string|number} _value - numeric for value to compare
+* @returns {Object[]} - [{index:number, values:number[]}]
+*/
+getSumBelow (_value) {//return Sums with values below _value
+  if(!isNumeric(_value)){console.error("metrics-pool-class.js: getBelow requires a number for _value.");return undefined;}
+  return this.#getSumOperation("below",+_value);
+};
+/**
+* returns roll sums equal to the provided value
+* @param {string|number} _value - numeric for value to compare
+* @returns {Object[]} - [{index:number, values:number[]}]
+*/
+getSumEqual (_value) {//return Sums with values equal to _value
+  let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
+  let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
+  if(is_invalid_array || is_invalid_number){
+    console.error("metrics-pool-class.js: getEqual requires a Number or an Array of Numbers for input");
+    return undefined;
+  } 
+  return this.#getSumOperation("equal",_value);
+  };
+  /**
+   * returns roll sums within the specified range, inclusive
+   * @param {string|number} _min_value 
+   * @param {string|number} _max_value 
+   * @returns {Object[]} - [{index:number, values:number[]}]
+   */
+  getSumWithinRange (_min_value, _max_value) {//return Sums with values within range of _min_value and _max_value, inclusive
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    return this.#getSumOperation("range",+_min_value,+_max_value);
+  };
+  /**
+  * returns numbers above the provided value
+  * @param {string|number} _value - numeric for value to compare
+  * @returns {Object[]} - [{index:number, values:number[]}]
+  */
+  getAbove (_value) {//return Rolls with values above _value
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getAbove requires a number for _value.");return undefined;}
+    return this.#getOperation("above",+_value);
+  };
+  /**
+  * returns numbers below the provided value
+  * @param {string|number} _value - numeric for value to compare
+  * @returns {Object[]} - [{index:number, values:number[]}]
+  */
+  getBelow (_value) {//return Rolls with values below _value
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getBelow requires a number for _value.");return undefined;}
+    return this.#getOperation("below",+_value);
+  };
+  /**
+  * returns numbers equal to the provided value
+  * @param {string|number} _value - numeric for value to compare
+  * @returns {Object[]} - [{index:number, values:number[]}]
+  */
+  getEqual (_value) {//return Rolls with values equal to _value
+    let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
+    let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
+    if(is_invalid_array || is_invalid_number){
+      console.error("metrics-pool-class.js: getEqual requires a Number or an Array of Numbers for input");
+      return undefined;
+    } 
+    return this.#getOperation("equal",_value);
+  };
+  /**
+   * returns numbers within the specified range, inclusive
+   * @param {string|number} _min_value 
+   * @param {string|number} _max_value 
+   * @returns {Object[]} - [{index:number, values:number[]}]
+   */
+  getWithinRange (_min_value, _max_value) {//return Rolls with values within range of _min_value and _max_value, inclusive
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    return this.#getOperation("range",+_min_value,+_max_value);
+  };
+  /**
+   * @returns {Dice[]} - Pools with Even results within Dice
+   */
+  getEven(){
+    return this.#getOperation("even"); 
+  };
+  /**
+   * @returns {Dice[]} - odd results
+   */
+  getOdd(){
+    return this.#getOperation("odd"); 
+  };
+  /**
+   * 
+   * @param {String} _operation - operation to perform
+   * @param {Number} _first_value - value or first value in Range op
+   * @param {Number|undefined} _second_value - undefined or second value in Range op
+   * @returns 
+   */
+  #getOperation (_operation, _first_value, _second_value) {
+    let operation_result=[];
+    const rolls=this.getFullRollResults().length;
+    for(let index=0;index<this.getIterations();index++){
+      let dice_results=[];
+      let is_keep=false;
+      for(let roll=0;roll<rolls;roll++){
+        let dice_value=this.getFullRollResults()[roll].getResults()[index].value
+        dice_results.push(dice_value);
+        switch(_operation) {
+          case "even":
+            is_keep = dice_value%2 == 0 ? true : is_keep;
+            break;
+          case "odd":
+            is_keep = dice_value%2 == 1 ? true : is_keep;
+            break;
+          case "above":
+            is_keep = dice_value > _first_value ? true : is_keep;
+            break;
+          case "below":
+            is_keep = dice_value < _first_value ? true : is_keep;
+            break;
+          case "range":
+            is_keep = dice_value >= _first_value && dice_value <= _second_value ? true : is_keep;
+            break;
+          case "equal":
+          default:
+            if(Array.isArray(_first_value)){
+              is_keep = _first_value.includes(dice_value) ? true : is_keep;
+            }
+            else{
+              is_keep = dice_value == +_first_value ? true : is_keep;
+            }
+          }
+      }
+      if(is_keep) {
+        operation_result.push({index:index, values:dice_results});
+      }
+    }
+    return operation_result;
+  };
 };

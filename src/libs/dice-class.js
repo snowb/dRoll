@@ -35,7 +35,7 @@ export class Dice {
     if(!isNumeric(_minimum_value)) {
       console.warn("dice-class.js: Invalid minimum value, assuming 1.");
     } else { this.#minimum_value = +_minimum_value; }
-    if(!isNumeric(_maximum_value)) {
+    if(!isNumeric(_maximum_value) || _maximum_value <= _minimum_value) {
       console.error("dice-class.js: Invalid maximum value.");
     } else { 
       this.#maximum_value = +_maximum_value;
@@ -254,7 +254,11 @@ export class Dice {
 
     return explosion_dice;
   };
-
+  /**
+   * Update values in #results with new values
+   * @param {Number[]} _values_array - array of numbers to replace/update in #results
+   * @returns {undefined - on error}
+   */
   updateValues(_values_array){
     if(!Array.isArray(_values_array)){
       console.error("dice-class.js: updateValues requires an Array as input.");
@@ -270,5 +274,79 @@ export class Dice {
       this.#results = _values_array.toSpliced(0);
       this.#results.fill(undefined,_values_array.length);
     }
-  }
+  };
+
+  /**
+ * returns all values above the input value
+ * @param {string|number} _value - value to match
+ * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
+ */
+  getAbove (_value) {//get all values above _value
+    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getAbove requires a number for input.");return undefined;}
+    let above_results = this.getResults().filter((_element)=>{return _element.value>+_value;});
+    return {count:above_results.length, values:above_results};
+  };
+  /**
+   * returns all values below the input value
+   * @param {string|number} _value - value to match
+   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
+   */
+  getBelow (_value) {//get all values below _value
+    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getBelow requires a number for input.");return undefined;}
+    let below_results = this.getResults().filter((_element)=>{return _element.value<+_value;});
+    return {count:below_results.length, values:below_results};
+  };
+  /**
+   * returns all values equal to the input value
+   * @param {string|number} _value - value to match
+   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
+   */
+  getEqual (_value) {//get all values equal to _value
+    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getEqual requires a number for input.");return undefined;}
+    let equal = this.getResults().filter((_element)=>{return _element.value==+_value;});
+    return {count:equal.length, values:equal};
+  };
+  /**
+   * returns all values within the to the input range, inclusive
+   * @param {string|number} _min_value - starting value to compare
+   * @param {string|number} _max_value - ending value to compare
+   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
+   */
+  getWithinRange (_min_value, _max_value) {//return all values within the specified range, inclusive
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-dice-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    let range = this.getResults().filter((_element)=>{return _element.value>=+_value && _element.value<=+_value;});
+    return {count:equal.length, values:range};
+  };
+  /**
+   * Returns Even values from Dice object
+   * @returns {Object} - object with count and Array of values
+   */
+  getEven(){
+    let even = this.getResults().filter((_element)=>{return _element.value%2==0;});
+    return {count:even.length, values:even};
+  };
+  /**
+   * Returns Odd values from Dice object
+   * @returns {Object} - object with count and Array of values
+   */
+  getOdd(){
+    let odd = this.getResults().filter((_element)=>{return _element.value%2==1;});
+    return {count:odd.length, values:odd};
+  };
+  /**
+   * runs all getAbove/Below/Equal/etc functions
+   * returns all generated results
+   * also returns the private properties of average and results
+   * @param {string|number} _value - value to match
+   * @returns {Object}
+   */
+  getAllForValue (_value) {//get above, below, equal, average, and all results
+    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getAllForValue requires a number for input.");return undefined;}
+    let allForValue={};
+    allForValue["Above_"+_value]=this.getAbove(_value);
+    allForValue["Below_"+_value]=this.getBelow(_value);
+    allForValue["Equal_To_"+_value]=this.getEqual(_value);
+    allForValue["All_Results"]=this.getResults();
+    return allForValue;
+  };
 };

@@ -188,91 +188,6 @@ export class Metrics_Pool extends Pool {
   getMinDiceValue(){
     return this.#min_dice;
   };
-
-  #getOperation (_operation, _first_value, _second_value) {
-    let operation_result=[];
-    const rolls=this.#dice_count;
-    for(let index=0;index<super.getIterations();index++){
-      let dice_results=[];
-      let is_keep=false;
-      for(let roll=0;roll<rolls;roll++){
-        
-        let dice_value=super.getFullRollResults()[roll].getResults()[index].value
-        dice_results.push(dice_value);
-        switch(_operation) {
-          case "even":
-            is_keep = dice_value%2 == 0 ? true : is_keep;
-            break;
-          case "odd":
-            is_keep = dice_value%2 == 1 ? true : is_keep;
-            break;
-          case "above":
-            is_keep = dice_value > _first_value ? true : is_keep;
-            break;
-          case "below":
-            is_keep = dice_value < _first_value ? true : is_keep;
-            break;
-          case "range":
-            is_keep = dice_value >= _first_value && dice_value <= _second_value ? true : is_keep;
-            break;
-          case "equal":
-          default:
-            if(Array.isArray(_first_value)){
-              is_keep = _first_value.includes(dice_value) ? true : is_keep;
-            }
-            else{
-              is_keep = dice_value == +_first_value ? true : is_keep;
-            }
-          }
-      }
-      if(is_keep) {
-        operation_result.push({index:index, values:dice_results});
-      }
-    }
-    return operation_result;
-  };
-  /**
-   * core function for retrieving roll result comparison data for the Sum of all rolls
-   * @param {string} [_operation="equal"] - operaton to execute
-   * @param {number} _first_value - first value to compare, or Array of values if getEqual
-   * @param {number} [_second_value] - second value for range compare
-   * @returns {Object[]} - [{index:number, values:number[]}]
-   */
-  #getSumOperation (_operation, _first_value, _second_value) {
-    return super.getSumRolled().reduce((_operation_result, _sum_value, _index)=>{
-      let is_keep=false;
-      switch(_operation) {
-        case "even":
-          is_keep = _sum_value%2 == 0? true : false;
-          break;
-        case "odd":
-          is_keep = _sum_value%2 == 1 ? true : false;
-          break;
-        case "above":
-          is_keep = _sum_value > _first_value ? true : false;
-          break;
-        case "below":
-          is_keep = _sum_value < _first_value ? true : false;
-          break;
-        case "range":
-          is_keep = _sum_value >= _first_value && _sum_value <= _second_value ? true : false;
-          break;
-        case "equal":
-        default:
-          if(Array.isArray(_first_value)){
-            is_keep = _first_value.includes(+_sum_value) ? true : false;
-          }
-          else{
-            is_keep = _sum_value == +_first_value ? true : false;
-          }          
-          break;
-      }
-      if(is_keep) {
-        _operation_result.push({index:_index, values:[_sum_value]});
-      }
-      return _operation_result;
-    },[]);    
-  }
   /**
    * 
    * @param {String} _filter_type - which filtered array to get metrics on (Even, Odd, Equal, etc)
@@ -393,12 +308,7 @@ export class Metrics_Pool extends Pool {
     metrics.mode=metrics_secondaries.mode;
     return metrics;
   }
-  /**
-   * @returns {Dice[]} - Pools with Even results within Dice
-   */
-  getEven(){
-    return this.#getOperation("even"); 
-  };
+  
   /**
    * Return metrics for the given filter
    * @param {String} _result_target - "pool" (default) or "dice", 
@@ -415,13 +325,7 @@ export class Metrics_Pool extends Pool {
    * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
    */
   getSumEvenMetrics(_result_target){
-    return this.#getFilterMetrics("sum_even", undefined, undefined, _result_target);
-   };
-  /**
-   * @returns {Dice[]} - odd results
-   */
-  getOdd(){
-    return this.#getOperation("odd"); 
+    return this.#getFilterMetrics("sum_even", undefined, undefined, _result_target); 
   };
   /**
    * Return metrics for the given filter
@@ -498,15 +402,7 @@ export class Metrics_Pool extends Pool {
       this.#secondaryMetrics.pool_median = temp_median[Math.floor(temp_median.length/2)];
     } */
   }
-  /**
-  * returns numbers above the provided value
-  * @param {string|number} _value - numeric for value to compare
-  * @returns {Object[]} - [{index:number, values:number[]}]
-  */
-  getAbove (_value) {//return Rolls with values above _value
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getAbove requires a number for _value.");return undefined;}
-    return this.#getOperation("above",+_value);
-  };
+  
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
@@ -527,15 +423,7 @@ export class Metrics_Pool extends Pool {
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumAboveMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("sum_above", +_value, undefined, undefined);
   };
-  /**
-  * returns numbers below the provided value
-  * @param {string|number} _value - numeric for value to compare
-  * @returns {Object[]} - [{index:number, values:number[]}]
-  */
-  getBelow (_value) {//return Rolls with values below _value
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getBelow requires a number for _value.");return undefined;}
-    return this.#getOperation("below",+_value);
-  };
+  
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
@@ -556,20 +444,7 @@ export class Metrics_Pool extends Pool {
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumBelowMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("sum_below", +_value, undefined, undefined);
   };
-  /**
-  * returns numbers equal to the provided value
-  * @param {string|number} _value - numeric for value to compare
-  * @returns {Object[]} - [{index:number, values:number[]}]
-  */
-  getEqual (_value) {//return Rolls with values equal to _value
-    let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
-    let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
-    if(is_invalid_array || is_invalid_number){
-      console.error("metrics-pool-class.js: getEqual requires a Number or an Array of Numbers for input");
-      return undefined;
-    } 
-    return this.#getOperation("equal",_value);
-  };
+  
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
@@ -591,16 +466,6 @@ export class Metrics_Pool extends Pool {
   getSumEqualMetrics(_value){
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumEqualMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("sum_equal", +_value, undefined, undefined);
-  };
-  /**
-   * returns numbers within the specified range, inclusive
-   * @param {string|number} _min_value 
-   * @param {string|number} _max_value 
-   * @returns {Object[]} - [{index:number, values:number[]}]
-   */
-  getWithinRange (_min_value, _max_value) {//return Rolls with values within range of _min_value and _max_value, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
-    return this.#getOperation("range",+_min_value,+_max_value);
   };
   /**
    * Return metrics for the given filter
@@ -637,60 +502,6 @@ export class Metrics_Pool extends Pool {
     }
     let dice_count = _dice_count===undefined ? 1 : +_dice_count
     return this.#getFilterMetrics("highest", dice_count, undefined, "dice");
-  };
-  /**
-   * @returns {Dice[]} - even results
-   */
-  getSumEven(){
-    return this.#getSumOperation("even"); 
-  };
-  /**
-   * @returns {Dice[]} - odd results
-   */
-  getSumOdd(){
-    return this.#getSumOperation("odd"); 
-  };
-  /**
-  * returns roll sums above the provided value
-  * @param {string|number} _value - numeric for value to compare
-  * @returns {Object[]} - [{index:number, values:number[]}]
-  */
-  getSumAbove (_value) {//return Sums with values above _value
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getAbove requires a number for _value.");return undefined;}
-    return this.#getSumOperation("above",+_value);
-  };
-  /**
-  * returns roll sums below the provided value
-  * @param {string|number} _value - numeric for value to compare
-  * @returns {Object[]} - [{index:number, values:number[]}]
-  */
-  getSumBelow (_value) {//return Sums with values below _value
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getBelow requires a number for _value.");return undefined;}
-    return this.#getSumOperation("below",+_value);
-  };
-  /**
-  * returns roll sums equal to the provided value
-  * @param {string|number} _value - numeric for value to compare
-  * @returns {Object[]} - [{index:number, values:number[]}]
-  */
-  getSumEqual (_value) {//return Sums with values equal to _value
-    let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
-    let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
-    if(is_invalid_array || is_invalid_number){
-      console.error("metrics-pool-class.js: getEqual requires a Number or an Array of Numbers for input");
-      return undefined;
-    } 
-    return this.#getSumOperation("equal",_value);
-  };
-  /**
-   * returns roll sums within the specified range, inclusive
-   * @param {string|number} _min_value 
-   * @param {string|number} _max_value 
-   * @returns {Object[]} - [{index:number, values:number[]}]
-   */
-  getSumWithinRange (_min_value, _max_value) {//return Sums with values within range of _min_value and _max_value, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
-    return this.#getSumOperation("range",+_min_value,+_max_value);
   };
   /**
    * returns all sequences, series of incrementing numbers of 2 or more length (1-2; 2-3-4)
