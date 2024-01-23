@@ -106,13 +106,40 @@
       let temp_shared_pools = queryString.getAll("p");
       let temp_shared_dice = queryString.getAll("d");
 
+      /**
+       * need to do checking prior to using
+       * 
+       * p = pool format
+       * { Number }       - pool id, 0 to 9             /^[0-9]{1}$/gi
+       *  ;
+       * { 0x Number}    - iterations, 1 to 100_000     /^[0-9a-fA-F]$/gi
+       *  ;  
+       * { Number}        - filter id, 0 to 20          /^[0-9]{1,2}$/gi
+       * 
+       * d = dice format
+       * { Number }       - pool id, 0 to 9             /^[0-9]{1}$/gi
+       *  ;
+       * {
+       *  { 0x Number }  - maximum dice value, 1 to 255, assumes min value of 1     /[0-9a-fA-F]{1,2}/gi
+       *    |
+       *  [ 
+       *    x0 Number    - minimum dice value, -255 to 255   /-?[0-9a-fA-F]{1,2}/gi
+       *    - 
+       *    0x Number    - maximum dice value, -255 to 255   /-?[0-9a-fA-F]{1,2}/gi
+       *  ]    
+       * }
+       *  ;
+       * { 0x Number }    - modifier, -255 to 255            /-?[0-9a-fA-F]{1,2}/gi                  
+       *  ;
+       * { Boolean }      - exploding dice flag           /[0-1]/gi
+       */
+
       temp_shared_pools = temp_shared_pools.map((_pool_info)=>{
         //need to handle invalid input
         let pool_object = {raw:_pool_info};
         let temp_data = _pool_info.split(";");
         pool_object.pool_id = +temp_data[0];
-        pool_object.iterations = "0x"+temp_data[1];
-        pool_object.iterations = +pool_object.iterations.toString("10");
+        pool_object.iterations = +("0x"+temp_data[1]).toString("10");
         pool_object.filter = +temp_data[2].split(":")[0];
 
         switch(pool_object.filter){
@@ -143,7 +170,8 @@
         let dice_object = {raw:_dice_info};
         let dice_data = _dice_info.split(";");
         dice_object.pool_id = +dice_data[0];
-        dice_object.exploding = +dice_data[2];
+        dice_object.modifier = +dice_data[2];
+        dice_object.exploding = +dice_data[3];
         if(dice_data[1].match("-")){
           let temp_dice_data = dice_data[1].split("-");
           dice_object.min_value = +("0x"+temp_dice_data[0]).toString("10");
