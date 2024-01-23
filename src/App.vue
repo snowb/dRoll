@@ -1,18 +1,11 @@
 <script setup>
-import { onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import PoolsContainer from './components/PoolsContainer.vue';
 
 let showInformation=ref(false);
 const toggleInformation=()=>{
   showInformation.value=!showInformation.value;
 };
-
-onMounted(()=>{
-  let queryString=new URLSearchParams(document.location.search);
-  console.log(queryString.get("pd"))
-  //console.log(JSON.parse(queryString.get("pools")));
-  //console.log(JSON.stringify([{f:1,t:10}])) = [{"f":1,"t":10}]
-});
 </script>
 
 <template>
