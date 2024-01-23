@@ -32,6 +32,9 @@
   const toggleMetrics=()=>{showDiceMetrics.value=!showDiceMetrics.value;};
 
   const editValue=(_event, _value_to_update)=>{
+    //perform value checking for negative numbers
+    // dX cannot be negative
+    // X - Y, X must be less than Y
     let updated_value=undefined;
     if(_event.key=="Enter"){
       _event.preventDefault();
