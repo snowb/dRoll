@@ -21,16 +21,25 @@
     toRaw(pools.value[_explode_dice.pool_index]).addDice(_explode_dice.add_dice);
     triggerRef(pools);
   };
+
   const dropDice=(_target_pool_index, _target_dice_index, _no_pool_reroll)=>{
     toRaw(pools.value[_target_pool_index]).dropDice(_target_dice_index, _no_pool_reroll);
     triggerRef(pools);
   };
+
   const reRollDice=(_target_pool_index, _target_dice_index)=>{
     toRaw(pools.value[_target_pool_index]).reRollDice(_target_dice_index);
     triggerRef(pools);
-  }
+  };
+
   const dropPool=(_target_pool_index)=>{
     toRaw(pools.value).splice(_target_pool_index,1);
+    triggerRef(pools);
+  };
+
+  const resetPool=(_target_pool_index)=>{
+    console.log("reset ",_target_pool_index)
+    pools.value[_target_pool_index] = new Metrics_Pool();
     triggerRef(pools);
   };
 
@@ -114,8 +123,8 @@
             break;
           case 1:          case 2:          case 5:
           case 6:          case 7:          case 11:
-          case 12:          case 13:          case 17:
-          case 18:          case 19:
+          case 12:         case 13:         case 17:
+          case 18:         case 19:
           pool_object.filter_value_1 = +temp_data[2].split(":")[1];
             break;
           default:
@@ -176,7 +185,7 @@
     <PoolComponent v-for="(pool,pool_index) in pools" 
       :pool=pool :pool_index=pool_index :force_render="forceRender()" :re_roll_explodes="re_roll_explodes"
       @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool"
-      @reRollPool="reRollPool" @reRollDice="reRollDice" @explodeDice="explodeDice">
+      @reRollPool="reRollPool" @reRollDice="reRollDice" @explodeDice="explodeDice" @resetPool="resetPool">
     </PoolComponent>
   </div>
   <div> 

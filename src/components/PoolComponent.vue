@@ -16,10 +16,10 @@
   let pool_iterations=ref(toRaw(props.pool).getIterations());
 
   const emit=defineEmits([
-    'addDice', 'updateValue', 'dropDice', 'dropPool', 
-    'reRollPool', 'reRollDice', 'explodeDice', 'filterPoolDice']);
+    "addDice", "updateValue", "dropDice", "dropPool", 
+    "reRollPool", "reRollDice", "explodeDice", "filterPoolDice", "resetPool"]);
   const addDice=()=>{
-    emit('addDice', {pool_index:props.pool_index, min:1, max:6, modifier:0});
+    emit("addDice", {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
   const updateValue=(_value_to_update)=>{
     _value_to_update.target_pool_index=props.pool_index;
@@ -52,8 +52,13 @@
   const dropPool=()=>{
     emit("dropPool", props.pool_index);
   };
+
   const reRollPool=()=>{  
-    emit('reRollPool',props.pool_index);
+    emit("reRollPool",props.pool_index);
+  };
+
+  const resetPool=()=>{
+    emit("resetPool", props.pool_index)
   };
 
   const toggleMetrics=()=>{showPoolMetrics.value=!showPoolMetrics.value;}
@@ -82,7 +87,7 @@
     return toRaw(props.pool).getFullRollResults().length>0;
   });
 
-  let filter_options=reactive({type:'full', value:undefined, max_value:undefined});
+  let filter_options=reactive({type:"full", value:undefined, max_value:undefined});
 
   const filterPoolDice=(_options)=>{
     filter_options.type=_options.type;
@@ -159,9 +164,8 @@
         <span style="font-weight: bold;">Iterations:</span>
         <input step="10000" tabindex="0" type="number" :id="props.pool_index+'_iterations'" :size="inputSize" class="editable" @keydown.enter="editValue($event,'iterations')" @blur="editValue($event,'iterations')" v-model="pool_iterations"/>
         <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollPool" title="Re-Roll Pool" name="bi-arrow-repeat" scale="1" fill="#242424"></v-icon>
-        <span class="pointer red-link" style="text-decoration: underline; padding: 0em 0.5em 0em 0.5em; margin-left:5em; font-size:smaller;"
-          @click="dropPool" tabindex="0"
-        >Delete Pool</span>
+        <v-icon class="pointer red-link" hover animation="pulse" speed="fast" style="margin-left: 3em" @click="resetPool" title="Reset Pool to 0 Dice" name="md-resettv-round" scale="1" fill="#242424"></v-icon>
+        <v-icon class="pointer red-link" hover animation="pulse" speed="fast" style="" @click="dropPool" title="Delete Pool" name="md-deleteforever-round" scale="1" fill="#242424"></v-icon>
       </div>
       <div style="position: relative; display: flex; flex-direction: row; margin-bottom:0.2em;">
         <span class="button pointer"
@@ -224,6 +228,7 @@
     color:#0000ff;
   }
   .red-link:hover{
-    color:#ff0000
+    color:#ff0000;
+    fill: #ff0000
   }
 </style>
