@@ -1,5 +1,5 @@
 <script setup>
-  import { toRaw, triggerRef, shallowRef, reactive, ref} from 'vue';
+  import { toRaw, triggerRef, shallowRef, ref, onMounted} from 'vue';
   import PoolComponent from './PoolComponent.vue';
   import { Metrics_Pool } from '../libs/metrics-pool-class';
   
@@ -88,6 +88,83 @@
     }
     triggerRef(pools);
   };
+
+  let sharedPools = undefined; // make ref? or keep all logic in onMounted? Probably need to pass down
+  // something for exploding values ...
+  onMounted(()=>{
+    if(document.location.search!==""){
+      let queryString=new URLSearchParams(document.location.search);
+      let temp_shared_pools = queryString.getAll("p");
+      let temp_shared_dice = queryString.getAll("d");
+
+      temp_shared_pools = temp_shared_pools.map((_pool_info)=>{
+        //need to handle invalid input
+        let pool_object = {raw:_pool_info};
+        let temp_data = _pool_info.split(";");
+        pool_object.pool_id = +temp_data[0];
+        pool_object.iterations = "0x"+temp_data[1];
+        pool_object.iterations = +pool_object.iterations.toString("10");
+        pool_object.filter = +temp_data[2].split(":")[0];
+
+        switch(pool_object.filter){
+          case 8:          case 14:          case 20:
+            let temp_filter_values = temp_data[2].split(":")[1].split("-");
+            pool_object.filter_value_1 = +temp_filter_values[0];
+            pool_object.filter_value_2 = +temp_filter_values[1];
+            break;
+          case 1:          case 2:          case 5:
+          case 6:          case 7:          case 11:
+          case 12:          case 13:          case 17:
+          case 18:          case 19:
+          pool_object.filter_value_1 = +temp_data[2].split(":")[1];
+            break;
+          default:
+            //nothing to do for filter values with Odd/Even
+        }
+        pool_object.dice = [];
+        return pool_object;
+      });
+
+      temp_shared_pools.sort((_a, _b)=>{
+        if(_a.pool_id < _b.pool_id){ return -1
+        } else { return 1; }
+      });
+      
+      temp_shared_dice = temp_shared_dice.map((_dice_info)=>{
+        let dice_object = {raw:_dice_info};
+        let dice_data = _dice_info.split(";");
+        dice_object.pool_id = +dice_data[0];
+        dice_object.exploding = +dice_data[2];
+        if(dice_data[1].match("-")){
+          let temp_dice_data = dice_data[1].split("-");
+          dice_object.min_value = +("0x"+temp_dice_data[0]).toString("10");
+          dice_object.max_value = +("0x"+temp_dice_data[1]).toString("10");
+        } else {
+          dice_object.min_value = 1;  
+          dice_object.max_value = +("0x"+dice_data[1]).toString("10");
+        }
+        return dice_object;
+      });
+
+      temp_shared_dice.forEach((_dice)=>{
+        let invalid_pool=true;
+        if(_dice.pool_id < temp_shared_pools.length){
+          temp_shared_pools.some((_pool)=>{
+            if(_pool.pool_id == _dice.pool_id){
+              _pool.dice.push(_dice);
+              invalid_pool =  false;
+              return true;
+            }
+          });
+        }
+        if(invalid_pool){
+          console.warn("dRoll App: provide shared URL pool id is invalid for '"+_dice.raw+"', ignoring.");
+        }
+      });
+      sharedPools = temp_shared_pools;
+    }
+    console.log(sharedPools)
+  });
 </script>
 
 <template>
