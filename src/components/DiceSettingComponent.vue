@@ -1,16 +1,19 @@
 <script setup>
 import { Metrics_Dice } from '../libs/metrics-dice-class';
 import { isNumeric } from '../libs/isNumeric';
-import { ref, reactive, toRaw, computed, watchEffect } from 'vue';
+import { ref, reactive, watchEffect } from 'vue';
 
 const props=defineProps({
     dice: Metrics_Dice,
     dice_index: Number,
     force_render: Number,
-    re_roll_explodes: Number
+    re_roll_explodes: Number,
+    /* dice_sign: String,
+    edit_mode: String */
   });
 
 const emit=defineEmits(["explode"]);
+/* const emit=defineEmits(["explode","changeSign"]); */
 
 let explode_options=reactive({});
 explode_options.target_explode_on="max";
@@ -78,16 +81,44 @@ const updateExplodeOption=(_event, _target_option)=>{
   }
 };
 
+/* let diceSign = ref("positive"); */
+
 watchEffect(()=>{
   if(props.re_roll_explodes && showExplodeOptions.value){
     emit("explode",explode_options);
   }
+  props.force_render;
+  /* diceSign.value = props.dice_sign ? props.dice_sign : "positive"; */
 });
+
+/* const diceSignFill = (_sign_element) => {
+  if(diceSign.value == _sign_element){
+    return "#232323";
+  }
+  return "#bdbdbd";
+};
+
+const diceSignClass = (_sign_element) => {
+  if(diceSign.value == _sign_element){
+    return "selected_sign";
+  }
+};
+
+const changeSign = (_target_sign_element)=>{
+  if(_target_sign_element != diceSign.value){
+    diceSign.value = _target_sign_element;
+    emit("changeSign", diceSign.value);
+  }
+}; */
 </script>
 
 <template>
   <div>
+    <!-- <div v-if="props.edit_mode=='basic'" class="small bold">Dice Value: <v-icon @click="changeSign('positive')" class="pointer" title="Set Dice to positive values" name="hi-plus-circle" scale="1" 
+      :fill="diceSignFill('positive')" :class="diceSignClass('positive')"></v-icon><v-icon @click="changeSign('negative')" :fill="diceSignFill('negative')" :class="diceSignClass('negative')"
+      class="pointer" title="Set Dice to negative values" name="hi-minus-circle" scale="1" ></v-icon></div> -->
     <div class="small bold"><input type="checkbox" v-model="showExplodeOptions" :checked="false"/>Explode Dice</div>
+      <!-- ADD + / - DICE HERE, need to handle the negative values at higher (-6 to -1 instead of -1 to -6) -->
     <div v-if="showExplodeOptions" class="small" style="padding-left:0.5em;">
       <span><input type="radio" name="explode_on" value="max" :checked="true" @change="updateExplode"/>On Max</span>&nbsp;&nbsp;
       <span><input type="radio" name="explode_on"  value="min" :checked="false" @change="updateExplode"/>On Min</span> &nbsp;&nbsp;
@@ -110,28 +141,6 @@ watchEffect(()=>{
         <span class="explode_button" style="position: absolute; right: 0em;" @click="emitExplode">Explode</span>
       </div>
     </div>
-    <!-- THESE POOL FILTERS NOT DICE FILTERS, DOH -->
-    <!-- <div class="small bold"><input type="checkbox" v-model="showFilterOptions" :checked="false"/>Filter</div>
-    <div v-if="showFilterOptions" class="small" style="padding-left:0.5em;">
-      <span><input type="radio" name="filter_on" :checked="true"/>Equal To: <span class="editable" contenteditable>9</span></span>&nbsp;&nbsp;
-      <span><input type="radio" name="filter_on" :checked="false"/>Equal To Or Above: <span class="editable" contenteditable>9</span></span>&nbsp;&nbsp;
-      <span><input type="radio" name="filter_on" :checked="false"/>Equal To Or Below: <span class="editable" contenteditable>9</span></span>
-      <br>
-      <span><input type="radio" name="filter_on" :checked="false"/>Even</span>&nbsp;&nbsp;
-      <span><input type="radio" name="filter_on" :checked="false"/>Odd</span>
-    </div>
-    <div class="small bold"><input type="checkbox" v-model="showDropOptions" :checked="false"/>Drop Dice</div>
-    <div v-if="showDropOptions" class="small" style="padding-left:0.5em;">
-      <span><input type="radio" name="drop_on" :checked="true"/>Lowest</span>&nbsp;&nbsp;
-      <span><input type="radio" name="drop_on" :checked="false"/>Highest</span>
-      <br>
-      <span><input type="radio" name="drop_on" :checked="false"/>Equal To: <span class="editable" contenteditable>9</span></span>
-      <span><input type="radio" name="drop_on" :checked="false"/>Above: <span class="editable" contenteditable>9</span></span>
-      <span><input type="radio" name="drop_on" :checked="false"/>Below: <span class="editable" contenteditable>9</span></span>
-      <br>
-      <span><input type="radio" name="drop_on" :checked="false"/>Even</span>&nbsp;&nbsp;
-      <span><input type="radio" name="drop_on" :checked="false"/>Odd</span>
-    </div> -->
   </div>
 </template>
 
@@ -163,4 +172,11 @@ watchEffect(()=>{
     box-shadow: 0px 0px 0px 0px #dbdbdb;
     transform: translate(2px,2px);
   }
+  .pointer:hover{
+    cursor: pointer;
+    fill: #5656ff;
+  }
+/*   .selected_sign {
+    fill: #00ff00;
+  } */
 </style>

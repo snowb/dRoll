@@ -1,6 +1,6 @@
 <script setup>
 //Component for displaying Dice object
-  import { toRaw, ref, computed, reactive } from 'vue';
+  import { toRaw, ref, computed, reactive, watchPostEffect } from 'vue';
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
   import DiceSettingComponent from './DiceSettingComponent.vue';
@@ -32,9 +32,6 @@
   const toggleMetrics=()=>{showDiceMetrics.value=!showDiceMetrics.value;};
 
   const editValue=(_event, _value_to_update)=>{
-    //perform value checking for negative numbers
-    // dX cannot be negative
-    // X - Y, X must be less than Y
     let updated_value=undefined;
     if(_event.key=="Enter"){
       _event.preventDefault();
@@ -42,11 +39,13 @@
     switch(true){
       case ["max","min","mod"].includes(_value_to_update) && isNumeric(_event.target.value):
         updated_value = +_event.target.value;
+        updated_value = updated_value < 2 ? 2 : updated_value;
         break;
       case ["max","min","mod"].includes(_value_to_update) && !isNumeric(_event.target.value):
         _event.target.value = saved_focus_value.value;
         return undefined;
     }
+
     if(updated_value != saved_focus_value){
       emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:updated_value});
     }
@@ -107,6 +106,23 @@
     props.force_render;
     return new_dice.maximum.toString().length+2;
   });
+
+/*   let diceSign = ref("positive");
+
+  const changeSign=(_dice_sign)=>{
+    diceSign.value = _dice_sign;
+  };
+
+  watchPostEffect(()=>{
+    props.force_render;
+    console.log(diceSign.value)
+    if(editMode.value == "basic" && 
+    diceSign.value != "negative" &&
+    toRaw(props.dice).getMinimum() < -1 && 
+    toRaw(props.dice).getMaximum() == -1){
+      changeSign("negative");
+    }
+  }); */
 </script>
 
 <template>
@@ -135,15 +151,18 @@
           <input title="Range of roll ending value, inclusive" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
         </span>
         <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
-        <v-icon class="pointer" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
+        <v-icon class="pointer" style="margin-right:2em;" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
         <v-icon v-if="!is_exploded_dice" class="pointer" @click="showSettingsToggle" style="position: absolute; right: 0em;" hover animation="spin" speed="slow" :title="(showSettings?'Hide':'Show')+' Dice Settings'">
           <v-icon name="bi-gear-fill" :scale="showSettings?0.75:1" fill="#dbdbdb"></v-icon>
           <v-icon v-if="showSettings" name="oi-circle-slash" fill="#ff0000" scale="1"></v-icon>
         </v-icon>
       </div>
       <div v-if="showSettings" style="border-top: thin solid #dbdbdb;">
+        <!-- <DiceSettingComponent @explode="explodeDice" @changeSign="changeSign" :re_roll_explodes="props.re_roll_explodes"
+          :dice="props.dice" :force_render="props.force_render" :edit_mode="editMode"
+        ></DiceSettingComponent> -->
         <DiceSettingComponent @explode="explodeDice" :re_roll_explodes="props.re_roll_explodes"
-          :dice="props.dice" :force_render="props.force_render"
+          :dice="props.dice" :force_render="props.force_render" :edit_mode="editMode"
         ></DiceSettingComponent>
       </div>
     </div>

@@ -12,6 +12,8 @@ import { IoCloseCircle,
   OiCircleSlash,
   MdResettvRound,
   MdDeleteforeverRound,
+/*   HiMinusCircle,
+  HiPlusCircle, */
   FaDiceD20 } from "oh-vue-icons/icons";
 
 addIcons(IoCloseCircle, 
