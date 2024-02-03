@@ -38,7 +38,6 @@
   };
 
   const resetPool=(_target_pool_index)=>{
-    console.log("reset ",_target_pool_index)
     pools.value[_target_pool_index] = new Metrics_Pool();
     triggerRef(pools);
   };
@@ -75,9 +74,11 @@
     switch(_value_to_update.target_value){
       case "min":
         new_values.min = _value_to_update.new_value;
+        if(new_values.min > new_values.max){new_values.min = new_values.max}
         break;
       case "max":
         new_values.max = _value_to_update.new_value;
+        if(new_values.min > new_values.max){new_values.max = new_values.min}
         break;
       case "mod":
         new_values.mod = _value_to_update.new_value;
