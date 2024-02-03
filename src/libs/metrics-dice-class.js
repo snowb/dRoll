@@ -28,14 +28,14 @@ export class Metrics_Dice extends Dice {
    * Returns the modified minimum value
    * @returns {Number} - minimum_value
    */
-  getMinimum(){
+  getMinimumModified(){
     return this.#minimum_modified_value;
   };
   /**
    * Returns the modified maximum value
    * @returns {Number} - maximum_value
    */
-  getMaximum(){
+  getMaximumModified(){
     return this.#maximum_modified_value;
   };
   /**
