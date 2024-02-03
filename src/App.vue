@@ -6,6 +6,8 @@ let showInformation=ref(false);
 const toggleInformation=()=>{
   showInformation.value=!showInformation.value;
 };
+
+const datetime = new Date(__BUILD_DATETIME__).toJSON();
 </script>
 
 <template>
@@ -13,6 +15,7 @@ const toggleInformation=()=>{
     <span class="bold info_button" @click="toggleInformation" v-if="!showInformation">Show Information</span>
     <span class="shown_info" v-if="showInformation">
       <span class="bold info_button" @click="toggleInformation">Hide Information</span><br>
+      <span style="font-size:xx-small">Updated: {{datetime}}</span><br>
       This is dRoll, the Dice Roll Simulator. A large number <span class="smaller">(default 10,000)</span> of values are 'rolled' via a cryptographically strong random value generator.<br>
       This is not a purely statistical output simulator. Although higher iteration values will approach the statistically accurate values, it is meant to capture a more realistic feel.<br> 
       <br>
