@@ -1,6 +1,6 @@
 <script setup>
 //Component for displaying Dice object
-  import { toRaw, ref, computed, reactive, watchPostEffect } from 'vue';
+  import { toRaw, ref, computed, reactive, watch } from 'vue';
   import { isNumeric } from '../libs/isNumeric';
   import MetricsGraphComponent from './MetricsGraphComponent.vue';
   import DiceSettingComponent from './DiceSettingComponent.vue';
@@ -52,8 +52,9 @@
         _event.target.value = saved_focus_value;
         return undefined;
     }
-    
-    if(updated_value != stored_values[_value_to_update]){
+    console.log('here1',updated_value,previous_values[_value_to_update])
+    if(updated_value != previous_values[_value_to_update]){
+      console.log('here 2')
       emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:updated_value});
       stored_values[_value_to_update] = updated_value;
     }
@@ -103,6 +104,20 @@
     min: toRaw(props.dice).getMinimum(), 
     max: toRaw(props.dice).getMaximum(),
     mod: toRaw(props.dice).getModifier()
+  });
+
+  let previous_values = reactive({
+    min: undefined, max: undefined, mod: undefined
+  });
+
+  watch(()=>stored_values.max, (_current, _previous)=>{
+    previous_values.max = _previous;
+  });
+  watch(()=>stored_values.min, (_current, _previous)=>{
+    previous_values.min = _previous;
+  });
+  watch(()=>stored_values.mod, (_current, _previous)=>{
+    previous_values.mod = _previous;
   });
 
   const inputSize=computed(()=>{
