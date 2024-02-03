@@ -35,7 +35,7 @@ export class Dice {
     if(!isNumeric(_minimum_value)) {
       console.warn("dice-class.js: Invalid minimum value, assuming 1.");
     } else { this.#minimum_value = +_minimum_value; }
-    if(!isNumeric(_maximum_value) || _maximum_value <= _minimum_value) {
+    if(!isNumeric(_maximum_value) || _maximum_value < _minimum_value) {
       console.error("dice-class.js: Invalid maximum value.");
     } else { 
       this.#maximum_value = +_maximum_value;
