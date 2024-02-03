@@ -52,9 +52,7 @@
         _event.target.value = saved_focus_value;
         return undefined;
     }
-    console.log('here1',updated_value,previous_values[_value_to_update])
     if(updated_value != previous_values[_value_to_update]){
-      console.log('here 2')
       emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:updated_value});
       stored_values[_value_to_update] = updated_value;
     }
@@ -69,7 +67,7 @@
   };
   
   const reRollDice=()=>{
-    if(!is_exploded_dice){
+    if(!is_exploded_dice.value){
       //don't re-roll exploded dice
       emit("reRollDice",props.dice_index);
     }

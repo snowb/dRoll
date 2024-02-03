@@ -1069,7 +1069,7 @@ export class Metrics_Pool extends Pool {
       console.warn("metrics-pool-class.js: Invalid value passed to reRollDice() method.");
       return undefined;
     }
-    super.reRollDice(_dice_index)
+    super.reRollDice(_dice_index);
     let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, super.getIterations());
     this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
     this.#secondaryMetrics.pool_median = metrics_secondaries.median;
