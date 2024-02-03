@@ -40,6 +40,14 @@
       case ["max","min","mod"].includes(_value_to_update) && isNumeric(_event.target.value):
         updated_value = +_event.target.value;
         //updated_value = updated_value < 2 ? 2 : updated_value;
+        if(_value_to_update=="max" && updated_value < stored_input_values.min){
+          updated_value = stored_input_values.min;
+          _event.target.value = stored_input_values.min;
+        }
+        if(_value_to_update=="min" && updated_value > stored_input_values.max){
+          updated_value = stored_input_values.max;
+          _event.target.value = stored_input_values.max;
+        }
         break;
       case ["max","min","mod"].includes(_value_to_update) && !isNumeric(_event.target.value):
         _event.target.value = saved_focus_value;
