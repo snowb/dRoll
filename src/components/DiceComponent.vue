@@ -39,22 +39,20 @@
     switch(true){
       case ["max","min","mod"].includes(_value_to_update) && isNumeric(_event.target.value):
         updated_value = +_event.target.value;
-        updated_value = updated_value < 2 ? 2 : updated_value;
+        //updated_value = updated_value < 2 ? 2 : updated_value;
         break;
       case ["max","min","mod"].includes(_value_to_update) && !isNumeric(_event.target.value):
-        _event.target.value = saved_focus_value.value;
+        _event.target.value = saved_focus_value;
         return undefined;
     }
-
-    if(updated_value != saved_focus_value){
+    
+    if(updated_value != stored_input_values[_value_to_update]){
       emit("updateValue",{target_dice_index:props.dice_index, target_value:_value_to_update, new_value:updated_value});
+      stored_input_values[_value_to_update] = updated_value;
     }
   };
 
-  let saved_focus_value=null;
-  const saveFocusValue=(_event)=>{
-    saved_focus_value=_event.target.innerText;
-  };
+  let stored_input_values = reactive({min:1, max:6, mod:0});
 
   const width=computed(()=>{
     return toRaw(props.dice).getMaximum()*150/6+"px";
@@ -142,13 +140,13 @@
       </div>
       <div style="display: flex; flex-direction: row; align-items: center; position:relative; margin-bottom:0.2em;"> 
         <span v-if="editMode=='basic'" style="display:inline-flex; padding: 0em 0.5em; margin-left:0.2em; border-radius: 1em; border:thin solid white;">
-          <span style="font-weight: bold;">d</span>&nbsp;<input title="Die Size" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
-          &nbsp;+/-&nbsp;<input title="Simple +/- Modifier" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'mod')" @blur="editValue($event,'mod')" v-model="new_dice.modifier"/>
+          <span style="font-weight: bold;">d</span>&nbsp;<input title="Die Size" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" @change="editValue($event,'max')" v-model="new_dice.maximum"/>
+          &nbsp;+/-&nbsp;<input title="Simple +/- Modifier" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @keydown.enter="editValue($event,'mod')" @blur="editValue($event,'mod')" @change="editValue($event,'mod')" v-model="new_dice.modifier"/>
         </span>
         <span v-if="editMode=='advanced'" style="display:inline-flex; padding: 0em 0.5em; margin-left:0.2em; font-weight: bold; border-radius: 1em; border:thin solid white;">
-          <input title="Range of roll starting value, inclusive" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')" v-model="new_dice.minimum"/>
+          <input title="Range of roll starting value, inclusive" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @keydown.enter="editValue($event,'min')" @blur="editValue($event,'min')" @change="editValue($event,'min')" v-model="new_dice.minimum"/>
           &nbsp;to&nbsp;
-          <input title="Range of roll ending value, inclusive" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @focus="saveFocusValue" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" v-model="new_dice.maximum"/>
+          <input title="Range of roll ending value, inclusive" :class="{green:!is_exploded_dice}" type="number" :disabled="is_exploded_dice" :size="inputSize" class="box" @keydown.enter="editValue($event,'max')" @blur="editValue($event,'max')" @change="editValue($event,'max')" v-model="new_dice.maximum"/>
         </span>
         <v-icon class="pointer" style="padding:0.1em;" hover animation="pulse" speed="slow" @click="toggleMode" title="Toggle Input Mode" name="fa-exchange-alt" scale="1" fill="#dbdbdb"></v-icon> 
         <v-icon class="pointer" style="margin-right:2em;" hover animation="spin" speed="slow" @click="reRollDice" title="Re-Roll Dice" name="bi-arrow-repeat" scale="1" fill="#dbdbdb"></v-icon>
