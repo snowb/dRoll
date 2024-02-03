@@ -107,34 +107,6 @@
       let temp_shared_pools = queryString.getAll("p");
       let temp_shared_dice = queryString.getAll("d");
 
-      /**
-       * need to do checking prior to using
-       * 
-       * p = pool format
-       * { Number }       - pool id, 0 to 9             /^[0-9]{1}$/gi
-       *  ;
-       * { 0x Number}    - iterations, 1 to 100_000     /^[0-9a-fA-F]$/gi
-       *  ;  
-       * { Number}        - filter id, 0 to 20          /^[0-9]{1,2}$/gi
-       * 
-       * d = dice format
-       * { Number }       - pool id, 0 to 9             /^[0-9]{1}$/gi
-       *  ;
-       * {
-       *  { 0x Number }  - maximum dice value, 1 to 255, assumes min value of 1     /[0-9a-fA-F]{1,2}/gi
-       *    |
-       *  [ 
-       *    x0 Number    - minimum dice value, -255 to 255   /-?[0-9a-fA-F]{1,2}/gi
-       *    - 
-       *    0x Number    - maximum dice value, -255 to 255   /-?[0-9a-fA-F]{1,2}/gi
-       *  ]    
-       * }
-       *  ;
-       * { 0x Number }    - modifier, -255 to 255            /-?[0-9a-fA-F]{1,2}/gi                  
-       *  ;
-       * { Boolean }      - exploding dice flag           /[0-1]/gi
-       */
-
       temp_shared_pools = temp_shared_pools.map((_pool_info)=>{
         //need to handle invalid input
         let pool_object = {raw:_pool_info};
@@ -201,7 +173,7 @@
       });
       sharedPools = temp_shared_pools;
     }
-    console.log(sharedPools)
+    console.log(sharedPools)//need to finish the queryString stuff, have to add poolOps and modPoolOps options
   });
 </script>
 
