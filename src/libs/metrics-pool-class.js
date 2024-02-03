@@ -110,36 +110,6 @@ export class Metrics_Pool extends Pool {
     return this.#dice_metrics[_index];
   }
   /**
-   * return #fullRollResults private property
-   * @returns {Metrics_Dice[]}
-   */
-  getFullRollResults () { return super.getFullRollResults(); };
-  /**
-   * return #rollResults private property
-   * @returns {Object[]} - [{index:number, roll:number[]}]
-   */
-  getRollResults () { return super.getRollResults(); };
-  /**
-   * return sum from #secondaryResults
-   * @returns {number[]}
-   */
-  getSumRolled () { return super.getSumRolled(); };
-  /**
-   * return min from #secondaryResults
-   * @returns {number[]}
-   */
-  getMinRolled () { return super.getMinRolled(); };
-  /**
-   * return max from #secondaryResults
-   * @returns {number[]}
-   */
-  getMaxRolled () { return super.getMaxRolled(); };
-
-  getPoolMin(){ return super.getPoolMin(); }
-
-  getPoolMax(){ return super.getPoolMax(); }
-
-  /**
    * @returns {number} - length/size of pool
    */
   getPoolSize(){
@@ -168,23 +138,21 @@ export class Metrics_Pool extends Pool {
      * 
      */
   };
-
- /*  getIterations(){
-    return super.getIterations();
-  }; */
-  
-/*   setIterations(_input){
-    super.setIterations(_input);
-  }; */
-
+  /**
+   * @returns {Number} - number of dice in pool
+   */
   getDiceCount(){
     return this.#dice_count;
   };
-
+  /**
+   * @returns {Number} - Highest dice value in pool
+   */
   getMaxDiceValue(){
     return this.#max_dice;
   };
-
+  /**
+   * @returns {Number} - Lowest dice value in pool
+   */
   getMinDiceValue(){
     return this.#min_dice;
   };
@@ -206,11 +174,17 @@ export class Metrics_Pool extends Pool {
       case "sum_even":
         filtered_array=this.getSumEven();
         break;
+      case "modified_even":            //modified_results would have to "pool" type, only has 1 value, unneeded reducer
+        filtered_array=this.getModifiedEven();
+        break;
       case "odd":
         filtered_array=this.getOdd();
         break;
       case "sum_odd":
         filtered_array=this.getSumOdd();
+        break;
+      case "modified_odd":            
+        filtered_array=this.getModifiedOdd();
         break;
       case "equal":
         filtered_array=this.getEqual(_first_target_value);
@@ -218,16 +192,26 @@ export class Metrics_Pool extends Pool {
       case "sum_equal":
         filtered_array=this.getSumEqual(_first_target_value);
         break;
+      case "modified_equal":
+        filtered_array=this.getModifiedEqual(_first_target_value);
+        break;
       case "above":
         filtered_array=this.getAbove(_first_target_value);
         break;
       case "sum_above":
         filtered_array=this.getSumAbove(_first_target_value);
         break;
+      case "modified_above":
+        filtered_array=this.getModifiedAbove(_first_target_value);
+        break;
       case "below":
         filtered_array=this.getBelow(_first_target_value);
+        break;
       case "sum_below":
         filtered_array=this.getSumBelow(_first_target_value);
+        break;
+      case "modified_below":
+        filtered_array=this.getModifiedBelow(_first_target_value);
         break;
       case "range":
         filtered_array=this.getWithinRange(_first_target_value,_second_target_value);
@@ -235,25 +219,30 @@ export class Metrics_Pool extends Pool {
       case "sum_range":
         filtered_array=this.getSumWithinRange(_first_target_value,_second_target_value);
         break;
-      case "highest":
-        filtered_array=this.getRollResults();
+      case "modified_range":
+        filtered_array=this.getModifiedWithinRange(_first_target_value,_second_target_value);
         break;
+      case "highest":
       case "lowest":
         filtered_array=this.getRollResults();
         break;
     }
-    let with_sums_array=filtered_array.reduce((_pool_array, _pool_object)=>{
+    let with_results_array=filtered_array.reduce((_pool_array, _pool_object)=>{
       let new_pool_object={
         index:undefined, 
         values:undefined,
-        sum:undefined
+        result:undefined
       };
       new_pool_object.index=_pool_object.index;
       if(_result_target!="dice"){
         new_pool_object.values=_pool_object.values;
-        new_pool_object.sum=_pool_object.values.reduce((_sum, _value)=>{
-          return _sum + _value;
-        },0);
+        if(_pool_object.values.length == 1){
+          new_pool_object.result = _pool_object.values[0];
+        } else {
+          new_pool_object.result=_pool_object.values.reduce((_result, _value)=>{
+            return _result + _value;
+          },0);
+        }
       } else {
         switch(_filter_type){
           case "even":
@@ -282,22 +271,37 @@ export class Metrics_Pool extends Pool {
             new_pool_object.values=_pool_object.roll.filter((_roll, _index)=>{return _index < _first_target_value});
             break;
         }
-        new_pool_object.sum=new_pool_object.values.reduce((_sum, _value)=>{
-          return _sum+_value;
+        new_pool_object.result=new_pool_object.values.reduce((_result, _value)=>{
+          return _result+_value;
         },0);
       }
       _pool_array.push(new_pool_object);
       return _pool_array;
     },[]);
-    let lowest_dice_minimum=super.getFullRollResults().reduce((_min_value, _dice)=>{
-      if(_dice.getMinimum()<_min_value){return _dice.getMinimum()}
-      return _min_value;
-    },Infinity);
-    for(let value=lowest_dice_minimum; value<=super.getPoolMax(); value++) {
-      let count=with_sums_array.filter((_pool_object)=>{
-        return _pool_object.sum==value;
+    let lowest_dice_minimum;
+    let target_maximum = this.getPoolMax();
+    if(_result_target=="dice"){
+      lowest_dice_minimum=this.getFullRollResults().reduce((_min_value, _dice)=>{
+        if(_dice.getMinimum()<_min_value){return _dice.getMinimum()}
+        return _min_value;
+      },Infinity);
+    } else {
+      if(this.getModifiedMinimum() < this.getPoolMin()){
+        lowest_dice_minimum = this.getModifiedMinimum();
+      } else {
+        lowest_dice_minimum = this.getPoolMin();
+      }
+      if(this.getModifiedMaximum() > this.getPoolMax()){
+        target_maximum = this.getModifiedMaximum();
+      } else {
+        target_maximum = this.getPoolMax();
+      }
+    }
+    for(let value=lowest_dice_minimum; value<=target_maximum; value++) {
+      let count=with_results_array.filter((_pool_object)=>{
+        return _pool_object.result==value;
       }).length;
-      let ratio=count/super.getIterations();
+      let ratio=count/this.getIterations();
       metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
     }
     metrics.pool_metrics=metrics.pool_metrics.filter((_metrics_object)=>{return _metrics_object.count>0});
@@ -328,6 +332,13 @@ export class Metrics_Pool extends Pool {
     return this.#getFilterMetrics("sum_even", undefined, undefined, _result_target); 
   };
   /**
+   * Return metrics for the given filter from the modifiedResults.results data
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getModifiedEvenMetrics(){
+    return this.#getFilterMetrics("modified_even", undefined, undefined, undefined); 
+  };
+  /**
    * Return metrics for the given filter
    * @param {String} _result_target - "pool" (default) or "dice", 
    *                                   whether to return the Pool Value WITH Odd Dice or only the Pool Value OF Odd Dice.
@@ -344,6 +355,13 @@ export class Metrics_Pool extends Pool {
    */
   getSumOddMetrics(_result_target){
     return this.#getFilterMetrics("sum_odd", undefined, undefined, _result_target);
+  };
+  /**
+   * Return metrics for the given filter from the modifiedResults.results data
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getModifiedOddMetrics(){
+    return this.#getFilterMetrics("modified_odd", undefined, undefined, undefined); 
   };
   /**
    * Updates the dice_metrics private property based on current Pool
@@ -388,19 +406,6 @@ export class Metrics_Pool extends Pool {
       return _mode_object;
     },{count:0}).value;
     return metrics_secondaries;
-    /*
-    this.#secondaryMetrics.pool_mean=super.getSumRolled().reduce((_avg,_value)=>{
-      return _avg + _value;
-    },0) / super.getIterations();
-    let temp_median=super.getSumRolled().toSorted((_a, _b)=>{
-      return _a >= _b ? 1 : -1;
-    });
-
-    if(temp_median.length%2==0){
-      this.#secondaryMetrics.pool_median = (temp_median[temp_median.length/2]+temp_median[(temp_median.length/2)-1])/2;
-    } else {
-      this.#secondaryMetrics.pool_median = temp_median[Math.floor(temp_median.length/2)];
-    } */
   }
   
   /**
@@ -423,7 +428,15 @@ export class Metrics_Pool extends Pool {
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumAboveMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("sum_above", +_value, undefined, undefined);
   };
-  
+  /**
+   * Return metrics for the given filter from the modified_results.result data
+   * @param {string|number} _value - numeric for value to compare
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getModifiedAboveMetrics(_value){
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getModifiedAboveMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("modified_above", +_value, undefined, undefined);
+  };
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
@@ -444,7 +457,15 @@ export class Metrics_Pool extends Pool {
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumBelowMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("sum_below", +_value, undefined, undefined);
   };
-  
+  /**
+   * Return metrics for the given filter from the modified_results.result data
+   * @param {string|number} _value - numeric for value to compare
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getModifiedBelowMetrics(_value){
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getModifiedBelowMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("modified_below", +_value, undefined, undefined);
+  };
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
@@ -468,6 +489,17 @@ export class Metrics_Pool extends Pool {
     return this.#getFilterMetrics("sum_equal", +_value, undefined, undefined);
   };
   /**
+   * Return metrics for the given filter from the modified_results.result data
+   * @param {string|number} _value - numeric for value to compare
+   * @param {String} _result_target - "pool" (default) or "dice", 
+   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getModifiedEqualMetrics(_value){
+    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getModifiedEqualMetrics requires a number for _value.");return undefined;}
+    return this.#getFilterMetrics("modified_equal", +_value, undefined, undefined);
+  };
+  /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
    * @param {String} _result_target - "pool" (default) or "dice", 
@@ -487,6 +519,20 @@ export class Metrics_Pool extends Pool {
     if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getSumWithinRangeMetrics requires a number for Minimum and Maximum values.");return undefined;}
     return this.#getFilterMetrics("sum_range", +_min_value, +_max_value, undefined);
   };
+  /**
+   * Return metrics for the given filter from the modified_results.result data
+   * @param {string|number} _value - numeric for value to compare
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
+  getModifiedWithinRangeMetrics(_min_value, _max_value){
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-pool-class.js: getModifiedWithinRangeMetrics requires a number for Minimum and Maximum values.");return undefined;}
+    return this.#getFilterMetrics("modified_range", +_min_value, +_max_value, undefined);
+  };
+  /**
+   * Returns _dice_count number of lowest results in the pool
+   * @param {Number|String} _dice_count - how many of the 'lowest' dice to return
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
   getLowestMetrics(_dice_count){
     if(_dice_count!==undefined && (!isNumeric(_dice_count) || _dice_count >= this.#dice_count)){
       console.error("metrics-pool-class.js: getLowestMetric argument must be Numeric and less than the number of Dice.");
@@ -495,6 +541,11 @@ export class Metrics_Pool extends Pool {
     let dice_count = _dice_count===undefined ? 1 : +_dice_count
     return this.#getFilterMetrics("lowest", dice_count, undefined, "dice");
   };
+  /**
+   * Returns _dice_count number of highest results in the pool
+   * @param {Number|String} _dice_count - how many of the 'highest' dice to return
+   * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
+   */
   getHighestMetrics(_dice_count){
     if(_dice_count!==undefined && (!isNumeric(_dice_count) || _dice_count >= this.#dice_count)){
       console.error("metrics-pool-class.js: getHighestMetrics argument must be Numeric and less than the number of Dice.");
