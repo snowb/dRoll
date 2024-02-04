@@ -21,7 +21,7 @@ export class Metrics_Pool extends Pool {
   #secondaryMetrics={
     dice_mean:[],
     pool_mean:null, pool_mode:null, pool_median:null
-  }
+  };
   #groupResults={
     sets:[], 
     sequences:[], 
@@ -385,21 +385,18 @@ export class Metrics_Pool extends Pool {
       _pool_total.total_count+=_metric.count;
       return _pool_total;
     },{total_value:0, total_count:0});
-    //this.#secondaryMetrics.pool_mean = intermediate_mean.total_value / intermediate_mean.total_count;
     metrics_secondaries.mean = intermediate_mean.total_value / intermediate_mean.total_count;
 
     metrics_secondaries.median=undefined;
     let target_median_location=Math.floor(_filter_array_length/2) - 1;
     let median_cheat = _counts_values_object.reduce((_current_location, _object)=>{
       if(_current_location>=target_median_location && metrics_secondaries.median===undefined){
-        //this.#secondaryMetrics.median=_object.value;
         metrics_secondaries.median=_object.value;
       }
       return _current_location+_object.count;
     },0);
 
     metrics_secondaries.mode=_counts_values_object.reduce((_mode_object, _metric_object)=>{
-    //this.#secondaryMetrics.mode=_counts_values_object.reduce((_mode_object, _metric_object)=>{
       if(_metric_object.count >= _mode_object.count){
         return _metric_object;
       }
@@ -720,6 +717,37 @@ export class Metrics_Pool extends Pool {
     }
     metrics.mean=this.#secondaryMetrics.pool_mean;
     metrics.median=this.#secondaryMetrics.pool_median;
+    metrics.mode=metrics.pool_metrics.reduce((_mode_object, _metric_object)=>{
+      if(_metric_object.count >= _mode_object.count){
+        return _metric_object;
+      }
+      return _mode_object;
+    },{count:0}).value;
+    return metrics;
+  };
+  getModifiedMetrics(){
+    let metrics={};
+    metrics.minimum_value=this.getModifiedMinimum();
+    metrics.maximum_value=this.getModifiedMaximum();
+    metrics.pool_metrics=[];
+    for(let value=metrics.minimum_value; value<=metrics.maximum_value; value++) {
+      let count=this.getModifiedEqual(value).length;
+      let ratio=count/this.getIterations();
+      metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
+    }
+    metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
+      return (_sum+_value);
+    },0) / this.getIterations();
+
+    metrics.median=undefined;
+    let target_median_location=Math.floor(this.getIterations()/2) - 1;
+    let median_cheat = metrics.pool_metrics.reduce((_current_location, _object)=>{
+      if(_current_location>=target_median_location && metrics.median===undefined){
+        metrics.median=_object.value;
+      }
+      return _current_location+_object.count;
+    },0);
+
     metrics.mode=metrics.pool_metrics.reduce((_mode_object, _metric_object)=>{
       if(_metric_object.count >= _mode_object.count){
         return _metric_object;
