@@ -16,8 +16,8 @@
   let pool_iterations=ref(toRaw(props.pool).getIterations());
 
   const emit=defineEmits([
-    "addDice", "updateValue", "dropDice", "dropPool", 
-    "reRollPool", "reRollDice", "explodeDice", "filterPoolDice", "resetPool"]);
+    "addDice", "updateValue", "dropDice", "dropPool", "resetPool",
+    "reRollPool", "reRollDice", "explodeDice", "filterPoolDice", "applyOpFunc"]);
   const addDice=()=>{
     emit("addDice", {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
@@ -149,6 +149,10 @@
     props.force_render;
     return props.pool && props.pool.getFullRollResults().length>0;
   });
+
+  const applyOpFunc=(_op_func_object)=>{
+    emit("applyOpFunc",_op_func_object);
+  };
 </script>
 
 <template>
@@ -178,7 +182,8 @@
       </div>
       <div v-if="showSettings && allowShowSetting" style="border-top: thin solid #242424;">
         <PoolSettingComponent :force_render="props.force_render" :pool="props.pool"
-          @filterPoolDice="filterPoolDice" :pool_index="props.pool_index"
+          @filterPoolDice="filterPoolDice" @applyOpFunc="applyOpFunc"
+          :pool_index="props.pool_index"
         ></PoolSettingComponent>
       </div>
       <div v-if="showDice" class="testclass" style="display: flex; flex-direction: row; align-items: flex-start; flex-wrap: wrap; max-width:99vw; border-top: thin solid #242424;">

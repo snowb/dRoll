@@ -18,7 +18,7 @@ filter_options.drop_value=1;
 filter_options.drop_type="lowest";
 filter_options.drop_count=1;
 
-const emit=defineEmits(["filterPoolDice","dropPoolDice"]);
+const emit=defineEmits(["filterPoolDice","dropPoolDice","applyOpFunc"]);
 
 let showDiceFilterOptions=ref(false);
 
@@ -68,23 +68,27 @@ const emitFilter=()=>{
 
 let showPoolFilterOptions=ref(false);
 
+let showPoolOperations = ref(false);
+
 //let showExplodeOptions=ref(false);
 
 watchEffect(()=>{
-  if(showDiceFilterOptions.value==false && showPoolFilterOptions.value==false){
+  if(showDiceFilterOptions.value==false && showPoolFilterOptions.value==false && showPoolOperations.value==false){
     emit("filterPoolDice",{type:"full"});
   }
 });
 
-watch([showDiceFilterOptions, showPoolFilterOptions, showPoolOperations, showPoolModifications], 
-([_new_dice_value, _new_pool_value, _new_op_value, _new_mod_value],
-[_old_dice_value, _old_pool_value, _old_op_value, _old_mod_value])=>{
+watch([showDiceFilterOptions, showPoolFilterOptions, showPoolOperations], 
+([_new_dice_value, _new_pool_value, _new_op_value],
+[_old_dice_value, _old_pool_value, _old_op_value])=>{
   switch(true){
     case _new_dice_value==true && _old_dice_value==false:
       showPoolFilterOptions.value = false;
       showPoolOperations.value = false;
+      showDiceFilterOptions.value = true;
       break;
-    default:
+    case _new_pool_value==true && _old_pool_value==false:
+    case _new_op_value==true && _old_op_value==false:
       showDiceFilterOptions.value = false;
       break;
   }
@@ -95,8 +99,9 @@ const inputSize=computed(()=>{
   return props.pool.getPoolMax().toString().length+2;
 });
 
-let showPoolOperations = ref(false);
-
+const applyOpFunc = (_event, _target_method, _target_op_func)=>{
+  emit("applyOpFunc",{pool_index: props.pool_index, method:_target_method, op_func:_target_op_func});
+};
 </script>
 
 <template>
@@ -131,11 +136,26 @@ let showPoolOperations = ref(false);
         </div>
       </div>
     </Transition>
-    <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
+    <div class="small bold check_box_root" title="Apply Operation/Modification to Dice in order"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
     <Transition>
-      <!-- put Pool Operation in here (add, subtract, multiply, divide) 
-        put modifications in here as well, with before/after Op option
-      -->
+      <div v-if="showPoolOperations" class="small" style="padding-left:0.5em;">
+<!--         <div style="font-weight: bold;" title="Runs operation on all Dice in order">Apply Operation to Pool</div>
+-->       
+          &nbsp;<span class="bold" title="Apply Operation to Dice in order">Operation: </span>
+          <span title="Add all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="true" @change="applyOpFunc($event,'op','add')"/>Add</span>&nbsp;&nbsp;
+          <span title="Subtract all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="false" @change="applyOpFunc($event,'op','subtract')"/>Subtract</span>&nbsp;&nbsp;
+          <span title="Multiply all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="false" @change="applyOpFunc($event,'op','multiply')"/>Multiply</span>&nbsp;&nbsp;
+          <span title="Divide all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="false" @change="applyOpFunc($event,'op','divide')"/>Divide</span>
+<!--         <div style="font-weight: bold;" title="Apply modification to Pool results">Modify Pool Results</div>
+-->       <br>
+          &nbsp;<span class="bold" title="Apply Function to Pool results">Function: </span>
+          <span title="No function"><input type="radio" :name="'function'+props.pool_index" :checked="true" @change="applyOpFunc($event,'func','none')"/>None</span>&nbsp;&nbsp;
+          <span title="Apply Absolute Value function to Pool results"><input type="radio" :name="'function'+props.pool_index" :checked="false" @change="applyOpFunc($event,'func','absolute')"/>Absolute Value</span>&nbsp;&nbsp;
+          <span title="Apply Negate/Invert function to Pool results"><input type="radio" :name="'function'+props.pool_index" :checked="false" @change="applyOpFunc($event,'func','negate')"/>Negate/Invert</span>
+        <!-- put Pool Operation in here (add, subtract, multiply, divide) 
+          put modifications in here as well, with before/after Op option
+        -->
+      </div>
     </Transition>
     <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolFilterOptions" :checked="false"/>Filter By Pool Value</div>
     <Transition>
