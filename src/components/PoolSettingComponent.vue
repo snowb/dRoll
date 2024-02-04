@@ -76,12 +76,17 @@ watchEffect(()=>{
   }
 });
 
-watch([showDiceFilterOptions, showPoolFilterOptions], ([_new_dice_value, _new_pool_value],[_old_dice_value, _old_pool_value])=>{
-  if(_new_dice_value==true && _old_dice_value==false){
-    showPoolFilterOptions.value=false;
-  }
-  if (_new_pool_value==true && _old_pool_value==false){
-    showDiceFilterOptions.value=false;
+watch([showDiceFilterOptions, showPoolFilterOptions, showPoolOperations, showPoolModifications], 
+([_new_dice_value, _new_pool_value, _new_op_value, _new_mod_value],
+[_old_dice_value, _old_pool_value, _old_op_value, _old_mod_value])=>{
+  switch(true){
+    case _new_dice_value==true && _old_dice_value==false:
+      showPoolFilterOptions.value = false;
+      showPoolOperations.value = false;
+      break;
+    default:
+      showDiceFilterOptions.value = false;
+      break;
   }
 });
 
@@ -89,6 +94,9 @@ const inputSize=computed(()=>{
   props.force_render;
   return props.pool.getPoolMax().toString().length+2;
 });
+
+let showPoolOperations = ref(false);
+
 </script>
 
 <template>
@@ -122,6 +130,12 @@ const inputSize=computed(()=>{
           <span class="button far_right_position" @click="emitFilter">Filter</span>
         </div>
       </div>
+    </Transition>
+    <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
+    <Transition>
+      <!-- put Pool Operation in here (add, subtract, multiply, divide) 
+        put modifications in here as well, with before/after Op option
+      -->
     </Transition>
     <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolFilterOptions" :checked="false"/>Filter By Pool Value</div>
     <Transition>
