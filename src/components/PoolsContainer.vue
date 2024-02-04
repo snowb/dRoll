@@ -179,19 +179,14 @@
   const applyOpFunc=(_op_func_object)=>{
     console.log(_op_func_object)
     switch(true){
-      case _op_func_object.method == "op" && _op_func_object.op_func == "add":
+      case _op_func_object.method == "op" && ["add","subtract","multiply","divide"].includes(_op_func_object.op_func):
+        toRaw(pools.value[_op_func_object.pool_index]).poolOperation(_op_func_object.op_func);
         break;
-      case _op_func_object.method == "op" && _op_func_object.op_func == "subtract":
-        break;
-      case _op_func_object.method == "op" && _op_func_object.op_func == "multiply":
-        break;
-      case _op_func_object.method == "op" && _op_func_object.op_func == "divide":
-        break;
-      case _op_func_object.method == "func" && _op_func_object.op_func == "absolute":
-        break;
-      case _op_func_object.method == "func" && _op_func_object.op_func == "negate":
+      case _op_func_object.method == "func" && ["absolute","negate","none"].includes(_op_func_object.op_func):
+        toRaw(pools.value[_op_func_object.pool_index]).modifyPoolOperation(_op_func_object.op_func);
         break;
     }
+    triggerRef(pools);
   };
 </script>
 
