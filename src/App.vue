@@ -28,6 +28,7 @@ const datetime = new Date(__BUILD_DATETIME__).toJSON();
       <span style="margin-left: 3em;">Click <span style="font-weight: bold; font-size: small; color:#242424; background-color:#dbdbdb"><input type="checkbox" checked="true"/>Filter By Dice Value </span>&nbsp;to filter Pools by the Value of its Dice.</span><br>
       <span style="margin-left: 4em;">Select <span style="font-weight: bold; font-size: small; color:#242424; background-color:#dbdbdb">Keep Only Dice ...</span>&nbsp;to filter out Dice with non-matching values.</span><br>
       <span style="margin-left: 4em;">Select <span style="font-weight: bold; font-size: small; color:#242424; background-color:#dbdbdb">Keep Pools With Dice ...</span>&nbsp;to filter out Pools without at least 1 matching value.</span><br>
+      <span style="margin-left: 3em;">Click <span style="font-weight: bold; font-size: small; color:#242424; background-color:#dbdbdb"><input type="checkbox" checked="true"/>Pool Operation </span>&nbsp;to apply an Operation <span class="smaller">(in display order) </span>and/or Function to the Pool results.</span><br>
       <span style="margin-left: 3em;">Click <span style="font-weight: bold; font-size: small; color:#242424; background-color:#dbdbdb"><input type="checkbox" checked="true"/>Filter By Pool Value </span>&nbsp;and select to filter out Pools with non-matching totals.</span><br>
       <span style="margin-left: 3em;">Click <span class="filter_button">Filter</span> to apply the filter.</span><br>
       <br>
