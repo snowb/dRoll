@@ -23,7 +23,7 @@ export class Pool {
     pool_max:null,pool_min:null
   }; 
   #modifiedResults={
-    results:[], modified_max:null, modified_min:null
+    results:[], modified_max:null, modified_min:null, last_operation:"none"
   }
   /**
    * Populates private properties and rolls the Dice object provided
@@ -763,21 +763,25 @@ getSumEqual (_value) {//return Sums with values equal to _value
           operation_function = (_value_1, _value_2)=>{
             return (_value_1 + _value_2);
           };
+          this.#modifiedResults.last_operation = "add";
           break;
         case "subtract":
           operation_function = (_value_1, _value_2)=>{
             return (_value_1 - _value_2);
           };
+          this.#modifiedResults.last_operation = "subtract";
           break;
         case "multiply":
           operation_function = (_value_1, _value_2)=>{
             return (_value_1 * _value_2);
           };
+          this.#modifiedResults.last_operation = "multiply";
           break;
         case "divide":
           operation_function = (_value_1, _value_2)=>{
             return (_value_1 / _value_2);
           };
+          this.#modifiedResults.last_operation = "divide";
           break;
         default:
           operation_function = (_value_1, _value_2)=>{
@@ -799,6 +803,7 @@ getSumEqual (_value) {//return Sums with values equal to _value
         return _new_array;
       },[]);
     } else {
+      this.#modifiedResults.last_operation = _operation;
       this.#modifiedResults.results = _operation(flattened_results);
       this.#modifiedResults.results.forEach((_value)=>{
         if(_value < modified_min){modified_min = _value;}
@@ -807,9 +812,6 @@ getSumEqual (_value) {//return Sums with values equal to _value
     }
     this.#modifiedResults.modified_max = modified_max;
     this.#modifiedResults.modified_min = modified_min;
-
-    console.log(this.#modifiedResults.results);
-
   };
   /**
    * Modify whatever results are in modifiedResults.results
@@ -818,9 +820,10 @@ getSumEqual (_value) {//return Sums with values equal to _value
    * @returns {Number[]} - mutates #modifiedResults.results and returns array of values
   */
   modifyPoolOperation(_modification){
+    let operation_order
     if(this.#modifiedResults.results.length==0){
       //no poolOperation has been run yet. Run "add" in standard order
-      let operation_order = this.#fullRollResults.map((_array, _index)=>{
+      operation_order = this.#fullRollResults.map((_array, _index)=>{
         return _index;
       });
       this.poolOperation("add",operation_order);
@@ -836,6 +839,10 @@ getSumEqual (_value) {//return Sums with values equal to _value
         case "negate":
           modifier_fuction = (_value)=>{return -1*_value};
           break;
+        case "none":
+          this.poolOperation(this.#modifiedResults.last_operation,operation_order);
+          modifier_fuction = (_value)=>{return _value};
+          break;
         default:
           console.warn("pool-class.js: invalid modification name passed to modifyPoolOperation, no changes made.");
           break;
@@ -849,8 +856,6 @@ getSumEqual (_value) {//return Sums with values equal to _value
       if(modified_value > modified_max){modified_max = modified_value;}
       return modified_value;
     });
-
-    console.log(this.#modifiedResults.results);
 
     this.#modifiedResults.modified_max = modified_max;
     this.#modifiedResults.modified_min = modified_min;
