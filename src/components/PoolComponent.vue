@@ -100,35 +100,57 @@
   const getFilteredMetrics=computed(()=>{
     props.force_render;
     let pool_or_dice = filter_options.type_modifier=="dice" ? "dice" : "pool";
-    switch(filter_options.type){
+    let target_filter_type;
+    if(["op","func"].includes(operationFunction.method) && operationFunction.operation_function!=="none"){
+      target_filter_type = "modified_"+filter_options.type;
+    } else if(pool_or_dice == "pool"){
+      target_filter_type = "sum_"+filter_options.type;
+    } else {
+      target_filter_type = filter_options.type;
+    }
+    switch(target_filter_type){
       case "equal":
         return props.pool.getEqualMetrics(filter_options.value, pool_or_dice);
       case "sum_equal":
         return props.pool.getSumEqualMetrics(filter_options.value);
+      case "modified_equal":
+        return props.pool.getModifiedEqualMetrics(filter_options.value);
       case "above":
         return props.pool.getAboveMetrics(filter_options.value, pool_or_dice);
       case "sum_above":
         return props.pool.getSumAboveMetrics(filter_options.value);
+      case "modified_above":
+        return props.pool.getModifiedAboveMetrics(filter_options.value);
       case "below":
         return props.pool.getBelowMetrics(filter_options.value, pool_or_dice);
       case "sum_below":
         return props.pool.getSumBelowMetrics(filter_options.value);
+      case "modified_below":
+        return props.pool.getModifiedBelowMetrics(filter_options.value);
       case "even":
         return props.pool.getEvenMetrics(pool_or_dice);
       case "sum_even":
         return props.pool.getSumEvenMetrics(pool_or_dice);
+      case "modified_even":
+        return props.pool.getModifiedEvenMetrics(pool_or_dice);
       case "odd":
         return props.pool.getOddMetrics(pool_or_dice);
       case "sum_odd":
         return props.pool.getSumOddMetrics(pool_or_dice);
+      case "modified_odd":
+        return props.pool.getModifiedOddMetrics(pool_or_dice);
       case "range":
         return props.pool.getWithinRangeMetrics(filter_options.value, filter_options.max_value, pool_or_dice);
       case "sum_range":
-        return props.pool.getSumWithinRangeMetrics(filter_options.value, filter_options.max_value, pool_or_dice);
+        return props.pool.getSumWithinRangeMetrics(filter_options.value, filter_options.max_value);
+      case "modified_range":
+        return props.pool.getModifiedWithinRangeMetrics(filter_options.value, filter_options.max_value);
       case "highest":
         return props.pool.getHighestMetrics(filter_options.drop_count);
       case "lowest":
         return props.pool.getLowestMetrics(filter_options.drop_count);
+      case "modified_full":
+        return props.pool.getModifiedMetrics();
       case "full":
       default:
         return props.pool.getMetrics();
@@ -150,8 +172,16 @@
     return props.pool && props.pool.getFullRollResults().length>0;
   });
 
+  let operationFunction = reactive({method:"none",operation_function:"none"});
+
   const applyOpFunc=(_op_func_object)=>{
     emit("applyOpFunc",_op_func_object);
+    if(["op","func"].includes(_op_func_object.method)){
+      operationFunction.method = _op_func_object.method;
+    }
+    if(["add","subtract","multiply","divide","negate","absolute"].includes(_op_func_object.op_func)){
+      operationFunction.operation_function = _op_func_object.op_func;
+    }
   };
 </script>
 
