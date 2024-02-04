@@ -175,6 +175,24 @@
     }
     console.log(sharedPools)//need to finish the queryString stuff, have to add poolOps and modPoolOps options
   });
+
+  const applyOpFunc=(_op_func_object)=>{
+    console.log(_op_func_object)
+    switch(true){
+      case _op_func_object.method == "op" && _op_func_object.op_func == "add":
+        break;
+      case _op_func_object.method == "op" && _op_func_object.op_func == "subtract":
+        break;
+      case _op_func_object.method == "op" && _op_func_object.op_func == "multiply":
+        break;
+      case _op_func_object.method == "op" && _op_func_object.op_func == "divide":
+        break;
+      case _op_func_object.method == "func" && _op_func_object.op_func == "absolute":
+        break;
+      case _op_func_object.method == "func" && _op_func_object.op_func == "negate":
+        break;
+    }
+  };
 </script>
 
 <template>
@@ -185,7 +203,7 @@
   <div style="display:flex; flex-direction: row; flex-wrap: wrap;">
     <PoolComponent v-for="(pool,pool_index) in pools" 
       :pool=pool :pool_index=pool_index :force_render="forceRender()" :re_roll_explodes="re_roll_explodes"
-      @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool"
+      @addDice="addDice" @updateValue="updateValue" @dropDice="dropDice" @dropPool="dropPool" @applyOpFunc="applyOpFunc"
       @reRollPool="reRollPool" @reRollDice="reRollDice" @explodeDice="explodeDice" @resetPool="resetPool">
     </PoolComponent>
   </div>

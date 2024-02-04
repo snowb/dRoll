@@ -17,7 +17,7 @@
 
   const emit=defineEmits([
     "addDice", "updateValue", "dropDice", "dropPool", "resetPool",
-    "reRollPool", "reRollDice", "explodeDice", "filterPoolDice"]);
+    "reRollPool", "reRollDice", "explodeDice", "filterPoolDice", "applyOpFunc"]);
   const addDice=()=>{
     emit("addDice", {pool_index:props.pool_index, min:1, max:6, modifier:0});
   };
@@ -151,21 +151,7 @@
   });
 
   const applyOpFunc=(_op_func_object)=>{
-    console.log(_op_func_object)
-    switch(true){
-      case _op_func_object.method == "op" && _op_func_object.op_func == "add":
-        break;
-      case _op_func_object.method == "op" && _op_func_object.op_func == "subtract":
-        break;
-      case _op_func_object.method == "op" && _op_func_object.op_func == "multiply":
-        break;
-      case _op_func_object.method == "op" && _op_func_object.op_func == "divide":
-        break;
-      case _op_func_object.method == "func" && _op_func_object.op_func == "absolute":
-        break;
-      case _op_func_object.method == "func" && _op_func_object.op_func == "negate":
-        break;
-    }
+    emit("applyOpFunc",_op_func_object);
   };
 </script>
 
