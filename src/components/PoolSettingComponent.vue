@@ -138,7 +138,7 @@ const applyOpFunc = (_event, _target_method, _target_op_func)=>{
     </Transition>
     <div class="small bold check_box_root" title="Apply Operation/Modification to Dice in order"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
     <Transition>
-      <div v-if="showPoolOperations" class="small" style="padding-left:0.5em;">
+      <div v-if="showPoolOperations" class="small check_box_root" style="padding-left:0.5em;">
 <!--         <div style="font-weight: bold;" title="Runs operation on all Dice in order">Apply Operation to Pool</div>
 -->       
           &nbsp;<span class="bold" title="Apply Operation to Dice in order">Operation: </span>
@@ -160,14 +160,14 @@ const applyOpFunc = (_event, _target_method, _target_op_func)=>{
     <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolFilterOptions" :checked="false"/>Filter By Pool Value</div>
     <Transition>
       <div v-if="showPoolFilterOptions" class="small" style="padding-left:0.5em;">
-        <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'sum_even','pool')"/>Even</span>&nbsp;&nbsp;
-        <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'sum_odd','pool')"/>Odd</span>      
+        <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
+        <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
         <br>
-        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_equal','pool')"/>Equal To</span>
-        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_above','pool')"/>Above</span>
-        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','pool')"/>Equal To</span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','pool')"/>Above</span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
         <br>
-        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'sum_range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
         <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
           <span style="visibility: hidden;" class="button">Filter</span>
           <span class="button far_right_position" @click="emitFilter">Filter</span>
