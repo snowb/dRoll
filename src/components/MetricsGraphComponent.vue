@@ -61,9 +61,7 @@ const chartOptions=computed(()=>{
             if(repetition_match!==null && repetition_match[0].length > 3 ){
               repetition_match = repetition_match[0].toString(10).slice(1);
               let single_char = repetition_match[0].toString(10).slice(0,1)
-              console.log(repetition_match)
               label_for_value = label_for_value.toString(10).replace(repetition_match,single_char+" .. ");
-              console.log(label_for_value)
             }
             
             return label_for_value;
