@@ -36,4 +36,3 @@ addIcons(IoCloseCircle,
 const app=createApp(App);
 app.component("v-icon", OhVueIcon);
 app.mount('#app');
-
