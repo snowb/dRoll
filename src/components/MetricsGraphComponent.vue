@@ -54,7 +54,20 @@ const chartOptions=computed(()=>{
           color: props.style.gridColor
         },
         ticks:{
-          color: props.style.backgroundColor
+          color: props.style.backgroundColor,
+          callback:function(_value){
+            let label_for_value = this.getLabelForValue(_value);
+            let repetition_match = label_for_value.toString(10).match(/([0-9])\1+/gi);
+            if(repetition_match!==null && repetition_match[0].length > 3 ){
+              repetition_match = repetition_match[0].toString(10).slice(1);
+              let single_char = repetition_match[0].toString(10).slice(0,1)
+              console.log(repetition_match)
+              label_for_value = label_for_value.toString(10).replace(repetition_match,single_char+" .. ");
+              console.log(label_for_value)
+            }
+            
+            return label_for_value;
+          }
         }
       },
       y:{
@@ -73,7 +86,11 @@ const chartOptions=computed(()=>{
         callbacks:{
           title:(_tooltip)=>{
             return "Value: "+_tooltip[0].label;
-           }
+           },
+           /* label:(_label)=>{
+            console.log(_label)
+            return _label;
+           } */
         }
       },
       // zoom: {
