@@ -137,6 +137,11 @@ export class Pool {
    */
   getModifiedMaximum(){ return this.#modifiedResults.modified_max; };
   /**
+   * return name of last operation
+   * @returns {string|function} - name of last operation or functin of custom operation
+   */
+  getLastOperation(){ return this.#modifiedResults.last_operation;};
+  /**
    * Resets the modifiedResults object to empty
    */
   resetModifiedResults(){ 
