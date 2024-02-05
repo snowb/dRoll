@@ -103,6 +103,19 @@ const inputSize=computed(()=>{
   return props.pool.getPoolMax().toString().length+2;
 });
 
+let operationRadio = ref("add");
+let functionRadio = ref("none");
+
+watch([operationRadio,functionRadio],([_new_op, _new_func],[_old_op, _old_func])=>{
+  if(_new_op!=_old_op){
+    applyOpFunc(undefined,"op",_new_op);
+    functionRadio.value = "none";
+  } else if(_new_func!=_old_func){
+    applyOpFunc(undefined,"op",_new_op);
+    applyOpFunc(undefined,"func",_new_func);
+  }
+});
+
 const applyOpFunc = (_event, _target_method, _target_op_func)=>{
   emit("applyOpFunc",{pool_index: props.pool_index, method:_target_method, op_func:_target_op_func});
 };
@@ -143,22 +156,16 @@ const applyOpFunc = (_event, _target_method, _target_op_func)=>{
     <div class="small bold check_box_root" title="Apply Operation/Modification to Dice in order"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
     <Transition>
       <div v-if="showPoolOperations" class="small check_box_root" style="padding-left:0.5em;">
-<!--         <div style="font-weight: bold;" title="Runs operation on all Dice in order">Apply Operation to Pool</div>
--->       
           &nbsp;<span class="bold" title="Apply Operation to Dice in order">Operation: </span>
-          <span title="Add all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="true" @change="applyOpFunc($event,'op','add')"/>Add</span>&nbsp;&nbsp;
-          <span title="Subtract all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="false" @change="applyOpFunc($event,'op','subtract')"/>Subtract</span>&nbsp;&nbsp;
-          <span title="Multiply all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="false" @change="applyOpFunc($event,'op','multiply')"/>Multiply</span>&nbsp;&nbsp;
-          <span title="Divide all Dice in order"><input type="radio" :name="'operation'+props.pool_index" :checked="false" @change="applyOpFunc($event,'op','divide')"/>Divide</span>
-<!--         <div style="font-weight: bold;" title="Apply modification to Pool results">Modify Pool Results</div>
--->       <br>
+          <span title="Add all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="add"/>Add</span>&nbsp;&nbsp;
+          <span title="Subtract all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="subtract"/>Subtract</span>&nbsp;&nbsp;
+          <span title="Multiply all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="multiply"/>Multiply</span>&nbsp;&nbsp;
+          <span title="Divide all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="divide"/>Divide</span>&nbsp;&nbsp;
+          <br>
           &nbsp;<span class="bold" title="Apply Function to Pool results">Function: </span>
-          <span title="No function"><input type="radio" :name="'function'+props.pool_index" :checked="true" @change="applyOpFunc($event,'func','none')"/>None</span>&nbsp;&nbsp;
-          <span title="Apply Absolute Value function to Pool results"><input type="radio" :name="'function'+props.pool_index" :checked="false" @change="applyOpFunc($event,'func','absolute')"/>Absolute Value</span>&nbsp;&nbsp;
-          <span title="Apply Negate/Invert function to Pool results"><input type="radio" :name="'function'+props.pool_index" :checked="false" @change="applyOpFunc($event,'func','negate')"/>Negate/Invert</span>
-        <!-- put Pool Operation in here (add, subtract, multiply, divide) 
-          put modifications in here as well, with before/after Op option
-        -->
+          <span title="No function"><input type="radio" :name="'function'+props.pool_index" v-model="functionRadio" value="none"/>None</span>&nbsp;&nbsp;
+          <span title="Apply Absolute Value function to Pool results"><input type="radio" :name="'function'+props.pool_index" v-model="functionRadio" value="absolute"/>Absolute Value</span>&nbsp;&nbsp;
+          <span title="Apply Negate/Invert function to Pool results"><input type="radio" :name="'function'+props.pool_index" v-model="functionRadio" value="negate"/>Negate/Invert</span>
       </div>
     </Transition>
     <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolFilterOptions" :checked="false"/>Filter By Pool Value</div>
