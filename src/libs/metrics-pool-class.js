@@ -730,15 +730,37 @@ export class Metrics_Pool extends Pool {
     metrics.minimum_value=this.getModifiedMinimum();
     metrics.maximum_value=this.getModifiedMaximum();
     metrics.pool_metrics=[];
-    for(let value=metrics.minimum_value; value<=metrics.maximum_value; value++) {
-      let count=this.getModifiedEqual(value).length;
-      let ratio=count/this.getIterations();
-      metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
-    }
-    metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
-      return (_sum+_value);
-    },0) / this.getIterations();
+    if(this.getLastOperation()=="divide"){
+      let associative_array = {};
+      metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
+        if(associative_array[_value]===undefined){
+          associative_array[_value] = 1;
+        } else {
+          associative_array[_value] += 1;
+        }
+        return (_sum+_value);
+      },0) / this.getIterations();
 
+      for(let _value in associative_array){
+        let count = associative_array[_value];
+        metrics.pool_metrics.push({
+          value:+_value, 
+          count:count, 
+          ratio:count/this.getIterations()
+        });
+      }
+      metrics.pool_metrics.sort((_a, _b)=>{return _a.value < _b.value ? -1 : 1;});
+    } else {
+      for(let value=metrics.minimum_value; value<=metrics.maximum_value; value++) {
+        let count=this.getModifiedEqual(value).length;
+        let ratio=count/this.getIterations();
+        metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
+      }
+      metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
+        return (_sum+_value);
+      },0) / this.getIterations();
+    }
+    
     metrics.median=undefined;
     let target_median_location=Math.floor(this.getIterations()/2) - 1;
     let median_cheat = metrics.pool_metrics.reduce((_current_location, _object)=>{
