@@ -177,7 +177,6 @@
   });
 
   const applyOpFunc=(_op_func_object)=>{
-    console.log(_op_func_object)
     switch(true){
       case _op_func_object.method == "op" && ["add","subtract","multiply","divide"].includes(_op_func_object.op_func):
         toRaw(pools.value[_op_func_object.pool_index]).poolOperation(_op_func_object.op_func);

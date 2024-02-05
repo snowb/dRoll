@@ -87,7 +87,7 @@
     return toRaw(props.pool).getFullRollResults().length>0;
   });
 
-  let filter_options=reactive({type:"full", value:undefined, max_value:undefined});
+  let filter_options=reactive({type:"full", value:undefined, max_value:undefined, ops_func:false});
 
   const filterPoolDice=(_options)=>{
     filter_options.type=_options.type;
@@ -108,7 +108,7 @@
     } else {
       target_filter_type = filter_options.type;
     }
-    switch(target_filter_type){
+    switch(filter_options.type){
       case "equal":
         return props.pool.getEqualMetrics(filter_options.value, pool_or_dice);
       case "sum_equal":
@@ -175,9 +175,13 @@
   let operationFunction = reactive({method:"none",operation_function:"none"});
 
   const applyOpFunc=(_op_func_object)=>{
+    console.log(_op_func_object)
     emit("applyOpFunc",_op_func_object);
     if(["op","func"].includes(_op_func_object.method)){
       operationFunction.method = _op_func_object.method;
+      filter_options.ops_func = true;
+    } else {
+      filter_options.ops_func = false;
     }
     if(["add","subtract","multiply","divide","negate","absolute"].includes(_op_func_object.op_func)){
       operationFunction.operation_function = _op_func_object.op_func;
@@ -227,6 +231,7 @@
       <PoolMetricsComponent v-if="showPoolMetricsValue.value"
         :pool="props.pool" :force_render="force_render" :filter_options="filter_options"
         :metrics="getFilteredMetrics" :metrics_type="filter_options.type"
+        :ops_func="filter_options.ops_func"
       >
       </PoolMetricsComponent>
     </span>

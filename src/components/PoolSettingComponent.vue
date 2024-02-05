@@ -86,10 +86,14 @@ watch([showDiceFilterOptions, showPoolFilterOptions, showPoolOperations],
       showPoolFilterOptions.value = false;
       showPoolOperations.value = false;
       showDiceFilterOptions.value = true;
+      applyOpFunc(undefined, "none", "none");
       break;
     case _new_pool_value==true && _old_pool_value==false:
     case _new_op_value==true && _old_op_value==false:
       showDiceFilterOptions.value = false;
+      break;
+    case _new_op_value==false && _old_op_value==true:
+      applyOpFunc(undefined, "none", "none");
       break;
   }
 });

@@ -11,7 +11,8 @@ import { Metrics_Pool } from '../libs/metrics-pool-class';
     show_set_metrics: Boolean,
     show_sequence_metrics: Boolean,
     filter_options: Object,
-    metrics_type: String
+    metrics_type: String,
+    ops_func: Boolean
   });
 
   const iterations=computed(()=>{
@@ -152,12 +153,12 @@ import { Metrics_Pool } from '../libs/metrics-pool-class';
   </div>
   <MetricsGraphComponent :metrics="computedPoolSetMetrics" :force_render="props.force_render"
     :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(computedPoolSetMetrics.values, 1.5)"
-    v-if="computedPoolSetMetrics.values.length>1 && props.metrics_type=='full'" style="border-top:thin solid #242424;"
+    v-if="computedPoolSetMetrics.values.length>1 && props.metrics_type=='full' && !props.ops_func" style="border-top:thin solid #242424;"
     title="Set Metrics"
   ></MetricsGraphComponent>
   <MetricsGraphComponent :metrics="computedPoolSequenceMetrics" :force_render="props.force_render"
     :style="{color:'#000',backgroundColor:'#444',gridColor:'#4444441a'}" :width="getWidth(computedPoolSequenceMetrics.values, 1.25)"
-    v-if="computedPoolSequenceMetrics.values.length>1 && props.metrics_type=='full'"
+    v-if="computedPoolSequenceMetrics.values.length>1 && props.metrics_type=='full' && !props.ops_func"
     title="Sequence Metrics"
   ></MetricsGraphComponent>
 </template>
