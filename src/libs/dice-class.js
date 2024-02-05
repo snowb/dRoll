@@ -257,7 +257,7 @@ export class Dice {
   /**
    * Update values in #results with new values
    * @param {Number[]} _values_array - array of numbers to replace/update in #results
-   * @returns {undefined - on error}
+   * @returns {undefined}- on error
    */
   updateValues(_values_array){
     if(!Array.isArray(_values_array)){

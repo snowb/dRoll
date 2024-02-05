@@ -681,11 +681,10 @@ getSumEqual (_value) {//return Sums with values equal to _value
     return this.#getOperation("odd"); 
   };
   /**
-   * 
    * @param {String} _operation - operation to perform
    * @param {Number} _first_value - value or first value in Range op
    * @param {Number|undefined} _second_value - undefined or second value in Range op
-   * @returns 
+   * @returns {Object[]} - [{index:Number, values:Number}]
    */
   #getOperation (_operation, _first_value, _second_value) {
     let operation_result=[];

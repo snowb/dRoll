@@ -91,6 +91,14 @@ Dice object takes in a minimum and maximum number, and optional modifier. Gener
     * [.modifySingleValue(_value)](#Dice+modifySingleValue) ⇒ <code>number</code>
     * [.dropValueAtIndex(_index)](#Dice+dropValueAtIndex)
     * [.explodeValue([_value_to_explode_on], [_explode_limit], [_additional_dice])](#Dice+explodeValue) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+    * [.updateValues(_values_array)](#Dice+updateValues) ⇒ <code>undefined</code>
+    * [.getAbove(_value)](#Dice+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getBelow(_value)](#Dice+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getEqual(_value)](#Dice+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getWithinRange(_min_value, _max_value)](#Dice+getWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getEven()](#Dice+getEven) ⇒ <code>Object</code>
+    * [.getOdd()](#Dice+getOdd) ⇒ <code>Object</code>
+    * [.getAllForValue(_value)](#Dice+getAllForValue) ⇒ <code>Object</code>
 
 <a name="Dice+Dice"></a>
 
@@ -224,6 +232,92 @@ sets the value at the specified index to undefined
 | [_explode_limit] | <code>undefined</code> \| <code>string</code> \| <code>number</code> | <code>1</code> | the maximum number of additional Dice |
 | [_additional_dice] | [<code>Dice</code>](#Dice) | <code>this</code> | the specific Dice to use, defaults to this/self |
 
+<a name="Dice+updateValues"></a>
+
+### dice.updateValues(_values_array) ⇒ <code>undefined</code>
+Update values in #results with new values
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>undefined</code> - - on error  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _values_array | <code>Array.&lt;Number&gt;</code> | array of numbers to replace/update in #results |
+
+<a name="Dice+getAbove"></a>
+
+### dice.getAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns all values above the input value
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | value to match |
+
+<a name="Dice+getBelow"></a>
+
+### dice.getBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns all values below the input value
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | value to match |
+
+<a name="Dice+getEqual"></a>
+
+### dice.getEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns all values equal to the input value
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | value to match |
+
+<a name="Dice+getWithinRange"></a>
+
+### dice.getWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns all values within the to the input range, inclusive
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _min_value | <code>string</code> \| <code>number</code> | starting value to compare |
+| _max_value | <code>string</code> \| <code>number</code> | ending value to compare |
+
+<a name="Dice+getEven"></a>
+
+### dice.getEven() ⇒ <code>Object</code>
+Returns Even values from Dice object
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>Object</code> - - object with count and Array of values  
+<a name="Dice+getOdd"></a>
+
+### dice.getOdd() ⇒ <code>Object</code>
+Returns Odd values from Dice object
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+**Returns**: <code>Object</code> - - object with count and Array of values  
+<a name="Dice+getAllForValue"></a>
+
+### dice.getAllForValue(_value) ⇒ <code>Object</code>
+runs all getAbove/Below/Equal/etc functionsreturns all generated resultsalso returns the private properties of average and results
+
+**Kind**: instance method of [<code>Dice</code>](#Dice)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | value to match |
+
 <a name="Metrics_Dice"></a>
 
 ## Metrics\_Dice : <code>Object</code>
@@ -240,29 +334,22 @@ The Metrics_Dice object to compute metrics from a Dice object
 
 
 * [Metrics_Dice](#Metrics_Dice) : <code>Object</code>
-    * [.getMinimum()](#Metrics_Dice+getMinimum) ⇒ <code>Number</code>
-    * [.getMaximum()](#Metrics_Dice+getMaximum) ⇒ <code>Number</code>
+    * [.getMinimumModified()](#Metrics_Dice+getMinimumModified) ⇒ <code>Number</code>
+    * [.getMaximumModified()](#Metrics_Dice+getMaximumModified) ⇒ <code>Number</code>
     * [.getAverage()](#Metrics_Dice+getAverage) ⇒ <code>number</code>
-    * [.getAbove(_value)](#Metrics_Dice+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getBelow(_value)](#Metrics_Dice+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getEqual(_value)](#Metrics_Dice+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getWithinRange(_min_value, _max_value)](#Metrics_Dice+getWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getEven()](#Metrics_Dice+getEven) ⇒ <code>Object</code>
-    * [.getOdd()](#Metrics_Dice+getOdd) ⇒ <code>Object</code>
-    * [.getAllForValue(_value)](#Metrics_Dice+getAllForValue) ⇒ <code>Object</code>
     * [.getMetrics()](#Metrics_Dice+getMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.convertDice(_dice, _method)](#Metrics_Dice+convertDice) ⇒ <code>undefined</code>
 
-<a name="Metrics_Dice+getMinimum"></a>
+<a name="Metrics_Dice+getMinimumModified"></a>
 
-### metrics_Dice.getMinimum() ⇒ <code>Number</code>
+### metrics_Dice.getMinimumModified() ⇒ <code>Number</code>
 Returns the modified minimum value
 
 **Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
 **Returns**: <code>Number</code> - - minimum_value  
-<a name="Metrics_Dice+getMaximum"></a>
+<a name="Metrics_Dice+getMaximumModified"></a>
 
-### metrics_Dice.getMaximum() ⇒ <code>Number</code>
+### metrics_Dice.getMaximumModified() ⇒ <code>Number</code>
 Returns the modified maximum value
 
 **Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
@@ -272,80 +359,6 @@ Returns the modified maximum value
 ### metrics_Dice.getAverage() ⇒ <code>number</code>
 **Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
 **Returns**: <code>number</code> - -  returns the average of all rolls  
-<a name="Metrics_Dice+getAbove"></a>
-
-### metrics_Dice.getAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns all values above the input value
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | value to match |
-
-<a name="Metrics_Dice+getBelow"></a>
-
-### metrics_Dice.getBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns all values below the input value
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | value to match |
-
-<a name="Metrics_Dice+getEqual"></a>
-
-### metrics_Dice.getEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns all values equal to the input value
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | value to match |
-
-<a name="Metrics_Dice+getWithinRange"></a>
-
-### metrics_Dice.getWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns all values within the to the input range, inclusive
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _min_value | <code>string</code> \| <code>number</code> | starting value to compare |
-| _max_value | <code>string</code> \| <code>number</code> | ending value to compare |
-
-<a name="Metrics_Dice+getEven"></a>
-
-### metrics_Dice.getEven() ⇒ <code>Object</code>
-Returns Even values from Dice object
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-**Returns**: <code>Object</code> - - object with count and Array of values  
-<a name="Metrics_Dice+getOdd"></a>
-
-### metrics_Dice.getOdd() ⇒ <code>Object</code>
-Returns Odd values from Dice object
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-**Returns**: <code>Object</code> - - object with count and Array of values  
-<a name="Metrics_Dice+getAllForValue"></a>
-
-### metrics_Dice.getAllForValue(_value) ⇒ <code>Object</code>
-runs all getAbove/Below/Equal/etc functionsreturns all generated resultsalso returns the private properties of average and results
-
-**Kind**: instance method of [<code>Metrics\_Dice</code>](#Metrics_Dice)  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | value to match |
-
 <a name="Metrics_Dice+getMetrics"></a>
 
 ### metrics_Dice.getMetrics() ⇒ <code>Array.&lt;Object&gt;</code>
@@ -383,37 +396,31 @@ Pool object an Array of Metrics_Dice objects and an optional iterations counts 
 
 * [Metrics_Pool](#Metrics_Pool) : <code>Object</code>
     * [.getDiceMetrics(_index)](#Metrics_Pool+getDiceMetrics) ⇒ <code>Object</code>
-    * [.getFullRollResults()](#Metrics_Pool+getFullRollResults) ⇒ [<code>Array.&lt;Metrics\_Dice&gt;</code>](#Metrics_Dice)
-    * [.getRollResults()](#Metrics_Pool+getRollResults) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getSumRolled()](#Metrics_Pool+getSumRolled) ⇒ <code>Array.&lt;number&gt;</code>
-    * [.getMinRolled()](#Metrics_Pool+getMinRolled) ⇒ <code>Array.&lt;number&gt;</code>
-    * [.getMaxRolled()](#Metrics_Pool+getMaxRolled) ⇒ <code>Array.&lt;number&gt;</code>
     * [.getPoolSize()](#Metrics_Pool+getPoolSize) ⇒ <code>number</code>
     * [.rollPool()](#Metrics_Pool+rollPool)
-    * [.getEven()](#Metrics_Pool+getEven) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+    * [.getDiceCount()](#Metrics_Pool+getDiceCount) ⇒ <code>Number</code>
+    * [.getMaxDiceValue()](#Metrics_Pool+getMaxDiceValue) ⇒ <code>Number</code>
+    * [.getMinDiceValue()](#Metrics_Pool+getMinDiceValue) ⇒ <code>Number</code>
     * [.getEvenMetrics(_result_target)](#Metrics_Pool+getEvenMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSumEvenMetrics(_result_target)](#Metrics_Pool+getSumEvenMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getOdd()](#Metrics_Pool+getOdd) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+    * [.getModifiedEvenMetrics()](#Metrics_Pool+getModifiedEvenMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getOddMetrics(_result_target)](#Metrics_Pool+getOddMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSumOddMetrics(_result_target)](#Metrics_Pool+getSumOddMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getAbove(_value)](#Metrics_Pool+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedOddMetrics()](#Metrics_Pool+getModifiedOddMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getAboveMetrics(_value, _result_target)](#Metrics_Pool+getAboveMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSumAboveMetrics(_value)](#Metrics_Pool+getSumAboveMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getBelow(_value)](#Metrics_Pool+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedAboveMetrics(_value)](#Metrics_Pool+getModifiedAboveMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBelowMetrics(_value, _result_target)](#Metrics_Pool+getBelowMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSumBelowMetrics(_value)](#Metrics_Pool+getSumBelowMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getEqual(_value)](#Metrics_Pool+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedBelowMetrics(_value)](#Metrics_Pool+getModifiedBelowMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getEqualMetrics(_value, _result_target)](#Metrics_Pool+getEqualMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSumEqualMetrics(_value, _result_target)](#Metrics_Pool+getSumEqualMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getWithinRange(_min_value, _max_value)](#Metrics_Pool+getWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedEqualMetrics(_value, _result_target)](#Metrics_Pool+getModifiedEqualMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getWithinRangeMetrics(_value, _result_target)](#Metrics_Pool+getWithinRangeMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSumWithinRangeMetrics(_value)](#Metrics_Pool+getSumWithinRangeMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getSumEven()](#Metrics_Pool+getSumEven) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
-    * [.getSumOdd()](#Metrics_Pool+getSumOdd) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
-    * [.getSumAbove(_value)](#Metrics_Pool+getSumAbove) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getSumBelow(_value)](#Metrics_Pool+getSumBelow) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getSumEqual(_value)](#Metrics_Pool+getSumEqual) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getSumWithinRange(_min_value, _max_value)](#Metrics_Pool+getSumWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedWithinRangeMetrics(_value)](#Metrics_Pool+getModifiedWithinRangeMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getLowestMetrics(_dice_count)](#Metrics_Pool+getLowestMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getHighestMetrics(_dice_count)](#Metrics_Pool+getHighestMetrics) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSequences()](#Metrics_Pool+getSequences) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSets()](#Metrics_Pool+getSets) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getSetsOfValue(_value)](#Metrics_Pool+getSetsOfValue) ⇒ <code>Array.&lt;Object&gt;</code>
@@ -446,37 +453,6 @@ Pool object an Array of Metrics_Dice objects and an optional iterations counts 
 | --- | --- | --- |
 | _index | <code>number</code> | - |
 
-<a name="Metrics_Pool+getFullRollResults"></a>
-
-### metrics_Pool.getFullRollResults() ⇒ [<code>Array.&lt;Metrics\_Dice&gt;</code>](#Metrics_Dice)
-return #fullRollResults private property
-
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-<a name="Metrics_Pool+getRollResults"></a>
-
-### metrics_Pool.getRollResults() ⇒ <code>Array.&lt;Object&gt;</code>
-return #rollResults private property
-
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, roll:number[]}]  
-<a name="Metrics_Pool+getSumRolled"></a>
-
-### metrics_Pool.getSumRolled() ⇒ <code>Array.&lt;number&gt;</code>
-return sum from #secondaryResults
-
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-<a name="Metrics_Pool+getMinRolled"></a>
-
-### metrics_Pool.getMinRolled() ⇒ <code>Array.&lt;number&gt;</code>
-return min from #secondaryResults
-
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-<a name="Metrics_Pool+getMaxRolled"></a>
-
-### metrics_Pool.getMaxRolled() ⇒ <code>Array.&lt;number&gt;</code>
-return max from #secondaryResults
-
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
 <a name="Metrics_Pool+getPoolSize"></a>
 
 ### metrics_Pool.getPoolSize() ⇒ <code>number</code>
@@ -488,11 +464,21 @@ return max from #secondaryResults
 rolls all Dice in the Pool, calculates secondary values
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-<a name="Metrics_Pool+getEven"></a>
+<a name="Metrics_Pool+getDiceCount"></a>
 
-### metrics_Pool.getEven() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+### metrics_Pool.getDiceCount() ⇒ <code>Number</code>
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - Pools with Even results within Dice  
+**Returns**: <code>Number</code> - - number of dice in pool  
+<a name="Metrics_Pool+getMaxDiceValue"></a>
+
+### metrics_Pool.getMaxDiceValue() ⇒ <code>Number</code>
+**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
+**Returns**: <code>Number</code> - - Highest dice value in pool  
+<a name="Metrics_Pool+getMinDiceValue"></a>
+
+### metrics_Pool.getMinDiceValue() ⇒ <code>Number</code>
+**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
+**Returns**: <code>Number</code> - - Lowest dice value in pool  
 <a name="Metrics_Pool+getEvenMetrics"></a>
 
 ### metrics_Pool.getEvenMetrics(_result_target) ⇒ <code>Array.&lt;Object&gt;</code>
@@ -517,11 +503,13 @@ Return metrics for the given filter
 | --- | --- | --- |
 | _result_target | <code>String</code> | "pool" (default) or "dice",                                    whether to return the Pool Value WITH Even Dice or only the Pool Value OF Even Dice. |
 
-<a name="Metrics_Pool+getOdd"></a>
+<a name="Metrics_Pool+getModifiedEvenMetrics"></a>
 
-### metrics_Pool.getOdd() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+### metrics_Pool.getModifiedEvenMetrics() ⇒ <code>Array.&lt;Object&gt;</code>
+Return metrics for the given filter from the modifiedResults.results data
+
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - odd results  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 <a name="Metrics_Pool+getOddMetrics"></a>
 
 ### metrics_Pool.getOddMetrics(_result_target) ⇒ <code>Array.&lt;Object&gt;</code>
@@ -546,18 +534,13 @@ Return metrics for the given filter
 | --- | --- | --- |
 | _result_target | <code>String</code> | "pool" (default) or "dice",                                    whether to return the Pool Value WITH Odd Dice or only the Pool Value OF Odd Dice. |
 
-<a name="Metrics_Pool+getAbove"></a>
+<a name="Metrics_Pool+getModifiedOddMetrics"></a>
 
-### metrics_Pool.getAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns numbers above the provided value
+### metrics_Pool.getModifiedOddMetrics() ⇒ <code>Array.&lt;Object&gt;</code>
+Return metrics for the given filter from the modifiedResults.results data
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
-
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 <a name="Metrics_Pool+getAboveMetrics"></a>
 
 ### metrics_Pool.getAboveMetrics(_value, _result_target) ⇒ <code>Array.&lt;Object&gt;</code>
@@ -583,13 +566,13 @@ Return metrics for the given filter
 | --- | --- | --- |
 | _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
 
-<a name="Metrics_Pool+getBelow"></a>
+<a name="Metrics_Pool+getModifiedAboveMetrics"></a>
 
-### metrics_Pool.getBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns numbers below the provided value
+### metrics_Pool.getModifiedAboveMetrics(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+Return metrics for the given filter from the modified_results.result data
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -620,13 +603,13 @@ Return metrics for the given filter
 | --- | --- | --- |
 | _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
 
-<a name="Metrics_Pool+getEqual"></a>
+<a name="Metrics_Pool+getModifiedBelowMetrics"></a>
 
-### metrics_Pool.getEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns numbers equal to the provided value
+### metrics_Pool.getModifiedBelowMetrics(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+Return metrics for the given filter from the modified_results.result data
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -658,18 +641,18 @@ Return metrics for the given filter
 | _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
 | _result_target | <code>String</code> | "pool" (default) or "dice",                                    whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice. |
 
-<a name="Metrics_Pool+getWithinRange"></a>
+<a name="Metrics_Pool+getModifiedEqualMetrics"></a>
 
-### metrics_Pool.getWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns numbers within the specified range, inclusive
+### metrics_Pool.getModifiedEqualMetrics(_value, _result_target) ⇒ <code>Array.&lt;Object&gt;</code>
+Return metrics for the given filter from the modified_results.result data
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 
-| Param | Type |
-| --- | --- |
-| _min_value | <code>string</code> \| <code>number</code> | 
-| _max_value | <code>string</code> \| <code>number</code> | 
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+| _result_target | <code>String</code> | "pool" (default) or "dice",                                    whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice. |
 
 <a name="Metrics_Pool+getWithinRangeMetrics"></a>
 
@@ -696,64 +679,41 @@ Return metrics for the given filter
 | --- | --- | --- |
 | _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
 
-<a name="Metrics_Pool+getSumEven"></a>
+<a name="Metrics_Pool+getModifiedWithinRangeMetrics"></a>
 
-### metrics_Pool.getSumEven() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - even results  
-<a name="Metrics_Pool+getSumOdd"></a>
-
-### metrics_Pool.getSumOdd() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - odd results  
-<a name="Metrics_Pool+getSumAbove"></a>
-
-### metrics_Pool.getSumAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns roll sums above the provided value
+### metrics_Pool.getModifiedWithinRangeMetrics(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+Return metrics for the given filter from the modified_results.result data
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 
 | Param | Type | Description |
 | --- | --- | --- |
 | _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
 
-<a name="Metrics_Pool+getSumBelow"></a>
+<a name="Metrics_Pool+getLowestMetrics"></a>
 
-### metrics_Pool.getSumBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns roll sums below the provided value
+### metrics_Pool.getLowestMetrics(_dice_count) ⇒ <code>Array.&lt;Object&gt;</code>
+Returns _dice_count number of lowest results in the pool
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+| _dice_count | <code>Number</code> \| <code>String</code> | how many of the 'lowest' dice to return |
 
-<a name="Metrics_Pool+getSumEqual"></a>
+<a name="Metrics_Pool+getHighestMetrics"></a>
 
-### metrics_Pool.getSumEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns roll sums equal to the provided value
+### metrics_Pool.getHighestMetrics(_dice_count) ⇒ <code>Array.&lt;Object&gt;</code>
+Returns _dice_count number of highest results in the pool
 
 **Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - array of objects of form {value:Number, count:Number, ratio:Number}  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
-
-<a name="Metrics_Pool+getSumWithinRange"></a>
-
-### metrics_Pool.getSumWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns roll sums within the specified range, inclusive
-
-**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
-
-| Param | Type |
-| --- | --- |
-| _min_value | <code>string</code> \| <code>number</code> | 
-| _max_value | <code>string</code> \| <code>number</code> | 
+| _dice_count | <code>Number</code> \| <code>String</code> | how many of the 'highest' dice to return |
 
 <a name="Metrics_Pool+getSequences"></a>
 
@@ -1013,6 +973,12 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
     * [.getSumRolled()](#Pool+getSumRolled) ⇒ <code>Array.&lt;number&gt;</code>
     * [.getMinRolled()](#Pool+getMinRolled) ⇒ <code>Array.&lt;number&gt;</code>
     * [.getMaxRolled()](#Pool+getMaxRolled) ⇒ <code>Array.&lt;number&gt;</code>
+    * [.getPoolMin()](#Pool+getPoolMin) ⇒ <code>Number</code>
+    * [.getPoolMax()](#Pool+getPoolMax) ⇒ <code>Number</code>
+    * [.getModifiedResults()](#Pool+getModifiedResults) ⇒ <code>Array.&lt;Number&gt;</code>
+    * [.getModifiedMinimum()](#Pool+getModifiedMinimum) ⇒ <code>Number</code>
+    * [.getModifiedMaximum()](#Pool+getModifiedMaximum) ⇒ <code>Number</code>
+    * [.resetModifiedResults()](#Pool+resetModifiedResults)
     * [.getPoolSize()](#Pool+getPoolSize) ⇒ <code>number</code>
     * [.rollPool()](#Pool+rollPool)
     * [.dropLowestValue(_drop_count)](#Pool+dropLowestValue)
@@ -1027,6 +993,26 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
     * [.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, [_modifier])](#Pool+updateDice) ⇒ <code>undefined</code>
     * [.reRollDice(_dice_index)](#Pool+reRollDice) ⇒ <code>undefined</code>
     * [.explodeValue([_value_to_explode_on], _explode_limit, _additional_dice)](#Pool+explodeValue) ⇒ <code>undefined</code>
+    * [.getModifiedEven()](#Pool+getModifiedEven) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedOdd()](#Pool+getModifiedOdd) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedAbove(_value)](#Pool+getModifiedAbove) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedBelow(_value)](#Pool+getModifiedBelow) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedEqual(_value)](#Pool+getModifiedEqual) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getModifiedWithinRange(_min_value, _max_value)](#Pool+getModifiedWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getSumEven()](#Pool+getSumEven) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getSumOdd()](#Pool+getSumOdd) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getSumAbove(_value)](#Pool+getSumAbove) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getSumBelow(_value)](#Pool+getSumBelow) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getSumEqual(_value)](#Pool+getSumEqual) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getSumWithinRange(_min_value, _max_value)](#Pool+getSumWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getAbove(_value)](#Pool+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getBelow(_value)](#Pool+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getEqual(_value)](#Pool+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getWithinRange(_min_value, _max_value)](#Pool+getWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getEven()](#Pool+getEven) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+    * [.getOdd()](#Pool+getOdd) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+    * [.poolOperation(_operation, _op_order_array)](#Pool+poolOperation)
+    * [.modifyPoolOperation(_operation)](#Pool+modifyPoolOperation) ⇒ <code>Array.&lt;Number&gt;</code>
 
 <a name="Pool+Pool"></a>
 
@@ -1083,13 +1069,47 @@ return sum from #secondaryResults
 <a name="Pool+getMinRolled"></a>
 
 ### pool.getMinRolled() ⇒ <code>Array.&lt;number&gt;</code>
-return min from #secondaryResults
+return minimum dice rolled from #secondaryResults
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
 <a name="Pool+getMaxRolled"></a>
 
 ### pool.getMaxRolled() ⇒ <code>Array.&lt;number&gt;</code>
-return max from #secondaryResults
+return maximum dice rolled from #secondaryResults
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+getPoolMin"></a>
+
+### pool.getPoolMin() ⇒ <code>Number</code>
+return lowest pool value from #secondaryResults
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+getPoolMax"></a>
+
+### pool.getPoolMax() ⇒ <code>Number</code>
+return highest pool value from #secondaryResults
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+getModifiedResults"></a>
+
+### pool.getModifiedResults() ⇒ <code>Array.&lt;Number&gt;</code>
+return array of numbers of current #modifiedResults.results
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+getModifiedMinimum"></a>
+
+### pool.getModifiedMinimum() ⇒ <code>Number</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Number</code> - - minimum pool value of all iterations  
+<a name="Pool+getModifiedMaximum"></a>
+
+### pool.getModifiedMaximum() ⇒ <code>Number</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Number</code> - - maximum pool value of all iterations  
+<a name="Pool+resetModifiedResults"></a>
+
+### pool.resetModifiedResults()
+Resets the modifiedResults object to empty
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
 <a name="Pool+getPoolSize"></a>
@@ -1251,4 +1271,205 @@ add additional Dice to the roll if a value occurs in the results
 | [_value_to_explode_on] | <code>string</code> \| <code>number</code> | <code>&quot;\&quot;max\&quot;&quot;</code> | value that triggers adding dice, 'max', 'min', or specific value |
 | _explode_limit | <code>string</code> \| <code>number</code> |  | limit to how many additional Dice can be added |
 | _additional_dice | [<code>Dice</code>](#Dice) |  | Dice object that will be cloned and added |
+
+<a name="Pool+getModifiedEven"></a>
+
+### pool.getModifiedEven() ⇒ <code>Array.&lt;Object&gt;</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - even results from Modified data  
+<a name="Pool+getModifiedOdd"></a>
+
+### pool.getModifiedOdd() ⇒ <code>Array.&lt;Object&gt;</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - odd results from Modified data  
+<a name="Pool+getModifiedAbove"></a>
+
+### pool.getModifiedAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll Modified above the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getModifiedBelow"></a>
+
+### pool.getModifiedBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll Modified below the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getModifiedEqual"></a>
+
+### pool.getModifiedEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll Modified equal to the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getModifiedWithinRange"></a>
+
+### pool.getModifiedWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll Modified within the specified range, inclusive
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type |
+| --- | --- |
+| _min_value | <code>string</code> \| <code>number</code> | 
+| _max_value | <code>string</code> \| <code>number</code> | 
+
+<a name="Pool+getSumEven"></a>
+
+### pool.getSumEven() ⇒ <code>Array.&lt;Object&gt;</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - even results from Sum data  
+<a name="Pool+getSumOdd"></a>
+
+### pool.getSumOdd() ⇒ <code>Array.&lt;Object&gt;</code>
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - odd results from Summed data  
+<a name="Pool+getSumAbove"></a>
+
+### pool.getSumAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll sums above the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getSumBelow"></a>
+
+### pool.getSumBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll sums below the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getSumEqual"></a>
+
+### pool.getSumEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll sums equal to the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getSumWithinRange"></a>
+
+### pool.getSumWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns roll sums within the specified range, inclusive
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type |
+| --- | --- |
+| _min_value | <code>string</code> \| <code>number</code> | 
+| _max_value | <code>string</code> \| <code>number</code> | 
+
+<a name="Pool+getAbove"></a>
+
+### pool.getAbove(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns numbers above the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getBelow"></a>
+
+### pool.getBelow(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns numbers below the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getEqual"></a>
+
+### pool.getEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns numbers equal to the provided value
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _value | <code>string</code> \| <code>number</code> | numeric for value to compare |
+
+<a name="Pool+getWithinRange"></a>
+
+### pool.getWithinRange(_min_value, _max_value) ⇒ <code>Array.&lt;Object&gt;</code>
+returns numbers within the specified range, inclusive
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, values:number[]}]  
+
+| Param | Type |
+| --- | --- |
+| _min_value | <code>string</code> \| <code>number</code> | 
+| _max_value | <code>string</code> \| <code>number</code> | 
+
+<a name="Pool+getEven"></a>
+
+### pool.getEven() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - Pools with Even results within Dice  
+<a name="Pool+getOdd"></a>
+
+### pool.getOdd() ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: [<code>Array.&lt;Dice&gt;</code>](#Dice) - - odd results  
+<a name="Pool+poolOperation"></a>
+
+### pool.poolOperation(_operation, _op_order_array)
+Perform operation with Pool and store in modifiedResults.results
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _operation | <code>String</code> \| <code>function</code> | String for name of builtin operation or Function, Function will be passed 1 argument; an Array of Arrays of Numbers [[1,2],[3,4]] and return an Array of Numbers |
+| _op_order_array | <code>Array.&lt;Number&gt;</code> | array of indices in order to perform operation on |
+
+<a name="Pool+modifyPoolOperation"></a>
+
+### pool.modifyPoolOperation(_operation) ⇒ <code>Array.&lt;Number&gt;</code>
+Modify whatever results are in modifiedResults.results
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Number&gt;</code> - - mutates #modifiedResults.results and returns array of values  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| _operation | <code>String</code> \| <code>function</code> | Valid String of operation or Function that will be calld within an Array.Map() over #modifiedResults.results generated by poolOperation  #modifiedResults.results = Number[] |
 
