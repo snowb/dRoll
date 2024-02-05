@@ -108,7 +108,7 @@
     } else {
       target_filter_type = filter_options.type;
     }
-    switch(filter_options.type){
+    switch(target_filter_type){
       case "equal":
         return props.pool.getEqualMetrics(filter_options.value, pool_or_dice);
       case "sum_equal":
@@ -175,7 +175,6 @@
   let operationFunction = reactive({method:"none",operation_function:"none"});
 
   const applyOpFunc=(_op_func_object)=>{
-    console.log(_op_func_object)
     emit("applyOpFunc",_op_func_object);
     if(["op","func"].includes(_op_func_object.method)){
       operationFunction.method = _op_func_object.method;
