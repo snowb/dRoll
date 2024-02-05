@@ -15,7 +15,9 @@ const datetime = new Date(__BUILD_DATETIME__).toJSON();
     <span class="bold info_button" @click="toggleInformation" v-if="!showInformation">Show Information</span>
     <span class="shown_info" v-if="showInformation">
       <span class="bold info_button" @click="toggleInformation">Hide Information</span><br>
-      <span style="font-size:xx-small">Updated: {{datetime}}</span><br>
+      <span style="font-size:xx-small">Updated: {{datetime}}</span>&nbsp;&nbsp;
+      <span style="font-size:xx-small">Issues may be input via GitHub at <a href="https://github.com/snowb/dRoll/issues">https://github.com/snowb/dRoll/issues</a></span>
+      <br> 
       This is dRoll, the Dice Roll Simulator. A large number <span class="smaller">(default 10,000)</span> of values are 'rolled' via a cryptographically strong random value generator.<br>
       This is not a purely statistical output simulator. Although higher iteration values will approach the statistically accurate values, it is meant to capture a more realistic feel.<br> 
       <br>
@@ -40,7 +42,7 @@ const datetime = new Date(__BUILD_DATETIME__).toJSON();
       <span style="margin-left: 1em;">Click <v-icon name="bi-gear-fill" scale="1" fill="#dbdbdb" style="background-color: #242424;"></v-icon> to show or hide Dice options.</span><br>
       <span style="margin-left: 2em;">Click <span style="font-weight: bold; font-size: small; color:#dbdbdb; background-color:#242424;"><input type="checkbox" checked="true"/>Explode Dice </span>&nbsp;to show Explode Dice options.</span><br>
       <span style="margin-left: 2em; border:thin solid white; padding:0em 0.5em 0em 0.5em; border-radius: 0.4em; box-shadow: 2px 2px 1px 0px #dbdbdb; font-size:small;">Explode</span> to apply options and Explode the Die.<br>
-
+      <br>
       <span class="bold info_button" @click="toggleInformation">Hide Information</span>
     </span>
     <br>
