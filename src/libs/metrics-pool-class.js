@@ -297,12 +297,34 @@ export class Metrics_Pool extends Pool {
         target_maximum = this.getPoolMax();
       }
     }
-    for(let value=lowest_dice_minimum; value<=target_maximum; value++) {
-      let count=with_results_array.filter((_pool_object)=>{
-        return _pool_object.result==value;
-      }).length;
-      let ratio=count/this.getIterations();
-      metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
+    if(this.getLastOperation()=="divide"){
+      let associative_array = {};
+      metrics.mean=with_results_array.reduce((_sum, _object)=>{
+        if(associative_array[_object.result]===undefined){
+          associative_array[_object.result] = 1;
+        } else {
+          associative_array[_object.result] += 1;
+        }
+        return (_sum+_object.result);
+      },0) / this.getIterations();
+
+      for(let _value in associative_array){
+        let count = associative_array[_value];
+        metrics.pool_metrics.push({
+          value:+_value, 
+          count:count, 
+          ratio:count/this.getIterations()
+        });
+      }
+      metrics.pool_metrics.sort((_a, _b)=>{return _a.value < _b.value ? -1 : 1;});
+    } else {
+      for(let value=lowest_dice_minimum; value<=target_maximum; value++) {
+        let count=with_results_array.filter((_pool_object)=>{
+          return _pool_object.result==value;
+        }).length;
+        let ratio=count/this.getIterations();
+        metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
+      }
     }
     metrics.pool_metrics=metrics.pool_metrics.filter((_metrics_object)=>{return _metrics_object.count>0});
     //maybe use the zero-count-cleared array for secondaries but still include full array?
