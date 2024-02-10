@@ -92,6 +92,11 @@ watch([showDiceFilterOptions, showPoolFilterOptions, showPoolOperations],
     case _new_op_value==true && _old_op_value==false:
       showDiceFilterOptions.value = false;
       break;
+    case _new_pool_value==false && _old_pool_value==true && _new_op_value==true && _old_op_value==true:
+      emit("filterPoolDice",{type:"full"});  
+      applyOpFunc(undefined, "op", operationRadio.value);
+      applyOpFunc(undefined, "func", functionRadio.value);
+      break;
     case _new_op_value==false && _old_op_value==true:
       applyOpFunc(undefined, "none", "none");
       break;
