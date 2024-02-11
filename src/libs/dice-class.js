@@ -45,11 +45,11 @@ export class Dice {
   /**
    * @param {number} _value - value to set iterations too
    */
-  setIterations (_value) {
-    if(!isNumeric(_value)){
-      console.warn("dice-class.js: Invalid value passed to setIterations, doing nothing.")
+  setIterations (_iterations) {
+    if(!isNumeric(_iterations) || _iterations < 1){
+      console.warn("dice-class.js: Invalid value passed to setIterations; no change.")
     }
-    this.#iterations = +_value;
+    this.#iterations = +_iterations;
   }
   /**
    * @returns {number} - returns number of iterations
@@ -111,7 +111,7 @@ export class Dice {
   roll (_iterations) {
     //mutating method to enable re-rolling
     let iterations;
-    if(!isNumeric(_iterations) || _iterations===undefined){
+    if(!isNumeric(_iterations) || _iterations < 1){
       console.warn("dice-class.js: Invalid iteration value, using current value: "+this.#iterations+".");
       iterations = this.#iterations;
     }

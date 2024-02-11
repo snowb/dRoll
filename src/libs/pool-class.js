@@ -37,8 +37,8 @@ export class Pool {
       //empty new Pool() call, create empty array and calculate nothing
       //needs addDice() to stuff
       this.#fullRollResults=[];
-      if(isNumeric(_iterations)) {this.#iterations=+_iterations;}
-      else if(typeof _iterations!=="undefined") {
+      if(isNumeric(_iterations) && _iterations>=1) {this.#iterations=+_iterations;}
+      else if(typeof _iterations!=="undefined" || _iterations<1) {
         console.warn("pool-class.js: Invalid iterations passed, assuming 10,000.");
       }
     } else if(!_dice_objects_array instanceof Array) {
@@ -54,14 +54,13 @@ export class Pool {
       } else if(this.#fullRollResults.length>0 && !all_dice_objects) {
         console.warn("pool-class.js: Not all objects are Dice/Metrics_Dice objects, reducing to valid Dice/Metrics_Dice objects.");
       }
-      if(isNumeric(_iterations)) {this.#iterations=+_iterations;}
-      else if(typeof _iterations!=="undefined") {
+      if(isNumeric(_iterations) && _iterations>=1) {this.#iterations=+_iterations;}
+      else if(typeof _iterations!=="undefined" || _iterations<1) {
         console.warn("pool-class.js: Invalid iterations passed, assuming 10,000.");
       }
       this.#fullRollResults.forEach((_element)=>{
         _element.setIterations(this.#iterations);
         _element.roll();
-        //_element.roll(this.#iterations);
       });
       this.#calculateSecondaryValues();
     }
@@ -79,11 +78,11 @@ export class Pool {
    * @param {number} _iterations 
    */
   setIterations (_iterations) {
-    if(!isNumeric(_iterations)){
-      console.error("pool-class-2.js: setIterations requires a number as input.");
+    if(!isNumeric(_iterations) || _iterations<1){
+      console.error("pool-class-2.js: setIterations requires a number greater than 0 as input.");
       return undefined;
     }
-    this.#iterations=_iterations;
+    this.#iterations=+_iterations;
     this.rollPool();
   }
   /**
