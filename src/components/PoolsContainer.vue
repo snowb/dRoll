@@ -173,7 +173,7 @@
       });
       sharedPools = temp_shared_pools;
     }
-    console.log(sharedPools)//need to finish the queryString stuff, have to add poolOps and modPoolOps options
+    //console.log(sharedPools)//need to finish the queryString stuff, have to add poolOps and modPoolOps options
   });
 
   const applyOpFunc=(_op_func_object)=>{
