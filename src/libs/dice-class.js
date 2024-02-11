@@ -111,7 +111,9 @@ export class Dice {
   roll (_iterations) {
     //mutating method to enable re-rolling
     let iterations;
-    if(!isNumeric(_iterations) || _iterations < 1){
+    if(_iterations === undefined){
+      iterations = this.#iterations;
+    } else if(!isNumeric(_iterations) || _iterations < 1){
       console.warn("dice-class.js: Invalid iteration value, using current value: "+this.#iterations+".");
       iterations = this.#iterations;
     }
