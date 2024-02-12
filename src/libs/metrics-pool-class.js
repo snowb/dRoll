@@ -252,7 +252,11 @@ export class Metrics_Pool extends Pool {
             new_pool_object.values=_pool_object.values.filter((_value)=>{return _value%2==1});
             break;
           case "equal":
-            new_pool_object.values=_pool_object.values.filter((_value)=>{return _value==_first_target_value});
+            if(Array.isArray(_first_target_value)){
+              new_pool_object.values=_pool_object.values.filter((_value)=>{return _first_target_value.includes(_value)});
+            } else {
+              new_pool_object.values=_pool_object.values.filter((_value)=>{return _value==_first_target_value});
+            }
             break;
           case "above":
             new_pool_object.values=_pool_object.values.filter((_value)=>{return _value>_first_target_value});
@@ -297,35 +301,26 @@ export class Metrics_Pool extends Pool {
         target_maximum = this.getPoolMax();
       }
     }
-    if(this.getLastOperation()=="divide"){
-      let associative_array = {};
-      metrics.mean=with_results_array.reduce((_sum, _object)=>{
-        if(associative_array[_object.result]===undefined){
-          associative_array[_object.result] = 1;
-        } else {
-          associative_array[_object.result] += 1;
-        }
-        return (_sum+_object.result);
-      },0) / this.getIterations();
+    let associative_array = {};
+    metrics.mean=with_results_array.reduce((_sum, _object)=>{
+      if(associative_array[_object.result]===undefined){
+        associative_array[_object.result] = 1;
+      } else {
+        associative_array[_object.result] += 1;
+      }
+      return (_sum+_object.result);
+    },0) / this.getIterations();
 
-      for(let _value in associative_array){
-        let count = associative_array[_value];
-        metrics.pool_metrics.push({
-          value:+_value, 
-          count:count, 
-          ratio:count/this.getIterations()
-        });
-      }
-      metrics.pool_metrics.sort((_a, _b)=>{return _a.value < _b.value ? -1 : 1;});
-    } else {
-      for(let value=lowest_dice_minimum; value<=target_maximum; value++) {
-        let count=with_results_array.filter((_pool_object)=>{
-          return _pool_object.result==value;
-        }).length;
-        let ratio=count/this.getIterations();
-        metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
-      }
+    for(let _value in associative_array){
+      let count = associative_array[_value];
+      metrics.pool_metrics.push({
+        value:+_value, 
+        count:count, 
+        ratio:count/this.getIterations()
+      });
     }
+    metrics.pool_metrics.sort((_a, _b)=>{return _a.value < _b.value ? -1 : 1;});
+  
     metrics.pool_metrics=metrics.pool_metrics.filter((_metrics_object)=>{return _metrics_object.count>0});
     //maybe use the zero-count-cleared array for secondaries but still include full array?
     let metrics_secondaries=this.#calculateMetricSecondaries(metrics.pool_metrics, filtered_array.length);
@@ -485,6 +480,15 @@ export class Metrics_Pool extends Pool {
     if(!isNumeric(_value)){console.error("metrics-pool-class.js: getModifiedBelowMetrics requires a number for _value.");return undefined;}
     return this.#getFilterMetrics("modified_below", +_value, undefined, undefined);
   };
+  #cleanNumericInput(_value){
+    switch(true){
+      case isNumeric(_value):
+        return +_value;
+      case Array.isArray(_value):
+        return _value.filter((_val)=>{return isNumeric(_val)}).map((_val)=>{return +_val});
+    }
+    return undefined;
+  };
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
@@ -493,30 +497,38 @@ export class Metrics_Pool extends Pool {
    * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
    */
   getEqualMetrics(_value, _result_target){
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getEqualMetrics requires a number for _value.");return undefined;}
-    return this.#getFilterMetrics("equal", +_value, undefined, _result_target);
+    let cleaned_value = this.#cleanNumericInput(_value);
+    if(cleaned_value===undefined){
+      console.error("metrics-pool-class.js: getEqualMetrics requires a number or array of numbers for _value.");
+      return undefined;
+    }
+    return this.#getFilterMetrics("equal", cleaned_value, undefined, _result_target);
   };
   /**
    * Return metrics for the given filter
    * @param {string|number} _value - numeric for value to compare
-   * @param {String} _result_target - "pool" (default) or "dice", 
-   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
    * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
    */
   getSumEqualMetrics(_value){
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getSumEqualMetrics requires a number for _value.");return undefined;}
-    return this.#getFilterMetrics("sum_equal", +_value, undefined, undefined);
+    let cleaned_value = this.#cleanNumericInput(_value);
+    if(cleaned_value===undefined){
+      console.error("metrics-pool-class.js: getSumEqualMetrics requires a number or array of numbers for _value.");
+      return undefined;
+    }
+    return this.#getFilterMetrics("sum_equal", cleaned_value, undefined, undefined);
   };
   /**
    * Return metrics for the given filter from the modified_results.result data
    * @param {string|number} _value - numeric for value to compare
-   * @param {String} _result_target - "pool" (default) or "dice", 
-   *                                   whether to return the Pool Value WITH Below Dice or only the Pool Value OF Below Dice.
    * @returns {Object[]} - array of objects of form {value:Number, count:Number, ratio:Number}
    */
   getModifiedEqualMetrics(_value){
-    if(!isNumeric(_value)){console.error("metrics-pool-class.js: getModifiedEqualMetrics requires a number for _value.");return undefined;}
-    return this.#getFilterMetrics("modified_equal", +_value, undefined, undefined);
+    let cleaned_value = this.#cleanNumericInput(_value);
+    if(cleaned_value===undefined){
+      console.error("metrics-pool-class.js: getModifiedEqualMetrics requires a number or array of numbers for _value.");
+      return undefined;
+    }
+    return this.#getFilterMetrics("modified_equal", cleaned_value, undefined, undefined);
   };
   /**
    * Return metrics for the given filter
@@ -752,37 +764,27 @@ export class Metrics_Pool extends Pool {
     metrics.minimum_value=this.getModifiedMinimum();
     metrics.maximum_value=this.getModifiedMaximum();
     metrics.pool_metrics=[];
-    if(this.getLastOperation()=="divide"){
-      let associative_array = {};
-      metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
-        if(associative_array[_value]===undefined){
-          associative_array[_value] = 1;
-        } else {
-          associative_array[_value] += 1;
-        }
-        return (_sum+_value);
-      },0) / this.getIterations();
 
-      for(let _value in associative_array){
-        let count = associative_array[_value];
-        metrics.pool_metrics.push({
-          value:+_value, 
-          count:count, 
-          ratio:count/this.getIterations()
-        });
+    let associative_array = {};
+    metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
+      if(associative_array[_value]===undefined){
+        associative_array[_value] = 1;
+      } else {
+        associative_array[_value] += 1;
       }
-      metrics.pool_metrics.sort((_a, _b)=>{return _a.value < _b.value ? -1 : 1;});
-    } else {
-      for(let value=metrics.minimum_value; value<=metrics.maximum_value; value++) {
-        let count=this.getModifiedEqual(value).length;
-        let ratio=count/this.getIterations();
-        metrics.pool_metrics.push({value:value, count:count, ratio:ratio});
-      }
-      metrics.mean=this.getModifiedResults().reduce((_sum, _value)=>{
-        return (_sum+_value);
-      },0) / this.getIterations();
+      return (_sum+_value);
+    },0) / this.getIterations();
+
+    for(let _value in associative_array){
+      let count = associative_array[_value];
+      metrics.pool_metrics.push({
+        value:+_value, 
+        count:count, 
+        ratio:count/this.getIterations()
+      });
     }
-    
+    metrics.pool_metrics.sort((_a, _b)=>{return _a.value < _b.value ? -1 : 1;});
+      
     metrics.median=undefined;
     let target_median_location=Math.floor(this.getIterations()/2) - 1;
     let median_cheat = metrics.pool_metrics.reduce((_current_location, _object)=>{

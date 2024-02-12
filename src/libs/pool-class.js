@@ -41,8 +41,8 @@ export class Pool {
       else if(typeof _iterations!=="undefined" || _iterations<1) {
         console.warn("pool-class.js: Invalid iterations passed, assuming 10,000.");
       }
-    } else if(!_dice_objects_array instanceof Array) {
-      console.error("pool-class.js: Pool constructor requires an Array of Dice objects.");
+    } else if(!Array.isArray(_dice_objects_array)) {
+      console.error("pool-class.js: Pool constructor requires an Array of Dice objects. Returning empty Pool.");
     } else {
       this.#fullRollResults = _dice_objects_array.reduce((_dice_array, _element)=>{
         if(_element instanceof Dice || _element instanceof Metrics_Dice) {_dice_array.push(_element);}
@@ -509,7 +509,8 @@ export class Pool {
         case "equal":
         default:
           if(Array.isArray(_first_value)){
-            is_keep = _first_value.includes(+_sum_value) ? true : false;
+            let cleaned_array = _first_value.filter((_value)=>{return isNumeric(_value)}).map((_value)=>{return +_value});
+            is_keep = cleaned_array.includes(+_sum_value) ? true : false;
           }
           else{
             is_keep = _sum_value == +_first_value ? true : false;
@@ -718,7 +719,8 @@ getSumEqual (_value) {//return Sums with values equal to _value
           case "equal":
           default:
             if(Array.isArray(_first_value)){
-              is_keep = _first_value.includes(dice_value) ? true : is_keep;
+              let cleaned_array = _first_value.filter((_value)=>{return isNumeric(_value)}).map((_value)=>{return +_value});
+              is_keep = cleaned_array.includes(dice_value) ? true : is_keep;
             }
             else{
               is_keep = dice_value == +_first_value ? true : is_keep;

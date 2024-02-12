@@ -4,7 +4,6 @@
 //constructor(_array_of_numbers, _modifier)
 // -- min and max values are read from Array
 // -- array need not be in a specific order
-import { isNumeric } from "./isNumeric.js";
 import { Dice } from "./dice-class.js";
 
 /**
