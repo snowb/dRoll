@@ -181,9 +181,12 @@
       filter_options.ops_func = true;
     } else {
       filter_options.ops_func = false;
+      operationFunction.method = "none";
     }
     if(["add","subtract","multiply","divide","negate","absolute"].includes(_op_func_object.op_func)){
       operationFunction.operation_function = _op_func_object.op_func;
+    } else {
+      operationFunction.operation_function = "none";
     }
   };
 </script>

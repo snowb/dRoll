@@ -86,18 +86,21 @@ watch([showDiceFilterOptions, showPoolFilterOptions, showPoolOperations],
       showPoolFilterOptions.value = false;
       showPoolOperations.value = false;
       showDiceFilterOptions.value = true;
+      operationRadio.value = "add";
+      functionRadio.value = "none";
       applyOpFunc(undefined, "none", "none");
       break;
     case _new_pool_value==true && _old_pool_value==false:
     case _new_op_value==true && _old_op_value==false:
       showDiceFilterOptions.value = false;
       break;
-    case _new_pool_value==false && _old_pool_value==true && _new_op_value==true && _old_op_value==true:
-      emit("filterPoolDice",{type:"full"});  
+    case _new_pool_value==false && _old_pool_value==true && _new_op_value==true && _old_op_value==true: 
       applyOpFunc(undefined, "op", operationRadio.value);
       applyOpFunc(undefined, "func", functionRadio.value);
       break;
     case _new_op_value==false && _old_op_value==true:
+      operationRadio.value = "add";
+      functionRadio.value = "none";
       applyOpFunc(undefined, "none", "none");
       break;
   }
@@ -160,7 +163,7 @@ const applyOpFunc = (_event, _target_method, _target_op_func)=>{
     </Transition>
     <div class="small bold check_box_root" title="Apply Operation/Modification to Dice in order"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
     <Transition>
-      <div v-if="showPoolOperations" class="small check_box_root" style="padding-left:0.5em;">
+      <div v-if="showPoolOperations" class="small" style="padding-left:0.5em;">
           &nbsp;<span class="bold" title="Apply Operation to Dice in order">Operation: </span>
           <span title="Add all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="add"/>Add</span>&nbsp;&nbsp;
           <span title="Subtract all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="subtract"/>Subtract</span>&nbsp;&nbsp;
