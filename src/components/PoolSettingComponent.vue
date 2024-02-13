@@ -25,6 +25,9 @@ let showDiceFilterOptions=ref(false);
 const updateFilterOption=(_event, _filter_type, _filter_type_modifier)=>{
   filter_options.filter_type=_filter_type;
   filter_options.filter_type_modifier=_filter_type_modifier;
+  if(_filter_type=="equal" && _filter_type_modifier=="pool"){
+    showArrayInput.value = true;
+  } else {showArrayInput.value = false;}
 };
 
 const updateFilterValue=(_event)=>{
@@ -47,6 +50,9 @@ const updateFilterValue=(_event)=>{
 };
 
 const emitFilter=()=>{
+  if(filter_options.filter_value === undefined || filter_options.filter_value === null || filter_options.filter_value==""){
+    filter_options.filter_value = 1;
+  }
   if(filter_options.filter_type=="range"){
     if(filter_options.filter_value > filter_options.filter_value_max){
       let value_swap = filter_options.filter_value;
@@ -56,6 +62,14 @@ const emitFilter=()=>{
     else if(filter_options.filter_value == filter_options.filter_value_max){
       filter_options.filter_value_max += 1;
     }
+  } else if(arrayInput.value==""){
+    arrayInput.value = ""+filter_options.filter_value;
+  } else if(showPoolEqualArray.value){
+    let equal_array = arrayInput.value.replace(/\s*/gi,"").split(",");
+    filter_options.filter_value = equal_array.reduce((_clean_array, _value)=>{
+      if(_value!="-" && _value!=""){_clean_array.push(+_value);}
+      return _clean_array;
+    },[]);
   }
   emit("filterPoolDice",{
     type: filter_options.filter_type, 
@@ -127,6 +141,35 @@ watch([operationRadio,functionRadio],([_new_op, _new_func],[_old_op, _old_func])
 const applyOpFunc = (_event, _target_method, _target_op_func)=>{
   emit("applyOpFunc",{pool_index: props.pool_index, method:_target_method, op_func:_target_op_func});
 };
+
+let showArrayInput = ref(false);
+
+let showPoolEqualArray = ref(false);
+
+const poolEqualArrayText = computed(()=>{
+  if(showPoolEqualArray.value){
+    return "single-numeric input."
+  } else {return "comma-separated array input."}
+});
+
+const toggleMode=()=>{showPoolEqualArray.value = !showPoolEqualArray.value};
+
+let arrayInput = ref(""+filter_options.filter_value);
+
+watch([arrayInput, showPoolEqualArray],([_new_array_input, _new_pool_equal_array], [_old_array_input, _old_pool_equal_array])=>{
+  switch(true){
+    case _new_array_input.match(/^(-?[0-9]*,?\s*)*$/gi)==null:
+      arrayInput.value = _old_array_input;
+      break;
+    case _new_pool_equal_array==false && _old_pool_equal_array==true:
+      filter_options.filter_value = filter_options.filter_value[0];
+      break;
+    case _new_pool_equal_array==true && _old_pool_equal_array==false:
+      filter_options.filter_value = [filter_options.filter_value];
+      break;
+  }
+});
+
 </script>
 
 <template>
@@ -184,7 +227,14 @@ const applyOpFunc = (_event, _target_method, _target_op_func)=>{
         <br>
         <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'equal','pool')"/>Equal To</span>
         <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'above','pool')"/>Above</span>
-        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/></span>
+        <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'below','pool')"/>Below: 
+          <input v-if="!showPoolEqualArray" type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/>
+          <input v-if="showPoolEqualArray" type="text" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="arrayInput"/>
+          </span>
+          <span>
+            <v-icon v-if="showArrayInput" class="pointer small" style="padding:0.1em; position: relative; top: 1px;" hover animation="pulse" speed="slow" @click="toggleMode" :title="'Switch to '+poolEqualArrayText" name="fa-exchange-alt" scale="1" fill="#242424">
+            </v-icon>
+          </span>
         <br>
         <span><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event,'range','pool')"/>Range From: <input type="number" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value"/> To: <input type="number" id="range_max" :size="inputSize" class="editable" @keydown.enter="updateFilterValue" @blur="updateFilterValue" v-model="filter_options.filter_value_max"/></span>
         <div style="display: flex; flex-direction: row; position: relative; margin-bottom:0.2em;">
@@ -205,6 +255,9 @@ const applyOpFunc = (_event, _target_method, _target_op_func)=>{
 </template>
 
 <style scoped>
+.pointer{
+  cursor:pointer;
+}
 .check_box_root{
   background-color: #e7e7e7; 
   position: relative; 
