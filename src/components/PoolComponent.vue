@@ -99,48 +99,60 @@
 
   const getFilteredMetrics=computed(()=>{
     props.force_render;
-    let pool_or_dice = filter_options.type_modifier=="dice" ? "dice" : "pool";
+    //let pool_or_dice = filter_options.type_modifier == "dice_of" ? "dice" : "pool";
     let target_filter_type;
     if(["op","func"].includes(operationFunction.method) && operationFunction.operation_function!=="none"){
       target_filter_type = "modified_"+filter_options.type;
-    } else if(pool_or_dice == "pool"){
+    } else if(filter_options.type_modifier == "pool"){
       target_filter_type = "sum_"+filter_options.type;
     } else {
-      target_filter_type = filter_options.type;
+      target_filter_type = filter_options.type_modifier+"_"+filter_options.type;
     }
     switch(target_filter_type){
-      case "equal":
-        return props.pool.getEqualMetrics(filter_options.value, pool_or_dice);
+      case "dice_of_equal":
+        return props.pool.getEqualMetrics(filter_options.value, "dice");
+      case "dice_with_equal":
+        return props.pool.getEqualMetrics(filter_options.value, "pool");
       case "sum_equal":
         return props.pool.getSumEqualMetrics(filter_options.value);
       case "modified_equal":
         return props.pool.getModifiedEqualMetrics(filter_options.value);
-      case "above":
-        return props.pool.getAboveMetrics(filter_options.value, pool_or_dice);
+      case "dice_of_above":
+        return props.pool.getAboveMetrics(filter_options.value, "dice");
+      case "dice_with_above":
+        return props.pool.getAboveMetrics(filter_options.value, "pool");
       case "sum_above":
         return props.pool.getSumAboveMetrics(filter_options.value);
       case "modified_above":
         return props.pool.getModifiedAboveMetrics(filter_options.value);
-      case "below":
-        return props.pool.getBelowMetrics(filter_options.value, pool_or_dice);
+      case "dice_of_below":
+        return props.pool.getBelowMetrics(filter_options.value, "dice");
+      case "dice_with_below":
+        return props.pool.getBelowMetrics(filter_options.value, "pool");
       case "sum_below":
         return props.pool.getSumBelowMetrics(filter_options.value);
       case "modified_below":
         return props.pool.getModifiedBelowMetrics(filter_options.value);
-      case "even":
-        return props.pool.getEvenMetrics(pool_or_dice);
+      case "dice_of_even":
+        return props.pool.getEvenMetrics("dice");
+      case "dice_with_even":
+        return props.pool.getEvenMetrics("pool");
       case "sum_even":
         return props.pool.getSumEvenMetrics(pool_or_dice);
       case "modified_even":
         return props.pool.getModifiedEvenMetrics(pool_or_dice);
-      case "odd":
-        return props.pool.getOddMetrics(pool_or_dice);
+      case "dice_of_odd":
+        return props.pool.getOddMetrics("dice");
+      case "dice_with_odd":
+        return props.pool.getOddMetrics("pool");
       case "sum_odd":
         return props.pool.getSumOddMetrics(pool_or_dice);
       case "modified_odd":
         return props.pool.getModifiedOddMetrics(pool_or_dice);
-      case "range":
-        return props.pool.getWithinRangeMetrics(filter_options.value, filter_options.max_value, pool_or_dice);
+      case "dice_of_range":
+        return props.pool.getWithinRangeMetrics(filter_options.value, filter_options.max_value, "dice");
+      case "dice_with_range":
+        return props.pool.getWithinRangeMetrics(filter_options.value, filter_options.max_value, "pool");
       case "sum_range":
         return props.pool.getSumWithinRangeMetrics(filter_options.value, filter_options.max_value);
       case "modified_range":
