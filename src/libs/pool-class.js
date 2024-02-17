@@ -96,11 +96,6 @@ export class Pool {
    */
   getRollResults () { return this.#rollResults; };
   /**
-   * return sum from #secondaryResults
-   * @returns {number[]}
-   */
-  getSumRolled () { return this.#secondaryResults.sum; };
-  /**
    * return minimum dice rolled from #secondaryResults
    * @returns {number[]}
    */
@@ -177,17 +172,15 @@ export class Pool {
     this.#secondaryResults.dice_min=Array(this.#iterations);
     this.#secondaryResults.dice_max=Array(this.#iterations);
     this.#rollResults=Array(this.#iterations);
+    this.poolOperation("add");
     for(let index=0;index<this.#iterations;index++){
-      //generate secondary results; sums, mins, maxes, means
-      this.#secondaryResults.sum[index]=0;
+            //generate secondary results; sums, mins, maxes, means
+      this.#secondaryResults.sum[index]=0;  
       let roll=0;//for determine mean in next step
       let min=null;
       let max=null;
       let temp_rolls=[];
       for(;roll<this.#fullRollResults.length;roll++){
-        /* if(this.#fullRollResults[roll].getResults()===undefined){
-          this.#fullRollResults[roll].roll();
-        } */
         let roll_result_value=this.#fullRollResults[roll].getResults()[index].value;
         this.#secondaryResults.sum[index]+=roll_result_value===undefined ? 0 : roll_result_value;
         if(min === null || min > roll_result_value) {
@@ -764,35 +757,41 @@ getSumEqual (_value) {//return Sums with values equal to _value
     if(typeof _operation!=="function"){
       let operation_function=undefined;
       switch(_operation){
-        case "add":
-          operation_function = (_value_1, _value_2)=>{
-            return (_value_1 + _value_2);
-          };
-          this.#modifiedResults.last_operation = "add";
-          break;
         case "subtract":
           operation_function = (_value_1, _value_2)=>{
-            return (_value_1 - _value_2);
+            let val_1 = _value_1===undefined ? 0 : _value_1;
+            let val_2 = _value_2===undefined ? 0 : _value_2;
+            return (val_1 - val_2);
           };
           this.#modifiedResults.last_operation = "subtract";
           break;
         case "multiply":
           operation_function = (_value_1, _value_2)=>{
-            return (_value_1 * _value_2);
+            let val_1 = _value_1===undefined ? 1 : _value_1;
+            let val_2 = _value_2===undefined ? 1 : _value_2;
+            return (val_1 * val_2);
           };
           this.#modifiedResults.last_operation = "multiply";
           break;
         case "divide":
           operation_function = (_value_1, _value_2)=>{
-            return (_value_1 / _value_2);
+            let val_1 = _value_1===undefined ? 1 : _value_1;
+            let val_2 = _value_2===undefined ? 1 : _value_2;
+            return (val_1 / val_2);
           };
           this.#modifiedResults.last_operation = "divide";
           break;
+        case "add":
         default:
           operation_function = (_value_1, _value_2)=>{
-            return (_value_1 + _value_2);
+            let val_1 = _value_1===undefined ? 0 : _value_1;
+            let val_2 = _value_2===undefined ? 0 : _value_2;
+            return (val_1 + val_2);
           };
-          console.warn("pool-class.js: invalid operation name passed to poolOperation, returning 'add' operation");
+          this.#modifiedResults.last_operation = "add";
+          if(_operation!="add"){
+            console.warn("pool-class.js: invalid operation name passed to poolOperation, returning 'add' operation");
+          }
           break;
       }
       this.#modifiedResults.results = flattened_results.reduce((_new_array, _values_array)=>{
