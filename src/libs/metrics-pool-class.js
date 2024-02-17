@@ -130,13 +130,6 @@ export class Metrics_Pool extends Pool {
     metrics.mode=metrics_secondaries.mode;
     this.#calculateSequences();
     this.#calculateSets();
-
-
-    /**
-     * 
-     * TRIGGER OTHER STUFF FOR CALCULATING METRICS
-     * 
-     */
   };
   /**
    * @returns {Number} - number of dice in pool
@@ -158,9 +151,9 @@ export class Metrics_Pool extends Pool {
   };
   /**
    * 
-   * @param {String} _filter_type - which filtered array to get metrics on (Even, Odd, Equal, etc)
+   * @param {'even'|'modified_even'|'odd'|'modified_odd'|'equal'|'modified_equal'|'above'|'modified_above'|'below'|'modified_below'|'range'|'modified_range'|'highest'|'lowest'} _filter_type - which filtered array to get metrics on (Even, Odd, Equal, etc)
    * @param {Number|String} _target_value - Numeric, the comparison value for Equal, Above, Below
-   * @param {String} _result_target - "pool" (default) or "dice", 
+   * @param {'pool'|'dice'} _result_target - "pool" (default) or "dice", 
    *                                   whether to return the Pool Value WITH target Dice or only the Pool Value OF target Dice.
    * @returns {object} - Metrics object {pool_metrics: Array, median: Number, mode: Number, mean: Number}
    */
@@ -509,7 +502,7 @@ export class Metrics_Pool extends Pool {
   };
   /**
    * core group generating function
-   * @param {string} _target_group - target group to calculate, Sets or Sequences
+   * @param {'sets'|'sequences'} _target_group - target group to calculate, Sets or Sequences
    * @returns {Object[]} - [{index:number, [sets|sequences]:Array[ number[] ]}]
    */
   #getGroups(_target_group){
@@ -603,7 +596,7 @@ export class Metrics_Pool extends Pool {
   };
   /**
    * 
-   * @param {string} _property - operation to execute
+   * @param {'getSetsOfValue'|'getSetsOfLength'|'getSequencesWithValue'|'getSequencesOfLength'} _property - operation to execute
    * @param {string} _target_group - which group to get, Sets or Sequences
    * @param {string|number} _value - value to match to
    * @returns {Object[]} - [{index:number, [set|sequences]:Array[ number[] ]}] 

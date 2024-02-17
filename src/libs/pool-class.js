@@ -196,11 +196,14 @@ export class Pool {
       this.#rollResults[index]={index:index,roll:temp_rolls.sort((_a, _b)=>{return +_a > +_b ? 1 : -1})};
     }
   }
+  test(){
+    this.#dropValue()
+  };
   /**
    * Core method that iterations through roll results and sends dropValue(index) to Dice object
    * Setting the found index in Dice to undefined
    * 
-   * @param {string} _target_drop - the operation to execute (lowest, highest, specific value)
+   * @param {"dropLowestValue"|"dropHighestValue"|"dropValue"|"dropValueAbove"|"dropValueBelow"|"dropEven"|"dropOdd"} _target_drop - the operation to execute (lowest, highest, specific value)
    * @param {string|number} [_drop_count=1] - maximum number of Dice to drop, defaults to 1
    * @param {string|number} _drop_value - the specific value to drop
    * @returns {undefined} - on error
@@ -447,13 +450,12 @@ export class Pool {
 
   /**
    * core function for retrieving roll result comparison data for the Sum of all rolls
-   * @param {string} [_operation="equal"] - operaton to execute
+   * @param {'even'|'odd'|'above'|'below'|'range'|'equal'} [_operation="equal"] - operaton to execute
    * @param {number} _first_value - first value to compare, or Array of values if getEqual
    * @param {number} [_second_value] - second value for range compare
-   * @returns {Object[]} - [{index:number, values:number[]}]
+   * @returns {Object[]} - [ { index : number, values : number[] } ]
    */
-  //#getModifiedOperation (_operation, _first_value, _second_value) {
-  #getModifiedOperation (_target_array, _operation, _first_value, _second_value) {
+  #getModifiedOperation (_operation, _first_value, _second_value) {
     let target_array = this.#modifiedResults.results;//this.#secondaryResults.sum;
 
     return target_array.reduce((_operation_result, _sum_value, _index)=>{
@@ -495,13 +497,13 @@ export class Pool {
  * @returns {Object[]} - even results from Modified data
  */
 getModifiedEven(){
-  return this.#getModifiedOperation("modified","even"); 
+  return this.#getModifiedOperation("even"); 
 };
 /**
  * @returns {Object[]} - odd results from Modified data
  */
 getModifiedOdd(){
-  return this.#getModifiedOperation("modified","odd"); 
+  return this.#getModifiedOperation("odd"); 
 };
 /**
 * returns roll Modified above the provided value
@@ -510,7 +512,7 @@ getModifiedOdd(){
 */
 getModifiedAbove (_value) {//return Modified with values above _value
   if(!isNumeric(_value)){console.error("pool-class.js: getAbove requires a number for _value.");return undefined;}
-  return this.#getModifiedOperation("modified","above",+_value);
+  return this.#getModifiedOperation("above",+_value);
 };
 /**
 * returns roll Modified below the provided value
@@ -519,7 +521,7 @@ getModifiedAbove (_value) {//return Modified with values above _value
 */
 getModifiedBelow (_value) {//return Modified with values below _value
   if(!isNumeric(_value)){console.error("pool-class.js: getBelow requires a number for _value.");return undefined;}
-  return this.#getModifiedOperation("modified","below",+_value);
+  return this.#getModifiedOperation("below",+_value);
 };
 /**
 * returns roll Modified equal to the provided value
@@ -533,7 +535,7 @@ if(is_invalid_array || is_invalid_number){
   console.error("pool-class.js: getEqual requires a Number or an Array of Numbers for input");
   return undefined;
 } 
-return this.#getModifiedOperation("modified","equal",_value);
+return this.#getModifiedOperation("equal",_value);
 };
 /**
  * returns roll Modified within the specified range, inclusive
@@ -543,7 +545,7 @@ return this.#getModifiedOperation("modified","equal",_value);
  */
 getModifiedWithinRange (_min_value, _max_value) {//return Modified with values within range of _min_value and _max_value, inclusive
   if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
-  return this.#getModifiedOperation("modified","range",+_min_value,+_max_value);
+  return this.#getModifiedOperation("range",+_min_value,+_max_value);
 };
   /**
   * returns numbers above the provided value
@@ -600,7 +602,7 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
     return this.#getOperation("odd"); 
   };
   /**
-   * @param {String} _operation - operation to perform
+   * @param {'even'|'odd'|'above'|'below'|'range'|'equal'} _operation - operation to perform
    * @param {Number} _first_value - value or first value in Range op
    * @param {Number|undefined} _second_value - undefined or second value in Range op
    * @returns {Object[]} - [{index:Number, values:Number}]
@@ -648,11 +650,10 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
     return operation_result;
   };
   modifiedGetOperation(_operation, _first_value, _second_value){
-
   };
   /**
    * Perform operation with Pool and store in modifiedResults.results
-   * @param {String|Function} _operation - String for name of builtin operation or Function, Function will be passed 1 argument; an Array of Arrays of Numbers [[1,2],[3,4]] and return an Array of Numbers
+   * @param {'add'|'subtract'|'multiply'|'divide'|Function} [_operation="add"] - String for name of builtin operation or Function, Function will be passed 1 argument; an Array of Arrays of Numbers [[1,2],[3,4]] and return an Array of Numbers
    * @param {Number[]} _op_order_array - array of indices in order to perform operation on
    */
   poolOperation(_operation, _op_order_array){
@@ -740,7 +741,7 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
   };
   /**
    * Modify whatever results are in modifiedResults.results
-   * @param {String|Function} _operation - Valid String of operation or Function that will be calld within an Array.Map() over #modifiedResults.results generated by poolOperation
+   * @param {'absolute'|'negate'|'none'|Function} _operation - Valid String of operation or Function that will be calld within an Array.Map() over #modifiedResults.results generated by poolOperation
    *  #modifiedResults.results = Number[]
    * @returns {Number[]} - mutates #modifiedResults.results and returns array of values
   */
