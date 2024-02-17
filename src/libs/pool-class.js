@@ -18,9 +18,9 @@ export class Pool {
   #rollResults=null;
 
   #secondaryResults={
-    sum:[],
+    //sum:[],
     dice_min:[],dice_max:[],
-    pool_max:null,pool_min:null
+    //pool_max:null,pool_min:null
   }; 
   #modifiedResults={
     results:[], modified_max:null, modified_min:null, last_operation:"none"
@@ -109,12 +109,12 @@ export class Pool {
    *  return lowest pool value from #secondaryResults
    * @returns {Number}
    */
-  getPoolMin(){ return this.#secondaryResults.pool_min; };
+  getPoolMin(){ return this.#modifiedResults.modified_min; };
   /**
-   * return highest pool value from #secondaryResults
+   * return highest pool value from #modifiedResults
    * @returns {Number}
    */
-  getPoolMax(){ return this.#secondaryResults.pool_max; };
+  getPoolMax(){ return this.#modifiedResults.modified_max; };
   /**
    * return array of numbers of current #modifiedResults.results
    * @returns {Number[]}
@@ -167,7 +167,7 @@ export class Pool {
    * calculates abbreviated and sorted roll data and stores in #rollResults private prop
    */
   #calculateSecondaryValues () {
-    this.#secondaryResults.sum=Array(this.#iterations);
+    //this.#secondaryResults.sum=Array(this.#iterations);
     // this.#secondaryResults.mean=Array(this.#iterations);
     this.#secondaryResults.dice_min=Array(this.#iterations);
     this.#secondaryResults.dice_max=Array(this.#iterations);
@@ -175,14 +175,14 @@ export class Pool {
     this.poolOperation("add");
     for(let index=0;index<this.#iterations;index++){
             //generate secondary results; sums, mins, maxes, means
-      this.#secondaryResults.sum[index]=0;  
+      //this.#secondaryResults.sum[index]=0;  
       let roll=0;//for determine mean in next step
       let min=null;
       let max=null;
       let temp_rolls=[];
       for(;roll<this.#fullRollResults.length;roll++){
         let roll_result_value=this.#fullRollResults[roll].getResults()[index].value;
-        this.#secondaryResults.sum[index]+=roll_result_value===undefined ? 0 : roll_result_value;
+        //this.#secondaryResults.sum[index]+=roll_result_value===undefined ? 0 : roll_result_value;
         if(min === null || min > roll_result_value) {
           min = roll_result_value;
         }
@@ -195,20 +195,6 @@ export class Pool {
       this.#secondaryResults.dice_max[index]=max;
       this.#rollResults[index]={index:index,roll:temp_rolls.sort((_a, _b)=>{return +_a > +_b ? 1 : -1})};
     }
-    this.#secondaryResults.pool_min=this.#rollResults.reduce((_min, _values_array)=>{
-      let values_sum=_values_array.roll.reduce((_sum, _value)=>{
-        return _sum + (_value===undefined ? 0 : _value);
-      },0);
-      if(values_sum<_min){return values_sum}
-      return _min;
-    },Infinity);
-    this.#secondaryResults.pool_max=this.#rollResults.reduce((_max, _values_array)=>{
-      let values_sum=_values_array.roll.reduce((_sum, _value)=>{
-        return _sum + (_value===undefined ? 0 : _value);
-      },0);
-      if(values_sum>_max){return values_sum}
-      return _max;
-    },-Infinity);
   }
   /**
    * Core method that iterations through roll results and sends dropValue(index) to Dice object
@@ -419,11 +405,8 @@ export class Pool {
       console.warn("pool-class.js: Invalid value passed to reRollDice() method.");
       return undefined;
     }
-    //this.#fullRollResults[_dice_index].roll(this.#iterations);
     this.#fullRollResults[_dice_index].roll();
     this.#calculateSecondaryValues();
-    /* this.#calculateSequences();
-    this.#calculateSets(); */
   };
   /**
    * add additional Dice to the roll if a value occurs in the results
@@ -460,8 +443,6 @@ export class Pool {
       this.addDice(_new_dice);
     });
     this.#calculateSecondaryValues();
-    /* this.#calculateSequences();
-    this.#calculateSets(); */
   };
 
   /**
@@ -473,14 +454,8 @@ export class Pool {
    */
   //#getModifiedOperation (_operation, _first_value, _second_value) {
   #getModifiedOperation (_target_array, _operation, _first_value, _second_value) {
-    let target_array = this.#secondaryResults.sum;
-    if(_target_array=="modified"){
-      if(this.#modifiedResults.results.length==0){
-        console.warn("pool-class.js: modifiedResults.results is empty, using Sum data.")
-      } else {
-        target_array = this.#modifiedResults.results;
-      }
-    }
+    let target_array = this.#modifiedResults.results;//this.#secondaryResults.sum;
+
     return target_array.reduce((_operation_result, _sum_value, _index)=>{
       let is_keep=false;
       switch(_operation) {
@@ -570,60 +545,6 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
   if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
   return this.#getModifiedOperation("modified","range",+_min_value,+_max_value);
 };
-/**
- * @returns {Object[]} - even results from Sum data
- */
-getSumEven(){
-  return this.#getModifiedOperation("sum","even"); 
-};
- /**
- * @returns {Object[]} - odd results from Summed data
- */
-getSumOdd(){
-  return this.#getModifiedOperation("sum","odd"); 
-};
-/**
-* returns roll sums above the provided value
-* @param {string|number} _value - numeric for value to compare
-* @returns {Object[]} - [{index:number, values:number[]}]
-*/
-getSumAbove (_value) {//return Sums with values above _value
-  if(!isNumeric(_value)){console.error("pool-class.js: getAbove requires a number for _value.");return undefined;}
-  return this.#getModifiedOperation("sum","above",+_value);
-};
-/**
-* returns roll sums below the provided value
-* @param {string|number} _value - numeric for value to compare
-* @returns {Object[]} - [{index:number, values:number[]}]
-*/
-getSumBelow (_value) {//return Sums with values below _value
-  if(!isNumeric(_value)){console.error("pool-class.js: getBelow requires a number for _value.");return undefined;}
-  return this.#getModifiedOperation("sum","below",+_value);
-};
-/**
-* returns roll sums equal to the provided value
-* @param {string|number} _value - numeric for value to compare
-* @returns {Object[]} - [{index:number, values:number[]}]
-*/
-getSumEqual (_value) {//return Sums with values equal to _value
-  let is_invalid_array = Array.isArray(_value) ? _value.some((_value)=>{return !isNumeric(_value)}) : false;
-  let is_invalid_number = !Array.isArray(_value) && !isNumeric(_value) ? true : false;
-  if(is_invalid_array || is_invalid_number){
-    console.error("pool-class.js: getEqual requires a Number or an Array of Numbers for input");
-    return undefined;
-  } 
-  return this.#getModifiedOperation("sum","equal",_value);
-  };
-  /**
-   * returns roll sums within the specified range, inclusive
-   * @param {string|number} _min_value 
-   * @param {string|number} _max_value 
-   * @returns {Object[]} - [{index:number, values:number[]}]
-   */
-  getSumWithinRange (_min_value, _max_value) {//return Sums with values within range of _min_value and _max_value, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("pool-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
-    return this.#getModifiedOperation("sum","range",+_min_value,+_max_value);
-  };
   /**
   * returns numbers above the provided value
   * @param {string|number} _value - numeric for value to compare
