@@ -105,8 +105,10 @@
       target_filter_type = "modified_"+filter_options.type;
     } else if(filter_options.type_modifier == "pool"){
       target_filter_type = "sum_"+filter_options.type;
-    } else {
+    } else if(filter_options.type_modifier!==undefined){
       target_filter_type = filter_options.type_modifier+"_"+filter_options.type;
+    } else {
+      target_filter_type = filter_options.type;
     }
     switch(target_filter_type){
       case "dice_of_equal":
