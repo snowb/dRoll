@@ -277,14 +277,22 @@ export class Dice {
       this.#results.fill(undefined,_values_array.length);
     }
   };
-
+  importDice(_dice){
+    if(!_dice instanceof Dice){
+      console.warn("dice-class.js: importValue() requires a Dice object as input.");
+    }
+    this.#minimum_value = _dice.getMinimum(); 
+    this.#maximum_value = _dice.getMaximum();
+    this.#modifier = _dice.getModifier();
+    this.setIterations(_dice.getIterations());
+  };
   /**
- * returns all values above the input value
- * @param {string|number} _value - value to match
- * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
- */
+   * returns all values above the input value
+   * @param {string|number} _value - value to match
+   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
+   */
   getAbove (_value) {//get all values above _value
-    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getAbove requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getAbove requires a number for input.");return undefined;}
     let above_results = this.getResults().filter((_element)=>{return _element.value>+_value;});
     return {count:above_results.length, values:above_results};
   };
@@ -294,18 +302,35 @@ export class Dice {
    * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
   getBelow (_value) {//get all values below _value
-    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getBelow requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getBelow requires a number for input.");return undefined;}
     let below_results = this.getResults().filter((_element)=>{return _element.value<+_value;});
     return {count:below_results.length, values:below_results};
   };
   /**
-   * returns all values equal to the input value
-   * @param {string|number} _value - value to match
-   * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
+   * returns all values equal to the input value or values
+   * @param {String|Number|Number[]} _value_or_array - numeric input or array of numerics to return 
+   * @returns Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
-  getEqual (_value) {//get all values equal to _value
-    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getEqual requires a number for input.");return undefined;}
-    let equal = this.getResults().filter((_element)=>{return _element.value==+_value;});
+  getEqual (_value_or_array) {//ADD ARRAY OPTION
+    let filter_function;
+    switch(true){
+      case !isNumeric(_value_or_array) && !Array.isArray(_value_or_array):
+        console.error("dice-class.js: getEqual requires a number or array of numbers for input.");
+        return undefined;
+      case Array.isArray(_value_or_array):
+        let cleaned_array = _value_or_array.filter((_value)=>{
+          return isNumeric(_value);
+        }).map((_value)=>{return +_value;});
+        filter_function = (_element)=>{
+          return cleaned_array.includes(+_element.value);
+        };
+        break;
+      case isNumeric(_value_or_array):
+        filter_function = (_element)=>{return +_element.value==+_value_or_array;};
+        break;
+    }
+    //if(!isNumeric(_value_or_array)){console.error("dice-class.js: getEqual requires a number for input.");return undefined;}
+    let equal = this.getResults().filter(filter_function);
     return {count:equal.length, values:equal};
   };
   /**
@@ -315,7 +340,7 @@ export class Dice {
    * @returns {Object[]} - {count: number, values: Object[{index:index, value:value}]}
    */
   getWithinRange (_min_value, _max_value) {//return all values within the specified range, inclusive
-    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("metrics-dice-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
+    if(!isNumeric(_min_value) || !isNumeric(_max_value)){console.error("dice-class.js: getWithinRange requires a number for Minimum and Maximum values.");return undefined;}
     let range = this.getResults().filter((_element)=>{return _element.value>=+_value && _element.value<=+_value;});
     return {count:equal.length, values:range};
   };
@@ -343,7 +368,7 @@ export class Dice {
    * @returns {Object}
    */
   getAllForValue (_value) {//get above, below, equal, average, and all results
-    if(!isNumeric(_value)){console.error("metrics-dice-class.js: getAllForValue requires a number for input.");return undefined;}
+    if(!isNumeric(_value)){console.error("dice-class.js: getAllForValue requires a number for input.");return undefined;}
     let allForValue={};
     allForValue["Above_"+_value]=this.getAbove(_value);
     allForValue["Below_"+_value]=this.getBelow(_value);
