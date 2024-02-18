@@ -12,6 +12,7 @@ import { Dice } from "./dice-class.js";
  * @property {Number} min_dice - The lowest Dice value
  * @property {Object} secondaryResults - Contains secondary metrics calculations
  * @property {Object} groupResults - contains sets, sequences, and metrics for both
+ * @property {Object[]} workingResults - Contains working results from any runn operations
  */
 export class Metrics_Pool extends Pool {
   #dice_metrics=[];
@@ -30,6 +31,8 @@ export class Metrics_Pool extends Pool {
     totalSequencesCount:undefined, 
     totalRollsWithSequences:undefined
   };
+
+  #workingResults = [];
 
   constructor(_dice_objects_array, _iterations){
     if(Array.isArray(_dice_objects_array)){
@@ -59,7 +62,7 @@ export class Metrics_Pool extends Pool {
    */
   #calculateMinMaxDice(_target){
     let initial_value = _target=="min" ? Infinity : -Infinity
-    return super.getFullRollResults().reduce((_target_dice, _metrics_dice)=>{
+    return this.getFullRollResults().reduce((_target_dice, _metrics_dice)=>{
       let dice_metric_minmax;
       if(_target=="min"){
         dice_metric_minmax = _metrics_dice.getMinimum();
@@ -124,10 +127,10 @@ export class Metrics_Pool extends Pool {
     this.#min_dice=this.#calculateMinMaxDice("min");
     this.#updateDiceMetrics();
     let metrics=this.getMetrics();
-    let metrics_secondaries=this.#calculateMetricSecondaries(metrics.pool_metrics, super.getIterations());
-    metrics.median=metrics_secondaries.median;
-    metrics.mean=metrics_secondaries.mean;
-    metrics.mode=metrics_secondaries.mode;
+    let metrics_secondaries = this.#calculateMetricSecondaries(metrics.pool_metrics, this.getIterations());
+    this.#secondaryMetrics.pool_median = metrics_secondaries.median;
+    this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
+    this.#secondaryMetrics.pool_mode = metrics_secondaries.mode;
     this.#calculateSequences();
     this.#calculateSets();
   };
@@ -202,7 +205,7 @@ export class Metrics_Pool extends Pool {
         filtered_array=this.getRollResults();
         break;
     }
-    let with_results_array=filtered_array.reduce((_pool_array, _pool_object)=>{
+    this.#workingResults=filtered_array.reduce((_pool_array, _pool_object)=>{
       let new_pool_object={
         index:undefined, 
         values:undefined,
@@ -259,7 +262,7 @@ export class Metrics_Pool extends Pool {
     },[]);
 
     let associative_array = {};
-    metrics.mean=with_results_array.reduce((_sum, _object)=>{
+    metrics.mean=this.#workingResults.reduce((_sum, _object)=>{
       if(associative_array[_object.result]===undefined){
         associative_array[_object.result] = 1;
       } else {
@@ -323,7 +326,7 @@ export class Metrics_Pool extends Pool {
    * Updates the dice_metrics private property based on current Pool
    */
   #updateDiceMetrics(){
-    this.#dice_metrics=super.getFullRollResults().reduce((_dice_metrics, _dice)=>{
+    this.#dice_metrics=this.getFullRollResults().reduce((_dice_metrics, _dice)=>{
       _dice_metrics.push(_dice.getMetrics());
       return _dice_metrics;
     },[]);
@@ -507,7 +510,7 @@ export class Metrics_Pool extends Pool {
    */
   #getGroups(_target_group){
     //returns group, either sets of matching numbers of sequences
-    return super.getRollResults().reduce((_results, _roll)=>{
+    return this.getRollResults().reduce((_results, _roll)=>{
       let temp_groups=[];
       let final_groups=[];
       let current_group=0; 
@@ -686,7 +689,7 @@ export class Metrics_Pool extends Pool {
    * @returns {number[]}
    */
   #getAllPossibleValues () {
-    return super.getFullRollResults().reduce((_all_values, _dice)=>{
+    return this.getFullRollResults().reduce((_all_values, _dice)=>{
       //generate arrays of all possible values as object/associative arrays
       //make NO assumptions about values within Dice arrays
       let dice_min_val=_dice.getMinimum();
@@ -728,7 +731,7 @@ export class Metrics_Pool extends Pool {
         //filter by set length, count, calculate metric
         let set_count=setsOfValue.filter((_element)=>{return _element.sets[0].length==_set_length}).length;
         let set_metrics={set:Array(_set_length).fill(+_valueOfSet),
-          count: set_count, ratio: (set_count/super.getIterations())
+          count: set_count, ratio: (set_count/this.getIterations())
           };
           all_sets_metrics.push(set_metrics);
       }
@@ -813,7 +816,7 @@ export class Metrics_Pool extends Pool {
       metricsObject.count=all_rolled_sequences.filter((_element)=>{
         return _element==_value;
       }).length;
-      metricsObject.ratio=metricsObject.count/super.getIterations();
+      metricsObject.ratio=metricsObject.count/this.getIterations();
       return metricsObject;
     });
     return sequenceMetrics;
@@ -934,7 +937,7 @@ export class Metrics_Pool extends Pool {
     super.dropDice(_dice_index, _no_pool_reroll);
     this.#dice_count-=1;
     if(_no_pool_reroll){
-      let metrics_secondaries=this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, super.getIterations());
+      let metrics_secondaries=this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, this.getIterations());
       this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
       this.#secondaryMetrics.pool_median = metrics_secondaries.median;
       this.#secondaryMetrics.pool_mode = metrics_secondaries.mode;
@@ -979,15 +982,15 @@ export class Metrics_Pool extends Pool {
    */
   updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier){
     let new_dice;
-    if(_minimum_value_or_dice instanceof Dice && !_minimum_value_or_dice instanceof Metrics_Dice){
+    if(_minimum_value_or_dice instanceof Dice && !(_minimum_value_or_dice instanceof Metrics_Dice)){
       new_dice = new Metrics_Dice(_minimum_value_or_dice.getMinimum(), _minimum_value_or_dice.getMaximum(), _minimum_value_or_dice.getModifierFunction());
       new_dice.setIterations(this.getIterations());
       new_dice.setAdditionalText(_minimum_value_or_dice.getAdditionalText());
-      super.updateDice(undefined, new_dice);
+      super.updateDice(_target_dice, new_dice);
     } else if(_minimum_value_or_dice instanceof Metrics_Dice){
       new_dice=_minimum_value_or_dice;
       new_dice.setIterations(this.getIterations());
-      super.updateDice(undefined, new_dice);
+      super.updateDice(_target_dice, new_dice);
     } else {
       if(!isNumeric(_minimum_value_or_dice)) {
       console.error("metrics-pool-class.js: Invalid minimum value passed to updateDice() method.");
@@ -1005,7 +1008,7 @@ export class Metrics_Pool extends Pool {
     //super.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, _modifier);
     //super.updateDice(undefined, new_dice);
     
-    let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, super.getIterations());
+    let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, this.getIterations());
     this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
     this.#secondaryMetrics.pool_median = metrics_secondaries.median;
     this.#secondaryMetrics.pool_mode = metrics_secondaries.mode;
@@ -1023,7 +1026,7 @@ export class Metrics_Pool extends Pool {
       return undefined;
     }
     super.reRollDice(_dice_index);
-    let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, super.getIterations());
+    let metrics_secondaries = this.#calculateMetricSecondaries(this.getMetrics().pool_metrics, this.getIterations());
     this.#secondaryMetrics.pool_mean = metrics_secondaries.mean;
     this.#secondaryMetrics.pool_median = metrics_secondaries.median;
     this.#secondaryMetrics.pool_mode = metrics_secondaries.mode;
@@ -1054,7 +1057,7 @@ export class Metrics_Pool extends Pool {
       return undefined;
     }
     let pool_explosion_results=[];
-    super.getFullRollResults().forEach((_dice, _index)=>{
+    this.getFullRollResults().forEach((_dice, _index)=>{
       _dice.setIterations(this.getIterations());
       let exploded_dice=_dice.explodeValue(_value_to_explode_on, _explode_limit, _additional_dice);     
       pool_explosion_results=[...pool_explosion_results,...exploded_dice];
@@ -1068,5 +1071,51 @@ export class Metrics_Pool extends Pool {
       return new_dice;
     });
     this.addDice(pool_explosion_results);
+  };
+  importPool(_pool){
+    if(!(_pool instanceof Pool)){
+      console.error("metrics-pool-class.js: importPool requires a Pool object for input.");
+      return undefined;
+    }
+    let new_metrics_dice_array = _pool.getFullRollResults().map((_dice)=>{
+      if(_dice instanceof Metrics_Dice){
+        return _dice;
+      }
+      return new Metrics_Dice(_dice.getMinimum(), _dice.getMaximum(), _dice.getModifier());
+    });
+    let new_metrics_pool = new Metrics_Pool(new_metrics_dice_array);
+    new_metrics_pool.setIterations(_pool.getIterations());
+    super.importPool(new_metrics_pool);
+    this.rollPool();
+  };
+  /**
+   * convert a Pool object into a Metrics_Pool object
+   * @param {Pool} _pool 
+   */
+  convertPool(_pool, _transcribe){
+    if(!(_pool instanceof Pool)){
+      console.error("metrics-pool-class.js: convertPool requires a Pool object for input.");
+      return undefined;
+    }
+    this.importPool(_pool);
+    this.#dice_count=this.getFullRollResults().length;
+    if(_transcribe=="transcribe"){
+      this.getFullRollResults().forEach((_dice)=>{
+        _dice.convertDice(_dice, "transcribe");
+      });
+      this.#max_dice=this.#calculateMinMaxDice("max");
+      this.#min_dice=this.#calculateMinMaxDice("min");
+      this.#updateDiceMetrics();
+      let metrics=this.getMetrics();
+      let metrics_secondaries=this.#calculateMetricSecondaries(metrics.pool_metrics, this.getIterations());
+      this.#secondaryMetrics.pool_median=metrics_secondaries.median;
+      this.#secondaryMetrics.pool_mean=metrics_secondaries.mean;
+      this.#secondaryMetrics.pool_mode=metrics_secondaries.mode;
+      this.#calculateSequences();
+      this.#calculateSets();
+      this.calculateSecondaryValues();
+    } else {
+      this.rollPool();
+    }
   };
 };
