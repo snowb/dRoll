@@ -10,7 +10,9 @@ import { Dice } from "./dice-class.js";
  * @property {number} iterations - number of iterations
  * @property {Object[]} fullRollResults - Array of objects containing Dice objects
  * @property {Object[]} rollResults - Array of objects containing abbreviated data [{index:number, roll:number[]}]
- * @property {Object} secondaryResults - Contains sum, mean, min, and max values for all roll
+ * @property {Object} secondaryResults - Contains dice_min, and dice_max values for all rolls
+ * @property {Object} modifiedResults - Contains modified results, modded max, mdoded min, and last operation
+ * @property {Object[]} workingResults - Contains working results from any runn operations
  */
 export class Pool {
   #iterations=10000;
@@ -18,13 +20,12 @@ export class Pool {
   #rollResults=null;
 
   #secondaryResults={
-    //sum:[],
-    dice_min:[],dice_max:[],
-    //pool_max:null,pool_min:null
+    dice_min:[],dice_max:[]
   }; 
   #modifiedResults={
     results:[], modified_max:null, modified_min:null, last_operation:"none"
-  }
+  };
+  #workingResults = [];
   /**
    * Populates private properties and rolls the Dice object provided
    * @class
@@ -62,7 +63,7 @@ export class Pool {
         _element.setIterations(this.#iterations);
         _element.roll();
       });
-      this.#calculateSecondaryValues();
+      this.calculateSecondaryValues();
     }
   };
 
@@ -74,7 +75,7 @@ export class Pool {
     return this.#iterations;
   }
   /**
-   * update iterations and re-roll;
+   * update iterations, does not re-roll
    * @param {number} _iterations 
    */
   setIterations (_iterations) {
@@ -83,7 +84,6 @@ export class Pool {
       return undefined;
     }
     this.#iterations=+_iterations;
-    this.rollPool();
   }
   /**
    * return #fullRollResults private property
@@ -95,6 +95,11 @@ export class Pool {
    * @returns {Object[]} - [{index:number, roll:number[]}]
    */
   getRollResults () { return this.#rollResults; };
+  /**
+   * return current working results of any ops/methods/funcs
+   * @returns {Object[]} - [ {  } ]
+   */
+  getWorkingResults(){ return this.#workingResults; };
   /**
    * return minimum dice rolled from #secondaryResults
    * @returns {number[]}
@@ -159,14 +164,14 @@ export class Pool {
       //_element.roll(this.#iterations);
     });
     //this.#calculatePoolOtherValues();
-    this.#calculateSecondaryValues();
+    this.calculateSecondaryValues();
   };
   /**
    * private property
    * calculates secondary values; sum, mean, min, max and stores in #secondaryResults private prop
    * calculates abbreviated and sorted roll data and stores in #rollResults private prop
    */
-  #calculateSecondaryValues () {
+  calculateSecondaryValues () {
     //this.#secondaryResults.sum=Array(this.#iterations);
     // this.#secondaryResults.mean=Array(this.#iterations);
     this.#secondaryResults.dice_min=Array(this.#iterations);
@@ -196,9 +201,6 @@ export class Pool {
       this.#rollResults[index]={index:index,roll:temp_rolls.sort((_a, _b)=>{return +_a > +_b ? 1 : -1})};
     }
   }
-  test(){
-    this.#dropValue()
-  };
   /**
    * Core method that iterations through roll results and sends dropValue(index) to Dice object
    * Setting the found index in Dice to undefined
@@ -252,7 +254,7 @@ export class Pool {
         this.#fullRollResults[_found_dice.dice].dropValueAtIndex(_found_dice.iteration);
       });
     }
-    this.#calculateSecondaryValues();
+    this.calculateSecondaryValues();
     //this.#calculatePoolOtherValues();
   };
   /**
@@ -334,7 +336,7 @@ export class Pool {
     if(!_no_pool_reroll){
       this.rollPool();
     } else {
-      this.#calculateSecondaryValues();
+      this.calculateSecondaryValues();
       //this.#calculatePoolOtherValues();
     }
   };
@@ -377,7 +379,13 @@ export class Pool {
       _minimum_value_or_dice.setIterations(this.#iterations);
       this.#fullRollResults.push(_minimum_value_or_dice);
       //this.#fullRollResults[this.#fullRollResults.length-1].roll();
-      this.#calculateSecondaryValues();
+      this.calculateSecondaryValues();
+      return;
+    }
+    if(isNumeric(_target_dice) && (_minimum_value_or_dice instanceof Dice)){
+      this.#fullRollResults[_target_dice] = _minimum_value_or_dice;
+      this.#fullRollResults[_target_dice].roll();
+      this.calculateSecondaryValues();
       return;
     }
     let target_dice;
@@ -394,9 +402,8 @@ export class Pool {
       target_dice = this.#fullRollResults.length-1;
       this.#fullRollResults[target_dice].setIterations(this.#iterations);
     }
-    //this.#fullRollResults[target_dice].roll(this.#iterations);
     this.#fullRollResults[target_dice].roll();
-    this.#calculateSecondaryValues();
+    this.calculateSecondaryValues();
   };
   /**
    * re-rolls the Dice object at the specified index
@@ -409,7 +416,7 @@ export class Pool {
       return undefined;
     }
     this.#fullRollResults[_dice_index].roll();
-    this.#calculateSecondaryValues();
+    this.calculateSecondaryValues();
   };
   /**
    * add additional Dice to the roll if a value occurs in the results
@@ -445,7 +452,7 @@ export class Pool {
     pool_explosion_results.forEach((_new_dice)=>{
       this.addDice(_new_dice);
     });
-    this.#calculateSecondaryValues();
+    this.calculateSecondaryValues();
   };
 
   /**
@@ -456,42 +463,42 @@ export class Pool {
    * @returns {Object[]} - [ { index : number, values : number[] } ]
    */
   #getModifiedOperation (_operation, _first_value, _second_value) {
-    let target_array = this.#modifiedResults.results;//this.#secondaryResults.sum;
-
-    return target_array.reduce((_operation_result, _sum_value, _index)=>{
+    let target_array = this.#modifiedResults.results;
+    this.#workingResults = target_array.reduce((_operation_result, _op_value, _index)=>{
       let is_keep=false;
       switch(_operation) {
         case "even":
-          is_keep = _sum_value%2 == 0? true : false;
+          is_keep = _op_value%2 == 0? true : false;
           break;
         case "odd":
-          is_keep = _sum_value%2 == 1 ? true : false;
+          is_keep = _op_value%2 == 1 ? true : false;
           break;
         case "above":
-          is_keep = _sum_value > _first_value ? true : false;
+          is_keep = _op_value > _first_value ? true : false;
           break;
         case "below":
-          is_keep = _sum_value < _first_value ? true : false;
+          is_keep = _op_value < _first_value ? true : false;
           break;
         case "range":
-          is_keep = _sum_value >= _first_value && _sum_value <= _second_value ? true : false;
+          is_keep = _op_value >= _first_value && _op_value <= _second_value ? true : false;
           break;
         case "equal":
         default:
           if(Array.isArray(_first_value)){
             let cleaned_array = _first_value.filter((_value)=>{return isNumeric(_value)}).map((_value)=>{return +_value});
-            is_keep = cleaned_array.includes(+_sum_value) ? true : false;
+            is_keep = cleaned_array.includes(+_op_value) ? true : false;
           }
           else{
-            is_keep = _sum_value == +_first_value ? true : false;
+            is_keep = _op_value == +_first_value ? true : false;
           }          
           break;
       }
       if(is_keep) {
-        _operation_result.push({index:_index, values:[_sum_value]});
+        _operation_result.push({index:_index, values:[_op_value]});
       }
       return _operation_result;
-    },[]);    
+    },[]);
+    return this.#workingResults;
   };
 /**
  * @returns {Object[]} - even results from Modified data
@@ -608,7 +615,7 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
    * @returns {Object[]} - [{index:Number, values:Number}]
    */
   #getOperation (_operation, _first_value, _second_value) {
-    let operation_result=[];
+    this.#workingResults=[];
     const rolls=this.getFullRollResults().length;
     for(let index=0;index < this.#iterations;index++){
       let dice_results=[];
@@ -644,12 +651,10 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
           }
       }
       if(is_keep) {
-        operation_result.push({index:index, values:dice_results});
+        this.#workingResults.push({index:index, values:dice_results});
       }
     }
-    return operation_result;
-  };
-  modifiedGetOperation(_operation, _first_value, _second_value){
+    return this.#workingResults;
   };
   /**
    * Perform operation with Pool and store in modifiedResults.results
@@ -673,7 +678,9 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
     for(let _index=0; _index<this.#iterations; _index++){
       flattened_results[_index]=[];
       ordered_results.forEach((_result)=>{
-        flattened_results[_index].push(_result[_index].value);
+        if(_result!==undefined){
+          flattened_results[_index].push(_result[_index].value);
+        }
       });
     }
     if(typeof _operation!=="function"){
@@ -728,6 +735,9 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
         if(reduced_value > modified_max){modified_max = reduced_value;}
         return _new_array;
       },[]);
+      this.#workingResults = this.#modifiedResults.results.map((_result, _index)=>{
+        return {index:_index, values:_result};
+      });
     } else {
       this.#modifiedResults.last_operation = _operation;
       this.#modifiedResults.results = _operation(flattened_results);
@@ -782,9 +792,29 @@ getModifiedWithinRange (_min_value, _max_value) {//return Modified with values w
       if(modified_value > modified_max){modified_max = modified_value;}
       return modified_value;
     });
-
+    this.#workingResults = this.#modifiedResults.results.map((_result, _index)=>{
+      return {index:_index, values:_result};
+    });
     this.#modifiedResults.modified_max = modified_max;
     this.#modifiedResults.modified_min = modified_min;
   };
-  
+  /**
+   * import and duplicate a Pool object, does not roll the new Pool
+   * @param {Pool} _pool 
+   */
+  importPool(_pool){
+    if(!(_pool instanceof Pool)){
+      console.warn("pool-class.js: importPool() requires a Pool object as input.");
+    }
+    this.#fullRollResults = _pool.getFullRollResults().map((_dice)=>{
+      let new_dice;
+      if(_dice instanceof Metrics_Dice){
+        new_dice = new Metrics_Dice(_dice.getMinimum(),_dice.getMaximum(),_dice.getModifier());
+      } else {
+        new_dice = new Dice(_dice.getMinimum(),_dice.getMaximum(),_dice.getModifier());
+      }
+      return new_dice;
+    });
+    this.setIterations(_pool.getIterations());
+  }
 };
