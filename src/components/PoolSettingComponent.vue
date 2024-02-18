@@ -220,7 +220,7 @@ watch([arrayInput, showPoolEqualArray],([_new_array_input, _new_pool_equal_array
     </Transition>
     <div class="small bold check_box_root" title="Apply Operation/Modification to Dice in order"><input type="checkbox" v-model="showPoolOperations" :checked="false"/>Pool Operation</div>
     <Transition>
-      <div v-if="showPoolOperations" class="small" style="padding-left:0.5em;">
+      <div v-if="showPoolOperations" class="small" style="padding-left:0.5em; background-color: #e7e7e7; position: relative; z-index: 2;">
           &nbsp;<span class="bold" title="Apply Operation to Dice in order">Operation: </span>
           <span title="Add all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="add"/>Add</span>&nbsp;&nbsp;
           <span title="Subtract all Dice in order"><input type="radio" :name="'operation'+props.pool_index" v-model="operationRadio" value="subtract"/>Subtract</span>&nbsp;&nbsp;
@@ -235,7 +235,7 @@ watch([arrayInput, showPoolEqualArray],([_new_array_input, _new_pool_equal_array
     </Transition>
     <div class="small bold check_box_root"><input type="checkbox" v-model="showPoolFilterOptions" :checked="false"/>Filter By Pool Value</div>
     <Transition>
-      <div v-if="showPoolFilterOptions" class="small" style="padding-left:0.5em;">
+      <div v-if="showPoolFilterOptions" class="small" style="padding-left:0.5em; z-index:1; position: relative;">
         <span title="Show Pool where at least 1 Dice is an Even value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'even','pool')"/>Even</span>&nbsp;&nbsp;
         <span title="Show Pool where at least 1 Dice is an Odd value."><input type="radio" :name="'pool_filter_on'+props.pool_index" :checked="false" @change="updateFilterOption($event, 'odd','pool')"/>Odd</span>      
         <br>
