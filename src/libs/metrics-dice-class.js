@@ -19,7 +19,7 @@ export class Metrics_Dice extends Dice {
 
   constructor(_minimum_value, _maximum_value, _modifier){
     super(_minimum_value, _maximum_value, _modifier);
-    this.#modifier_function = super.getModifierFunction();
+    this.#modifier_function = this.getModifierFunction();
     this.#maximum_modified_value = this.#modifier_function(_maximum_value);
     this.#minimum_modified_value = this.#modifier_function(_minimum_value);
   }
@@ -75,8 +75,17 @@ export class Metrics_Dice extends Dice {
       console.error("metrics-dice-class.js: convertDice requires a Dice object for input.");
       return undefined;
     }
+    this.importDice(_dice);
+    this.#modifier_function = this.getModifierFunction();
+    this.#maximum_modified_value = this.#modifier_function(this.getMaximum());
+    this.#minimum_modified_value = this.#modifier_function(this.getMinimum());
     if(_transcribe=="transcribe"){
-      super.updateValues(_dice.getResults());
+      if(_dice.getResults()===undefined){
+        _dice.roll();
+      }
+      this.updateValues(_dice.getResults());
+    } else {
+      this.roll();
     }
   }
 }
