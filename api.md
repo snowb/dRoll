@@ -94,7 +94,7 @@ Dice object takes in a minimum and maximum number, and optional modifier. Gener
     * [.updateValues(_values_array)](#Dice+updateValues) ⇒ <code>undefined</code>
     * [.getAbove(_value)](#Dice+getAbove) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getBelow(_value)](#Dice+getBelow) ⇒ <code>Array.&lt;Object&gt;</code>
-    * [.getEqual(_value)](#Dice+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getEqual(_value_or_array)](#Dice+getEqual) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getWithinRange(_min_value, _max_value)](#Dice+getWithinRange) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getEven()](#Dice+getEven) ⇒ <code>Object</code>
     * [.getOdd()](#Dice+getOdd) ⇒ <code>Object</code>
@@ -270,15 +270,15 @@ returns all values below the input value
 
 <a name="Dice+getEqual"></a>
 
-### dice.getEqual(_value) ⇒ <code>Array.&lt;Object&gt;</code>
-returns all values equal to the input value
+### dice.getEqual(_value_or_array) ⇒ <code>Array.&lt;Object&gt;</code>
+returns all values equal to the input value or values
 
 **Kind**: instance method of [<code>Dice</code>](#Dice)  
-**Returns**: <code>Array.&lt;Object&gt;</code> - - {count: number, values: Object[{index:index, value:value}]}  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - { count: number, values: Object[ { index: index, value: value } ] }  
 
 | Param | Type | Description |
 | --- | --- | --- |
-| _value | <code>string</code> \| <code>number</code> | value to match |
+| _value_or_array | <code>String</code> \| <code>Number</code> \| <code>Array.&lt;Number&gt;</code> | numeric input or array of numerics to return |
 
 <a name="Dice+getWithinRange"></a>
 
@@ -392,6 +392,7 @@ Pool object an Array of Metrics_Dice objects and an optional iterations counts 
 | min_dice | <code>Number</code> | The lowest Dice value |
 | secondaryResults | <code>Object</code> | Contains secondary metrics calculations |
 | groupResults | <code>Object</code> | contains sets, sequences, and metrics for both |
+| workingResults | <code>Array.&lt;Object&gt;</code> | Contains working results from any runn operations |
 
 
 * [Metrics_Pool](#Metrics_Pool) : <code>Object</code>
@@ -436,6 +437,7 @@ Pool object an Array of Metrics_Dice objects and an optional iterations counts 
     * [.updateDice(_target_dice, _minimum_value_or_dice, _maximum_value, [_modifier])](#Metrics_Pool+updateDice) ⇒ <code>undefined</code>
     * [.reRollDice(_dice_index)](#Metrics_Pool+reRollDice) ⇒ <code>undefined</code>
     * [.explodeValue([_value_to_explode_on], _explode_limit, _additional_dice)](#Metrics_Pool+explodeValue) ⇒ <code>undefined</code>
+    * [.convertPool(_pool)](#Metrics_Pool+convertPool)
 
 <a name="Metrics_Pool+getDiceMetrics"></a>
 
@@ -867,6 +869,17 @@ add additional Dice to the roll if a value occurs in the results
 | _explode_limit | <code>string</code> \| <code>number</code> |  | limit to how many additional Dice can be added |
 | _additional_dice | [<code>Dice</code>](#Dice) |  | Dice object that will be cloned and added |
 
+<a name="Metrics_Pool+convertPool"></a>
+
+### metrics_Pool.convertPool(_pool)
+convert a Pool object into a Metrics_Pool object
+
+**Kind**: instance method of [<code>Metrics\_Pool</code>](#Metrics_Pool)  
+
+| Param | Type |
+| --- | --- |
+| _pool | [<code>Pool</code>](#Pool) | 
+
 <a name="Pool"></a>
 
 ## Pool : <code>Object</code>
@@ -880,7 +893,9 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
 | iterations | <code>number</code> | number of iterations |
 | fullRollResults | <code>Array.&lt;Object&gt;</code> | Array of objects containing Dice objects |
 | rollResults | <code>Array.&lt;Object&gt;</code> | Array of objects containing abbreviated data [{index:number, roll:number[]}] |
-| secondaryResults | <code>Object</code> | Contains sum, mean, min, and max values for all roll |
+| secondaryResults | <code>Object</code> | Contains dice_min, and dice_max values for all rolls |
+| modifiedResults | <code>Object</code> | Contains modified results, modded max, mdoded min, and last operation |
+| workingResults | <code>Array.&lt;Object&gt;</code> | Contains working results from any runn operations |
 
 
 * [Pool](#Pool) : <code>Object</code>
@@ -890,6 +905,7 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
     * [.setIterations(_iterations)](#Pool+setIterations)
     * [.getFullRollResults()](#Pool+getFullRollResults) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
     * [.getRollResults()](#Pool+getRollResults) ⇒ <code>Array.&lt;Object&gt;</code>
+    * [.getWorkingResults()](#Pool+getWorkingResults) ⇒ <code>Array.&lt;Object&gt;</code>
     * [.getMinRolled()](#Pool+getMinRolled) ⇒ <code>Array.&lt;number&gt;</code>
     * [.getMaxRolled()](#Pool+getMaxRolled) ⇒ <code>Array.&lt;number&gt;</code>
     * [.getPoolMin()](#Pool+getPoolMin) ⇒ <code>Number</code>
@@ -901,6 +917,7 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
     * [.resetModifiedResults()](#Pool+resetModifiedResults)
     * [.getPoolSize()](#Pool+getPoolSize) ⇒ <code>number</code>
     * [.rollPool()](#Pool+rollPool)
+    * [.calculateSecondaryValues()](#Pool+calculateSecondaryValues)
     * [.dropLowestValue(_drop_count)](#Pool+dropLowestValue)
     * [.dropHighestValue(_drop_count)](#Pool+dropHighestValue)
     * [.dropValue(_drop_value, _drop_count)](#Pool+dropValue)
@@ -927,6 +944,7 @@ Pool object an Array of Dice objects and an optional iterations counts Generate
     * [.getOdd()](#Pool+getOdd) ⇒ [<code>Array.&lt;Dice&gt;</code>](#Dice)
     * [.poolOperation([_operation], _op_order_array)](#Pool+poolOperation)
     * [.modifyPoolOperation(_operation)](#Pool+modifyPoolOperation) ⇒ <code>Array.&lt;Number&gt;</code>
+    * [.importPool(_pool)](#Pool+importPool)
 
 <a name="Pool+Pool"></a>
 
@@ -953,7 +971,7 @@ returns iterations value
 <a name="Pool+setIterations"></a>
 
 ### pool.setIterations(_iterations)
-update iterations and re-roll;
+update iterations, does not re-roll
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
 
@@ -974,6 +992,13 @@ return #rollResults private property
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
 **Returns**: <code>Array.&lt;Object&gt;</code> - - [{index:number, roll:number[]}]  
+<a name="Pool+getWorkingResults"></a>
+
+### pool.getWorkingResults() ⇒ <code>Array.&lt;Object&gt;</code>
+return current working results of any ops/methods/funcs
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+**Returns**: <code>Array.&lt;Object&gt;</code> - - [ {  } ]  
 <a name="Pool+getMinRolled"></a>
 
 ### pool.getMinRolled() ⇒ <code>Array.&lt;number&gt;</code>
@@ -1036,6 +1061,12 @@ Resets the modifiedResults object to empty
 
 ### pool.rollPool()
 rolls all Dice in the Pool, calculates secondary values
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+<a name="Pool+calculateSecondaryValues"></a>
+
+### pool.calculateSecondaryValues()
+private propertycalculates secondary values; sum, mean, min, max and stores in #secondaryResults private propcalculates abbreviated and sorted roll data and stores in #rollResults private prop
 
 **Kind**: instance method of [<code>Pool</code>](#Pool)  
 <a name="Pool+dropLowestValue"></a>
@@ -1328,4 +1359,15 @@ Modify whatever results are in modifiedResults.results
 | Param | Type | Description |
 | --- | --- | --- |
 | _operation | <code>&#x27;absolute&#x27;</code> \| <code>&#x27;negate&#x27;</code> \| <code>&#x27;none&#x27;</code> \| <code>function</code> | Valid String of operation or Function that will be calld within an Array.Map() over #modifiedResults.results generated by poolOperation  #modifiedResults.results = Number[] |
+
+<a name="Pool+importPool"></a>
+
+### pool.importPool(_pool)
+import and duplicate a Pool object, does not roll the new Pool
+
+**Kind**: instance method of [<code>Pool</code>](#Pool)  
+
+| Param | Type |
+| --- | --- |
+| _pool | [<code>Pool</code>](#Pool) | 
 

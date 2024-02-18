@@ -309,7 +309,7 @@ export class Dice {
   /**
    * returns all values equal to the input value or values
    * @param {String|Number|Number[]} _value_or_array - numeric input or array of numerics to return 
-   * @returns Object[]} - {count: number, values: Object[{index:index, value:value}]}
+   * @returns {Object[]} - { count: number, values: Object[ { index: index, value: value } ] }
    */
   getEqual (_value_or_array) {//ADD ARRAY OPTION
     let filter_function;
