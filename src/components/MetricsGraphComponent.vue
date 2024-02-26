@@ -131,9 +131,16 @@ const pool_mode=computed(()=>{
 
 const pool_total=computed(()=>{
   props.force_render;
+  console.log(props)
   let total = props.metrics.values.reduce((_sum,_value)=>{
     return _sum+_value;
   },0);
+  if(total>100){
+      total = props.metrics.values.reduce((_max,_value)=>{
+      if(_value > _max){return _value}
+      return _max;
+    },-Infinity);
+  }
   return Math.round(total*100)/100;
 });
 </script>
